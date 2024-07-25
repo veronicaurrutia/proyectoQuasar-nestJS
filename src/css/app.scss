@@ -1,1 +1,8 @@
 // app global css in SCSS form
+.custom-background {
+  background: radial-gradient(circle, #35a2ff 0%, #014a88 70%);
+}
+
+.transparent-background {
+  background-color: rgba(0, 0, 0, 0.1);
+}

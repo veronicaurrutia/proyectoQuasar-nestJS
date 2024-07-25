@@ -1,6 +1,6 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+  <q-layout view="lHh Lpr lFf" class="custom-background ">
+    <q-header class="transparent-background" elevated>
       <q-toolbar>
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
 
@@ -26,23 +26,21 @@
       @mouseout="miniState = true" bordered>
       <q-scroll-area class="fit" :horizontal-thumb-style="{ opacity: 0 }">
 
-        <q-list darkbordered padding class="text-primary">
+        <q-list dark bordered padding class="text-primary">
           <q-item v-ripple>
             <q-item-section avatar>
               <q-avatar letter color="" text-color="" icon="face" />
             </q-item-section>
             <q-item-section>
-              <q-item-label lines="1">Kurt Muller </q-item-label>
-              <q-item-label lines="1">kmuller@loginsa.com </q-item-label>
-              <q-item-label lines="1">Administrador </q-item-label>
-
+              <q-item-label lines="1"><strong>Kurt Muller</strong> </q-item-label>
+              <q-item-label lines="1"><strong>kmuller@loginsa.com</strong> </q-item-label>
+              <q-item-label lines="1"><strong>Administrador</strong> </q-item-label>
             </q-item-section>
-
           </q-item>
           <q-item v-ripple>
             <q-item-section>
-              <q-item-label lines="2">Tecnologias de la información. </q-item-label>
-              <q-item-label lines="2">Loginsa. </q-item-label>
+              <q-item-label lines="2"> <strong>Tecnologias de la información.</strong> </q-item-label>
+              <q-item-label lines="2"> <strong>Loginsa.</strong> </q-item-label>
             </q-item-section>
           </q-item>
           <q-separator spaced />
@@ -53,10 +51,8 @@
               <q-icon :name="menu.icon" />
             </q-item-section>
 
-            <q-item-section>{{ menu.menu }}</q-item-section>
+            <q-item-section><strong>{{ menu.menu }}</strong> </q-item-section>
           </q-item>
-
-
 
           <q-separator spaced />
 
@@ -65,7 +61,7 @@
               <q-icon name="settings" />
             </q-item-section>
 
-            <q-item-section>Configuración</q-item-section>
+            <q-item-section><strong>Configuración</strong> </q-item-section>
           </q-item>
 
           <q-item clickable v-ripple active-class="my-menu-url">
@@ -73,7 +69,7 @@
               <q-icon name="logout" />
             </q-item-section>
 
-            <q-item-section>Salir</q-item-section>
+            <q-item-section> <strong>Salir</strong> </q-item-section>
           </q-item>
         </q-list>
       </q-scroll-area>
@@ -102,32 +98,32 @@ const menu = ref([
     'url': 'Administración'
   },
   {
-    'menu': 'dashboard',
+    'menu': 'Dashboard',
     'icon': 'dashboard',
     'url': 'dashboard'
   },
   {
-    'menu': 'nueva solicitud',
+    'menu': 'Nueva solicitud',
     'icon': 'add_circle',
     'url': 'nueva solicitud'
   },
   {
-    'menu': 'requerimientos en proceso',
+    'menu': 'Requerimientos en proceso',
     'icon': 'fast_forward',
     'url': 'requerimientos en proceso'
   },
   {
-    'menu': 'requerimientos finalizados',
+    'menu': 'Requerimientos finalizados',
     'icon': 'check',
     'url': 'requerimientos finalizados'
   },
   {
-    'menu': 'requerimientos asignados',
+    'menu': 'Requerimientos asignados',
     'icon': 'supervisor_account',
     'url': 'requerimientos asignados'
   },
   {
-    'menu': 'gestionar requerimientos',
+    'menu': 'Gestionar requerimientos',
     'icon': 'engineering',
     'url': 'gestionar requerimientos'
   },
