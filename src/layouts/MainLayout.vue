@@ -64,7 +64,7 @@
             <q-item-section><strong>Configuración</strong> </q-item-section>
           </q-item>
 
-          <q-item clickable v-ripple active-class="my-menu-url">
+          <q-item clickable @click="logout()" v-ripple active-class="my-menu-url">
             <q-item-section avatar>
               <q-icon name="logout" />
             </q-item-section>
@@ -82,7 +82,10 @@
 </template>
 
 <script setup>
+import { useQuasar } from 'quasar';
+import { useUsuariostore } from 'src/stores/usuario.store';
 import { ref } from 'vue'
+import { useRouter } from 'vue-router';
 
 defineOptions({
   name: 'MainLayout'
@@ -129,12 +132,26 @@ const menu = ref([
   },
 ])
 
+const usuarioStore = useUsuariostore();
+const router = useRouter();
+const quasar = useQuasar()
+
 
 
 //let drawer = false
 let miniState = ref(true)
 
 const leftDrawerOpen = ref(false)
+
+function logout() {
+  usuarioStore.logout()
+  router.push('/login')
+  quasar.notify({
+    message: 'Hasta luego.', //agregar nombre
+    icon: 'waving_hand',
+    color: 'positive',
+  })
+}
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value
