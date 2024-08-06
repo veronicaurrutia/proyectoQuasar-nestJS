@@ -8,16 +8,7 @@ export const useUsuariostore = defineStore("usuario", {
     token: ref(useLocalStorage("token", null)),
   }),
 
-  getters: {
-    isLoggedIn() {
-      if (this.token) {
-        return true;
-        // agregar validacion expiracion de token, consulta api prueba token
-      } else {
-        return false;
-      }
-    },
-  },
+  getters: {},
 
   actions: {
     async login(email, password) {

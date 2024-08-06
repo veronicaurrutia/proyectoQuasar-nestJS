@@ -56,6 +56,22 @@
 
           <q-separator spaced />
 
+          <q-item clickable @click="router.push('/')" v-ripple active-class="my-menu-url">
+            <q-item-section avatar>
+              <q-icon name="home" />
+            </q-item-section>
+            <q-item-section><strong>home</strong>
+            </q-item-section>
+          </q-item>
+
+          <q-item clickable @click="router.push('/perfil')" v-ripple active-class="my-menu-url">
+            <q-item-section avatar>
+              <q-icon name="person" />
+            </q-item-section>
+            <q-item-section><strong>perfil</strong> </q-item-section>
+          </q-item>
+
+
           <q-item clickable v-ripple active-class="my-menu-url">
             <q-item-section avatar>
               <q-icon name="settings" />
