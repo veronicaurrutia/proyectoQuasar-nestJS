@@ -32,18 +32,52 @@
               <q-avatar letter color="" text-color="" icon="face" />
             </q-item-section>
             <q-item-section>
-              <q-item-label lines="1"><strong>Kurt Muller</strong> </q-item-label>
-              <q-item-label lines="1"><strong>kmuller@loginsa.com</strong> </q-item-label>
-              <q-item-label lines="1"><strong>Administrador</strong> </q-item-label>
+              <q-item-label lines="1">Kurt Muller </q-item-label>
+              <q-item-label lines="1">kmuller@loginsa.com </q-item-label>
+              <q-item-label lines="1">Administrador </q-item-label>
             </q-item-section>
           </q-item>
           <q-item v-ripple>
             <q-item-section>
-              <q-item-label lines="2"> <strong>Tecnologias de la información.</strong> </q-item-label>
-              <q-item-label lines="2"> <strong>Loginsa.</strong> </q-item-label>
+              <q-item-label lines="2"> Tecnologias de la información. </q-item-label>
+              <q-item-label lines="2"> Loginsa. </q-item-label>
             </q-item-section>
           </q-item>
           <q-separator spaced />
+
+          <template v-for="menu in menu" :key="menu">
+            <div v-if="menu.submenu && menu.active">
+              <q-expansion-item expand-icon-class="text-primary" expand-separator :icon="menu.icon" :label="menu.menu">
+                <q-separator />
+                <q-card v-if="menu.submenu">
+                  <q-card-section v-for="submenu in menu.submenu" :key="submenu">
+                    <q-item dense @click="router.push(submenu.url)" clickable v-ripple active-class="my-menu-url">
+                      <q-item-section avatar>
+                        <q-icon :name="submenu.icon" />
+                      </q-item-section>
+                      <q-item-section>
+                        <div class="">{{ submenu.menu }}</div>
+
+                        <div class="text-caption text-grey">{{ submenu.caption }}</div>
+
+                      </q-item-section>
+                    </q-item>
+                  </q-card-section>
+                </q-card>
+                <q-separator />
+              </q-expansion-item>
+            </div>
+            <div v-else-if="menu.active">
+              <q-item clickable v-ripple active-class="my-menu-url">
+                <q-item-section avatar>
+                  <q-icon :name="menu.icon" />
+                </q-item-section>
+                <q-item-section>{{ menu.menu }} </q-item-section>
+              </q-item>
+            </div>
+          </template>
+
+          <!--
 
           <q-item :active="url === menu.url" @click="url = menu.url" v-for="menu in menu" :key="menu" clickable v-ripple
             active-class="my-menu-url">
@@ -51,16 +85,17 @@
               <q-icon :name="menu.icon" />
             </q-item-section>
 
-            <q-item-section><strong>{{ menu.menu }}</strong> </q-item-section>
+
+            <q-item-section>{{ menu.menu }} </q-item-section>
           </q-item>
 
+-->
           <q-separator spaced />
-
-          <q-item clickable @click="router.push('/')" v-ripple active-class="my-menu-url">
+          <q-item v-if="false" clickable @click="router.push('/')" v-ripple active-class="my-menu-url">
             <q-item-section avatar>
               <q-icon name="home" />
             </q-item-section>
-            <q-item-section><strong>home</strong>
+            <q-item-section>home
             </q-item-section>
           </q-item>
 
@@ -68,16 +103,16 @@
             <q-item-section avatar>
               <q-icon name="person" />
             </q-item-section>
-            <q-item-section><strong>perfil</strong> </q-item-section>
+            <q-item-section>Perfil </q-item-section>
           </q-item>
 
 
-          <q-item clickable v-ripple active-class="my-menu-url">
+          <q-item v-if="false" clickable v-ripple active-class="my-menu-url">
             <q-item-section avatar>
               <q-icon name="settings" />
             </q-item-section>
 
-            <q-item-section><strong>Configuración</strong> </q-item-section>
+            <q-item-section>Configuración </q-item-section>
           </q-item>
 
           <q-item clickable @click="logout()" v-ripple active-class="my-menu-url">
@@ -85,9 +120,10 @@
               <q-icon name="logout" />
             </q-item-section>
 
-            <q-item-section> <strong>Salir</strong> </q-item-section>
+            <q-item-section> Salir </q-item-section>
           </q-item>
         </q-list>
+
       </q-scroll-area>
     </q-drawer>
 
@@ -114,38 +150,90 @@ const menu = ref([
   {
     'menu': 'Administración',
     'icon': 'admin_panel_settings',
-    'url': 'Administración'
+    'url': 'Administración',
+    'active': true,
+    'submenu': [
+      {
+        'icon': 'account_circle',
+        'menu': 'Cuentas',
+        'caption': 'Mantenedor',
+        'url': 'cuentas',
+        'active': false
+      },
+      {
+        'icon': 'domain',
+        'menu': 'Empresas',
+        'caption': 'Mantenedor',
+        'url': 'empresas',
+        'active': false
+      },
+      {
+        'icon': 'badge',
+        'menu': 'Areas',
+        'caption': 'Mantenedor',
+        'url': 'areas',
+        'active': false
+      },
+      {
+        'icon': 'group',
+        'menu': 'usuarios',
+        'caption': 'Mantenedor',
+        'url': 'usuarios',
+        'active': true
+      },
+
+    ]
   },
   {
     'menu': 'Dashboard',
     'icon': 'dashboard',
-    'url': 'dashboard'
+    'url': 'dashboard',
+    'active': true,
+
   },
+
   {
-    'menu': 'Nueva solicitud',
-    'icon': 'add_circle',
-    'url': 'nueva solicitud'
+    'menu': 'Requerimientos',
+    'icon': 'description',
+    'url': 'requerimientos en proceso',
+    'active': true,
+    'submenu': [
+      {
+        'menu': 'Nueva solicitud',
+        'caption': 'Requerimientos',
+        'icon': 'add_circle',
+        'url': 'nueva solicitud'
+      },
+      {
+        'menu': 'Solicitudes en proceso',
+        'caption': 'Requerimientos',
+        'url': 'roles',
+        'icon': 'fast_forward',
+        'active': false
+      },
+      {
+        'menu': 'Solicitudes finalizados',
+        'caption': 'Requerimientos',
+        'icon': 'check',
+        'url': 'requerimientos finalizados'
+      },
+      {
+        'menu': 'Tickets asignados',
+        'caption': 'Requerimientos',
+        'icon': 'supervisor_account',
+        'url': 'requerimientos asignados'
+      },
+      {
+        'menu': 'Gestionar tickets',
+        'caption': 'Requerimientos',
+        'icon': 'engineering',
+        'url': 'gestionar requerimientos'
+      },
+
+    ]
   },
-  {
-    'menu': 'Requerimientos en proceso',
-    'icon': 'fast_forward',
-    'url': 'requerimientos en proceso'
-  },
-  {
-    'menu': 'Requerimientos finalizados',
-    'icon': 'check',
-    'url': 'requerimientos finalizados'
-  },
-  {
-    'menu': 'Requerimientos asignados',
-    'icon': 'supervisor_account',
-    'url': 'requerimientos asignados'
-  },
-  {
-    'menu': 'Gestionar requerimientos',
-    'icon': 'engineering',
-    'url': 'gestionar requerimientos'
-  },
+
+
 ])
 
 const usuarioStore = useUsuariostore();

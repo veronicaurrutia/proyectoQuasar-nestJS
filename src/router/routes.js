@@ -12,6 +12,22 @@ const routes = [
         path: "perfil",
         component: () => import("pages/PerfilPage.vue"),
       },
+      {
+        path: "cuentas",
+        component: () => import("pages/CuentasPage.vue"),
+      },
+      {
+        path: "empresas",
+        component: () => import("pages/EmpresasPage.vue"),
+      },
+      {
+        path: "areas",
+        component: () => import("pages/AreasPage.vue"),
+      },
+      {
+        path: "usuarios",
+        component: () => import("pages/UsuariosPage.vue"),
+      },
     ],
   },
   {
