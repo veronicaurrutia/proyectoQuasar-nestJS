@@ -2,8 +2,7 @@ import { useLocalStorage } from "@vueuse/core";
 import { defineStore } from "pinia";
 import { api } from "src/boot/axios";
 import { ref } from "vue";
-import axios from "axios";
-// const response = await axios.post("http://localhost:3000/api/auth",
+import { Notify } from "quasar";
 
 export const useUsuariostore = defineStore("usuario", {
   state: () => ({
@@ -16,7 +15,6 @@ export const useUsuariostore = defineStore("usuario", {
     async login(email, password) {
       try {
         const response = await api.post("/auth", {
-          // const response = await axios.post("http://localhost:3000/api/auth", {
           email: email,
           password: password,
         });
@@ -31,11 +29,15 @@ export const useUsuariostore = defineStore("usuario", {
     },
     async logout() {
       this.token = null;
+      Notify.create({
+        message: "Hasta luego.",
+        icon: "waving_hand",
+        color: "positive",
+      });
     },
     async refreshToken() {
-      const headers = { Authorization: "Bearer " + this.token };
       try {
-        const response = await api.get("/check-status");
+        const response = await api.get("/auth/check-status");
         this.token = response.data.token;
       } catch (e) {
         console.log(e);

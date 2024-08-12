@@ -176,7 +176,7 @@ const menu = ref([
       },
       {
         'icon': 'group',
-        'menu': 'usuarios',
+        'menu': 'Usuarios',
         'caption': 'Mantenedor',
         'url': 'usuarios',
         'active': true
@@ -250,11 +250,6 @@ const leftDrawerOpen = ref(false)
 function logout() {
   usuarioStore.logout()
   router.push('/login')
-  quasar.notify({
-    message: 'Hasta luego.', //agregar nombre
-    icon: 'waving_hand',
-    color: 'positive',
-  })
 }
 
 function toggleLeftDrawer() {

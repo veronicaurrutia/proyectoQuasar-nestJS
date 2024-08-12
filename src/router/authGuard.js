@@ -1,9 +1,12 @@
 import { useUsuariostore } from "src/stores/usuario.store";
 import { Notify } from "quasar";
+import { useRouter } from "vue-router";
 
 let expirationCheckInterval;
 
 const checkTokenExpiration = (usuarioStore, Notify, next) => {
+  const router = useRouter();
+
   if (!usuarioStore.token) {
     console.log("No hay token disponible.");
     return next({ path: "/login" });
@@ -14,9 +17,10 @@ const checkTokenExpiration = (usuarioStore, Notify, next) => {
     const currentTime = Date.now();
     let timeLeft = expirationTime - currentTime;
 
-    console.log("Tiempo restante:", timeLeft, "Tiempo crítico:", 5 * 60 * 1000);
+    //console.log("Tiempo restante:", timeLeft, "Tiempo crítico:", 5 * 60 * 1000);
 
     if (timeLeft < 5 * 60 * 1000) {
+      next();
       //comprueba que le queden 5 minutos al token
       Notify.create({
         timeout: 0, // mantener la notificación hasta que haga una acción
@@ -27,11 +31,9 @@ const checkTokenExpiration = (usuarioStore, Notify, next) => {
             handler: async () => {
               try {
                 await usuarioStore.refreshToken();
-                next();
               } catch (error) {
-                console.error("Error al renovar el token:", error);
                 usuarioStore.logout();
-                next({ path: "/login" });
+                router.push("/login");
               }
             },
           },
@@ -39,17 +41,15 @@ const checkTokenExpiration = (usuarioStore, Notify, next) => {
             label: "Cancelar",
             handler: async () => {
               await usuarioStore.logout();
-              console.log(
-                "hago algo mas dentro del cancelar",
-                usuarioStore.token
-              );
-              checkTokenExpiration(usuarioStore, Notify, next);
+              //checkTokenExpiration(usuarioStore, Notify, next);
+              //return next({ path: "/login" });
+              router.push("/login");
             },
           },
         ],
       });
     } else {
-      next(); // Continue navigation
+      return next(); // Continue navigation
     }
   } catch (error) {
     console.error("Error al procesar el token:", error);
@@ -84,14 +84,14 @@ const authGuard = async (to, from, next) => {
   if (to.matched.some((record) => record.meta.requiresAuth)) {
     if (!usuarioStore.token) {
       usuarioStore.logout();
-      next({ path: "/login" });
+      return next({ path: "/login" });
     } else {
       startExpirationCheck(usuarioStore, Notify);
       checkTokenExpiration(usuarioStore, Notify, next);
     }
   } else {
     stopExpirationCheck();
-    next();
+    return next();
   }
 };
 
