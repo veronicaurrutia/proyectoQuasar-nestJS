@@ -27,7 +27,7 @@ const checkTokenExpiration = (usuarioStore, Notify, next) => {
         message: "Tu sesión está por expirar. ¿Deseas permanecer en el sitio?",
         actions: [
           {
-            label: "Renovar",
+            label: "Permanecer",
             handler: async () => {
               try {
                 await usuarioStore.refreshToken();
@@ -43,6 +43,11 @@ const checkTokenExpiration = (usuarioStore, Notify, next) => {
               await usuarioStore.logout();
               //checkTokenExpiration(usuarioStore, Notify, next);
               //return next({ path: "/login" });
+              Notify.create({
+                message: "Hasta luego.",
+                icon: "waving_hand",
+                color: "positive",
+              });
               router.push("/login");
             },
           },

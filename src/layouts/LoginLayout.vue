@@ -77,7 +77,6 @@ export default {
       }
 
       const response = await usuarioStore.login(email.value, password.value)
-
       if (response.estado == 'OK') {
         router.push('/')
         quasar.notify({
@@ -88,7 +87,7 @@ export default {
       }
       else {
         quasar.notify({
-          message: 'Usuario y/o Contraseña incorrecto.',
+          message: response.data?.response?.data?.message ?? response.data.message,
           icon: 'close',
           color: 'negative',
         })
