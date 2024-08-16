@@ -134,10 +134,10 @@
 </template>
 
 <script setup>
-import { useQuasar } from 'quasar';
 import { useUsuariostore } from 'src/stores/usuario.store';
 import { ref } from 'vue'
 import { useRouter } from 'vue-router';
+import { Notify } from "quasar";
 
 defineOptions({
   name: 'MainLayout'
@@ -176,7 +176,7 @@ const menu = ref([
       },
       {
         'icon': 'group',
-        'menu': 'usuarios',
+        'menu': 'Usuarios',
         'caption': 'Mantenedor',
         'url': 'usuarios',
         'active': true
@@ -238,7 +238,6 @@ const menu = ref([
 
 const usuarioStore = useUsuariostore();
 const router = useRouter();
-const quasar = useQuasar()
 
 
 
@@ -249,12 +248,12 @@ const leftDrawerOpen = ref(false)
 
 function logout() {
   usuarioStore.logout()
+  Notify.create({
+    message: "Hasta luego.",
+    icon: "waving_hand",
+    color: "positive",
+  });
   router.push('/login')
-  quasar.notify({
-    message: 'Hasta luego.', //agregar nombre
-    icon: 'waving_hand',
-    color: 'positive',
-  })
 }
 
 function toggleLeftDrawer() {

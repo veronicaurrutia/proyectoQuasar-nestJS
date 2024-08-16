@@ -24,7 +24,6 @@ export const useUsuariostore = defineStore("usuario", {
 
         return { estado: "OK", data: response };
       } catch (error) {
-        console.log(error);
         this.logout();
         return { estado: "ERROR", data: error };
       }
@@ -34,9 +33,8 @@ export const useUsuariostore = defineStore("usuario", {
       this.cuentaId = null;
     },
     async refreshToken() {
-      const headers = { Authorization: "Bearer " + this.token };
       try {
-        const response = await api.get("/check-status");
+        const response = await api.get("/auth/check-status");
         this.token = response.data.token;
       } catch (e) {
         console.log(e);
