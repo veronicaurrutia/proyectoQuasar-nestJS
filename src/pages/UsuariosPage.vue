@@ -33,8 +33,8 @@
           <q-input v-model="usuario.email" label="Correo" stack-label dense lazy-rules color="primary" />
           <q-input v-model="usuario.password" label="Password" stack-label dense lazy-rules color="primary" />
           <q-select dense v-if="cuentaId == null" v-model="usuario.cuentaId" :options="cuentas" label="Cuenta" />
-          <!-- <q-select dense v-else readonly v-model="usuario.cuentaId" :options="cuentas" label="Cuenta" /> -->
-          <q-select dense v-if="cuentaId" v-model="usuario.empresasId" :options="empresas" label="Empresa" />
+          <q-select dense v-if="usuario.cuentaId != null" v-model="usuario.empresasId" :options="empresas"
+            label="Empresa" />
           <q-select dense v-if="usuario.empresasId != null" v-model="usuario.centroId" :options="centros"
             label="Centro" />
 
@@ -101,7 +101,7 @@ export default {
           field: (row) => row.nombre,
           format: (val) => `${val}`,
           classes: "",
-          headerClasses: "bg-primary text-white",
+          headerClasses: "bg-primary glossy text-white",
           style: "max-width: 150px",
         },
         {
@@ -112,7 +112,7 @@ export default {
           field: (row) => row.apellido,
           format: (val) => `${val}`,
           classes: "",
-          headerClasses: "bg-primary text-white",
+          headerClasses: "bg-primary text-white glossy",
           style: "max-width: 150px",
         },
         {
@@ -120,30 +120,30 @@ export default {
           label: "Correo",
           field: "email",
           align: "center",
-          headerClasses: "bg-primary text-white",
+          headerClasses: "bg-primary text-white glossy",
         },
         {
           name: "cuenta",
           label: "Cuenta",
-          field: "cuentaId",
+          field: row => row.cuenta ? row.cuenta.nombre : "Sin cuenta",
           align: "center",
-          headerClasses: "bg-primary text-white",
+          headerClasses: "bg-primary text-white glossy",
         },
         {
           name: "centro",
           label: "Centro",
-          field: "centroId",
+          field: row => row.centro ? row.centro.nombre : "Sin centro",
           align: "center",
-          headerClasses: "bg-primary text-white",
+          headerClasses: "bg-primary text-white glossy",
         },
         {
           name: "enabledopt",
           label: "Estado",
           field: "enabledopt",
           align: "center",
-          headerClasses: "bg-primary text-white",
+          headerClasses: "bg-primary text-white glossy",
         },
-        { name: 'actions', label: 'Actions', align: 'center', field: 'actions', headerClasses: "bg-primary text-white" }
+        { name: 'actions', label: 'Actions', align: 'center', field: 'actions', headerClasses: "bg-primary text-white glossy" }
       ],
     }
   },
@@ -201,6 +201,7 @@ export default {
     async obtenerUsuarios() {
       const response = await api.get("/usuario");
       this.usuarios = response.data
+      console.log("usuarios", this.usuarios)
     },
     async crearUsuario() {
       this.usuario.cuentaId = this.usuario.cuentaId.value
@@ -222,6 +223,7 @@ export default {
       })
     },
     async obtenerCentrosEmpresa(valor) {
+      this.centros = []
       const response = await api.get("centro/empresa/" + valor.value)
       response.data.forEach((item) => {
         let dato = { value: item.id, label: item.nombre }

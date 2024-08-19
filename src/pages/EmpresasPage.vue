@@ -5,7 +5,8 @@
       Descripción del mantenedor de empresas<br><br>
       <q-btn color="primary" class="glossy" icon="add" @click="dialogEmpresa = true">Agregar</q-btn>
       <div class=" q-mt-md">
-        <q-table bordered title="Empresas" :rows="empresas" :columns="columns" :rows-per-page-options="[10]">
+        <q-table bordered title="Empresas" :rows="empresas" :columns="columns" :rows-per-page-options="[10]"
+          :filter="filter">
           <template v-slot:body-cell-enabledopt="props">
             <q-td :props="props" align="center">
               <q-icon :name="props.row.estado ? 'check_circle' : 'cancel'"
@@ -18,9 +19,17 @@
               <q-btn color="primary" icon="delete" @click="eliminarEmpresa(props.row)" flat />
             </q-td>
           </template>
+          <template v-slot:top-right>
+            <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+              <template v-slot:append>
+                <q-icon name="search" />
+              </template>
+            </q-input>
+          </template>
         </q-table>
       </div>
     </q-card>
+    <!-- DIALOGO CREAR EMPRESA -->
     <q-dialog v-model="dialogEmpresa" persistent>
       <q-card class="q-gutter-sm my-card" style="width: 700px; max-width: 80vw">
         <q-card-section class="row items-center">
@@ -33,7 +42,9 @@
           <q-input v-model="empresa.razon_social" label="Razón Social" lazy-rules stack-label dense color="primary" />
           <q-input v-model="empresa.telefono" label="Telefono" stack-label dense lazy-rules color="primary" />
           <q-input v-model="empresa.direccion" label="Dirección" stack-label dense lazy-rules color="primary" />
-          <q-select dense v-model="empresa.paisId" :options="paises" label="País" />
+          <q-select dense v-model="empresa.estado" :options="estados" label="Estado" map-options emit-value />
+          <q-select dense v-model="empresa.paisId" :options="paises" label="País" map-options emit-value />
+          <q-select dense v-model="empresa.cuentaId" :options="cuentas" label="Cuenta" map-options emit-value />
         </q-card-section>
         <q-card-actions align="right">
           <template v-if="!cargandoIcon">
@@ -47,7 +58,8 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="editar" persistent>
+    <!-- DIALOGO EDITAR EMPRESA -->
+    <q-dialog v-model="dialogEmpresaEdit" persistent>
       <q-card class="q-gutter-sm my-card" style="width: 700px; max-width: 80vw">
         <q-card-section class="row items-center">
           <q-avatar square icon="domain" color="primary" text-color="white" />
@@ -59,12 +71,12 @@
           <q-input v-model="empresa.razon_social" label="Razón Social" lazy-rules stack-label dense color="primary" />
           <q-input v-model="empresa.telefono" label="Telefono" stack-label dense lazy-rules color="primary" />
           <q-input v-model="empresa.direccion" label="Dirección" stack-label dense lazy-rules color="primary" />
-          <q-select dense v-model="empresa.paisId" :options="paises" label="País" />
-          <q-select dense v-model="empresa.estado" :options="estados" label="Estado" />
+          <q-select dense v-model="empresa.estado" :options="estados" label="Estado" map-options emit-value />
+          <q-select dense v-model="empresa.paisId" :options="paises" label="País" map-options emit-value />
         </q-card-section>
         <q-card-actions align="right">
           <template v-if="!cargandoIcon">
-            <q-btn flat label="Cancelar" color="primary" v-close-popup @click="editar = false" />
+            <q-btn flat label="Cancelar" color="primary" v-close-popup @click="dialogEmpresaEdit = false" />
             <q-btn label="Confirmar" color="primary" @click="actualizarEmpresa()" />
           </template>
           <template v-if="cargandoIcon">
@@ -79,15 +91,20 @@
 
 <script>
 import { api } from "src/boot/axios";
+import { Notify } from "quasar";
+import { useUsuariostore } from "src/stores/usuario.store";
+
 export default {
 
   data() {
     return {
+      filter: "",
       dialogEmpresa: false,
       cargandoIcon: false,
-      editar: false,
+      dialogEmpresaEdit: false,
       empresas: [],
       paises: [],
+      cuentas: [],
       empresa: {
         nombre: null,
         email: null,
@@ -96,20 +113,9 @@ export default {
         direccion: null,
         paisId: null,
         estado: true,
+        cuentaId: null,
       },
       columns: [
-        // {
-        //   name: "ID",
-        //   required: true,
-        //   label: "ID",
-        //   align: "left",
-        //   field: (row) => row.id,
-        //   format: (val) => `${val}`,
-        //   sortable: true,
-        //   classes: "",
-        //   headerClasses: "bg-primary text-white",
-        //   style: "max-width: 150px",
-        // },
         {
           name: "nombre",
           required: true,
@@ -118,7 +124,7 @@ export default {
           field: (row) => row.nombre,
           format: (val) => `${val}`,
           classes: "",
-          headerClasses: "bg-primary text-white",
+          headerClasses: "bg-primary text-white glossy",
           style: "max-width: 150px",
         },
         {
@@ -126,21 +132,28 @@ export default {
           label: "Correo",
           field: "email",
           align: "center",
-          headerClasses: "bg-primary text-white",
+          headerClasses: "bg-primary text-white glossy",
         },
         {
           name: "direccion",
           label: "Dirección",
           field: "direccion",
           align: "center",
-          headerClasses: "bg-primary text-white",
+          headerClasses: "bg-primary text-white glossy",
+        },
+        {
+          name: "cuenta",
+          label: "Cuenta",
+          field: row => row.cuenta ? row.cuenta.nombre : "Sin cuenta",
+          align: "center",
+          headerClasses: "bg-primary text-white glossy",
         },
         {
           name: "enabledopt",
           label: "Estado",
           field: "estado",
           align: "center",
-          headerClasses: "bg-primary text-white",
+          headerClasses: "bg-primary text-white glossy",
           format: (val) => val
             ? '<q-icon name="check_circle" color="green" />'
             : '<q-icon name="cancel" color="red" />',
@@ -150,7 +163,7 @@ export default {
           label: "Acciones",
           field: "actions",
           align: "center",
-          headerClasses: "bg-primary text-white",
+          headerClasses: "bg-primary text-white glossy",
         },
       ],
       estados: [
@@ -164,9 +177,15 @@ export default {
     }
   },
   created() {
+    const usuarioStore = useUsuariostore();
+    this.cuentaId = usuarioStore.cuentaId;
     this.obtenerPaises();
     this.obtenerEmpresas();
-
+    if (this.cuentaId == null) {
+      this.obtenerCuentas();
+    } else {
+      this.obtenerCuentaMaestra();
+    }
   },
   watch: {
     dialogEmpresa() {
@@ -178,6 +197,8 @@ export default {
           telefono: null,
           direccion: null,
           paisId: null,
+          estado: null,
+          cuentaId: null,
         }
         this.empresa = auxiliar
         this.obtenerEmpresas()
@@ -200,11 +221,27 @@ export default {
         }
         this.paises.push(dato)
       })
-      // console.log(this.paises[0])
     },
     async obtenerEmpresas() {
-      const response = await api.get("/empresa");
-      this.empresas = response.data
+      if (this.cuentaId == null) {
+        const response = await api.get("/empresa");
+        this.empresas = response.data
+      } else {
+        const response = await api.get("/empresa/cuenta/" + this.cuentaId)
+        this.empresas = response.data
+      }
+    },
+    async obtenerCuentas() {
+      const response = await api.get("/cuenta");
+      response.data.forEach((item) => {
+        let dato = { value: item.id, label: item.nombre }
+        this.cuentas.push(dato)
+      })
+    },
+    async obtenerCuentaMaestra() {
+      const response = await api.get("/cuenta/" + this.cuentaId)
+      let dato = { value: response.data.id, label: response.data.nombre }
+      this.cuentas.push(dato)
     },
     async crearEmpresa() {
       this.empresa.paisId = this.empresa.paisId.value
@@ -213,22 +250,22 @@ export default {
       this.dialogEmpresa = false;
     },
     editarEmpresa(row) {
-      this.editar = true;
+      this.dialogEmpresaEdit = true;
+      console.log(row)
       this.empresa = row;
     },
     async actualizarEmpresa() {
-      this.empresa.paisId = this.empresa.paisId.value
-      this.empresa.estado = this.empresa.estado.value
       let id = this.empresa.id
       delete this.empresa.id
+      delete this.empresa.cuenta
       const response = await api.patch("/empresa/" + id, this.empresa)
       console.log(response)
-      this.editar = false;
+      this.dialogEmpresaEdit = false;
     },
     eliminarEmpresa(row) {
       Notify.create({
         timeout: 0, // mantener la notificación hasta que haga una acción
-        message: "quieres eliminar la Cuenta?",
+        message: "quieres eliminar la Empresa?",
         actions: [
           {
             label: "Eliminar",
