@@ -4,11 +4,12 @@ import { useRouter } from "vue-router";
 
 let expirationCheckInterval;
 
-const checkTokenExpiration = (usuarioStore, Notify, next) => {
-  const router = useRouter();
+const redirectToLogin = (router) => {
+  router.push("/login");
+};
 
+const checkTokenExpiration = (usuarioStore, Notify, router, next) => {
   if (!usuarioStore.token) {
-    console.log("No hay token disponible.");
     return next({ path: "/login" });
   }
   try {
@@ -17,11 +18,8 @@ const checkTokenExpiration = (usuarioStore, Notify, next) => {
     const currentTime = Date.now();
     let timeLeft = expirationTime - currentTime;
 
-    //console.log("Tiempo restante:", timeLeft, "Tiempo crítico:", 5 * 60 * 1000);
-
     if (timeLeft < 5 * 60 * 1000) {
       next();
-      //comprueba que le queden 5 minutos al token
       Notify.create({
         timeout: 0, // mantener la notificación hasta que haga una acción
         message: "Tu sesión está por expirar. ¿Deseas permanecer en el sitio?",
@@ -33,7 +31,7 @@ const checkTokenExpiration = (usuarioStore, Notify, next) => {
                 await usuarioStore.refreshToken();
               } catch (error) {
                 usuarioStore.logout();
-                router.push("/login");
+                redirectToLogin(router);
               }
             },
           },
@@ -41,20 +39,18 @@ const checkTokenExpiration = (usuarioStore, Notify, next) => {
             label: "Cancelar",
             handler: async () => {
               await usuarioStore.logout();
-              //checkTokenExpiration(usuarioStore, Notify, next);
-              //return next({ path: "/login" });
               Notify.create({
                 message: "Hasta luego.",
                 icon: "waving_hand",
                 color: "positive",
               });
-              router.push("/login");
+              redirectToLogin(router);
             },
           },
         ],
       });
     } else {
-      return next(); // Continue navigation
+      return next(); // Continuar la navegación
     }
   } catch (error) {
     console.error("Error al procesar el token:", error);
@@ -63,18 +59,18 @@ const checkTokenExpiration = (usuarioStore, Notify, next) => {
   }
 };
 
-const startExpirationCheck = (usuarioStore, Notify) => {
+const startExpirationCheck = (usuarioStore, Notify, router, next) => {
   if (expirationCheckInterval) {
     clearInterval(expirationCheckInterval);
   }
 
   expirationCheckInterval = setInterval(() => {
     if (usuarioStore.token) {
-      checkTokenExpiration(usuarioStore, Notify, () => {});
+      checkTokenExpiration(usuarioStore, Notify, router, next);
     } else {
       clearInterval(expirationCheckInterval);
     }
-  }, 60 * 1000); // Check every minute
+  }, 60 * 1000); // Revisar cada minuto
 };
 
 const stopExpirationCheck = () => {
@@ -85,14 +81,15 @@ const stopExpirationCheck = () => {
 
 const authGuard = async (to, from, next) => {
   const usuarioStore = useUsuariostore();
+  const router = useRouter();
 
   if (to.matched.some((record) => record.meta.requiresAuth)) {
     if (!usuarioStore.token) {
       usuarioStore.logout();
       return next({ path: "/login" });
     } else {
-      startExpirationCheck(usuarioStore, Notify);
-      checkTokenExpiration(usuarioStore, Notify, next);
+      startExpirationCheck(usuarioStore, Notify, router, next);
+      checkTokenExpiration(usuarioStore, Notify, router, next);
     }
   } else {
     stopExpirationCheck();
