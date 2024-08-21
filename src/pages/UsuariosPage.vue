@@ -32,11 +32,12 @@
           <q-input v-model="usuario.apellido" label="Apellido" lazy-rules stack-label dense color="primary" />
           <q-input v-model="usuario.email" label="Correo" stack-label dense lazy-rules color="primary" />
           <q-input v-model="usuario.password" label="Password" stack-label dense lazy-rules color="primary" />
-          <q-select dense v-if="cuentaId == null" v-model="usuario.cuentaId" :options="cuentas" label="Cuenta" />
+          <q-select dense v-if="cuentaId == null" v-model="usuario.cuentaId" :options="cuentas" label="Cuenta"
+            map-options emit-value />
           <q-select dense v-if="usuario.cuentaId != null" v-model="usuario.empresasId" :options="empresas"
-            label="Empresa" />
-          <q-select dense v-if="usuario.empresasId != null" v-model="usuario.centroId" :options="centros"
-            label="Centro" />
+            label="Empresa" map-options emit-value multiple use-chips />
+          <q-select dense v-if="usuario.empresasId != null" v-model="usuario.centroId" :options="centros" label="Centro"
+            map-options emit-value />
 
 
         </q-card-section>
@@ -168,7 +169,7 @@ export default {
           password: null,
           estado: true,
           cuentaId: null,
-          empresaSId: null,
+          empresasId: null,
           centroId: null,
         }
         this.usuario = auxiliar
@@ -204,11 +205,7 @@ export default {
       console.log("usuarios", this.usuarios)
     },
     async crearUsuario() {
-      this.usuario.cuentaId = this.usuario.cuentaId.value
-      let emp = this.usuario.empresasId.value.toString()
-      this.usuario.empresasId = []
-      this.usuario.empresasId.push(emp)
-      this.usuario.centroId = this.usuario.centroId.value
+      console.log(this.usuario)
       const response = await api.post("/usuario", this.usuario)
       this.dialogUsuario = false;
     },
@@ -216,7 +213,7 @@ export default {
       console.log("Editing row:", row);
     },
     async obtenerEmpresasCuenta(valor) {
-      const response = await api.get("/empresa/cuenta/" + valor.value)
+      const response = await api.get("/empresa/cuenta/" + valor)
       response.data.forEach((item) => {
         let dato = { value: item.id, label: item.nombre }
         this.empresas.push(dato)
@@ -224,7 +221,7 @@ export default {
     },
     async obtenerCentrosEmpresa(valor) {
       this.centros = []
-      const response = await api.get("centro/empresa/" + valor.value)
+      const response = await api.get("centro/empresa/" + valor)
       response.data.forEach((item) => {
         let dato = { value: item.id, label: item.nombre }
         this.centros.push(dato)

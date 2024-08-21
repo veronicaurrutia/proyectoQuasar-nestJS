@@ -7,6 +7,7 @@ export const useUsuariostore = defineStore("usuario", {
   state: () => ({
     token: ref(useLocalStorage("token", null)),
     cuentaId: ref(useLocalStorage("cuentaId", null)),
+    empresas: ref(useLocalStorage("empresas", null)),
   }),
 
   getters: {},
@@ -18,9 +19,22 @@ export const useUsuariostore = defineStore("usuario", {
           email: email,
           password: password,
         });
-        // console.log(response.data.cuentaId, "user");
+        console.log(response.data);
         this.token = response.data.token;
         this.cuentaId = response.data.cuentaId;
+        if (Array.isArray(response.data.empresas)) {
+          this.empresas = response.data.empresas.map((empresa) => {
+            return {
+              id: empresa.id,
+              nombre: empresa.nombre,
+              // Agrega aquí otros campos necesarios
+            };
+          });
+        } else {
+          // Manejo de error en caso de que no sea un array
+          console.error("Empresas no es un array");
+          this.empresas = [];
+        }
 
         return { estado: "OK", data: response };
       } catch (error) {

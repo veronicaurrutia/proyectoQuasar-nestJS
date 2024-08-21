@@ -206,8 +206,8 @@ export default {
         this.obtenerEmpresas()
       }
     },
-    editar() {
-      if (this.editar == false) {
+    dialogEmpresaEdit() {
+      if (this.dialogEmpresaEdit == false) {
         this.obtenerEmpresas()
       }
     }
