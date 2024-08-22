@@ -100,6 +100,8 @@ export default {
       paises: [],
       cuentas: [],
       empresas: [],
+      usuarioStore: null,
+      empresaUsuario: null,
       empresasUsuario: [],
       area: {
         nombre: null,
@@ -164,11 +166,14 @@ export default {
     }
   },
   created() {
-    const usuarioStore = useUsuariostore();
-    this.cuentaId = usuarioStore.cuentaId;
-    this.empresasUsuario = usuarioStore.empresas
-    console.log(this.empresasUsuario)
-    if (this.empresasUsuario != null) {
+    this.usuarioStore = useUsuariostore();
+    this.cuentaId = this.usuarioStore.cuentaId;
+    this.empresaUsuario = this.usuarioStore.empresa
+    console.log(this.usuarioStore.empresas.length, "sss")
+    if (this.usuarioStore.empresas.length > 0) {
+      this.obtenerEmpresa()
+    }
+    else {
       this.obtenerEmpresas()
     }
     this.obtenerAreas();
@@ -183,7 +188,7 @@ export default {
           estado: null,
           empresaId: null,
         }
-        this.obtenerEmpresas()
+        // this.obtenerEmpresa()
         this.area = auxiliar
         this.obtenerAreas()
       } else {
@@ -203,36 +208,27 @@ export default {
       if (this.cuentaId == null) {
         const response = await api.get("/area");
         this.areas = response.data
-        console.log(this.areas)
-      }// else {
-      //     const response = await api.get("/area/empresa/" + this.cuentaId)
-      //     this.areas = response.data
-      // }
+      } else {
+        if (this.empresaUsuario != null) {
+          console.log(this.empresaUsuario)
+          const response = await api.get("/area/empresa/" + this.empresaUsuario)
+          this.areas = response.data
+        }
+      }
     },
     async obtenerEmpresas() {
       this.empresas = []
-      console.log(this.empresasUsuario)
-      this.empresasUsuario.forEach((item) => {
+      const response = await api.get("/empresa")
+      response.data.forEach((item) => {
         let dato = { value: item.id, label: item.nombre }
         this.empresas.push(dato)
       })
-      // if (this.cuentaId == null) {
-      //   const response = await api.get("/empresa");
-      //   response.data.forEach((item) => {
-      //     let dato = {
-      //       value: item.id, label: item.nombre
-      //     }
-      //     this.empresas.push(dato)
-      //   })
-      // } else {
-      //   const response = await api.get("/empresa/cuenta/" + this.cuentaId)
-      //   response.data.forEach((item) => {
-      //     let dato = {
-      //       value: item.id, label: item.nombre
-      //     }
-      //     this.empresas.push(dato)
-      //   })
-      // }
+    },
+    async obtenerEmpresa() {
+      this.empresas = [];
+      let item = this.usuarioStore.empresas.find(empresa => empresa.value === this.empresaUsuario)
+      this.empresas.push(item)
+      console.log(this.empresas, this.empresaUsuario)
     },
     async crearArea() {
       const response = await api.post("/area", this.area)

@@ -53,18 +53,54 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+
+    <q-dialog v-model="dialogUsuarioEdit" persistent>
+      <q-card class="q-gutter-sm my-card" style="width: 700px; max-width: 80vw">
+        <q-card-section class="row items-center">
+          <q-avatar square icon="group" color="primary" text-color="white" />
+          <span class="q-ml-sm">Modificar Usuario</span>
+        </q-card-section>
+        <q-card-section>
+          <q-input v-model="usuario.nombre" label="Nombre" lazy-rules stack-label dense color="primary" />
+          <q-input v-model="usuario.apellido" label="Apellido" lazy-rules stack-label dense color="primary" />
+          <q-input v-model="usuario.email" label="Correo" stack-label dense lazy-rules color="primary" />
+          <q-input v-model="usuario.password" label="Password" stack-label dense lazy-rules color="primary" />
+          <q-select dense v-if="cuentaId == null" v-model="usuario.cuentaId" :options="cuentas" label="Cuenta"
+            map-options emit-value />
+          <q-select dense v-if="usuario.cuentaId != null" v-model="usuario.empresasId" :options="empresas"
+            label="Empresa" map-options emit-value multiple use-chips />
+          <q-select dense v-if="usuario.empresasId != null" v-model="usuario.centroId" :options="centros" label="Centro"
+            map-options emit-value />
+
+
+        </q-card-section>
+        <q-card-actions align="right">
+          <template v-if="!cargandoIcon">
+            <q-btn flat label="Cancelar" color="primary" v-close-popup @click="dialogUsuarioEdit = false" />
+            <q-btn label="Confirmar" color="primary" @click="actualizarUsuario()" />
+          </template>
+          <template v-if="cargandoIcon">
+            <span color="primary">Registrando...</span>
+            <q-spinner-hourglass color="primary" size="2em" />
+          </template>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
   </div>
 </template>
 
 <script>
 import { api } from "src/boot/axios";
 import { useUsuariostore } from "src/stores/usuario.store";
+import { Notify } from "quasar";
 
 export default {
 
   data() {
     return {
       dialogUsuario: false,
+      dialogUsuarioEdit: false,
       cargandoIcon: false,
       cuentaId: null,
       usuarios: [],
@@ -211,6 +247,18 @@ export default {
     },
     editarUsuario(row) {
       console.log("Editing row:", row);
+      this.dialogUsuarioEdit = true;
+      this.usuario = row;
+    },
+    async actualizarUsuario() {
+      let id = this.usuario.id
+      delete this.usuario.id
+      delete this.usuario.cuenta
+      delete this.usuario.empresas
+      delete this.usuario.centro
+      console.log(this.usuario)
+      const response = await api.patch("/usuario/" + id, this.usuario)
+      this.dialogUsuarioEdit = false;
     },
     async obtenerEmpresasCuenta(valor) {
       const response = await api.get("/empresa/cuenta/" + valor)
@@ -235,7 +283,7 @@ export default {
       this.usuario.cuentaId = dato;
       console.log(this.cuentas, this.usuario.cuentaId)
     },
-    async eliminarUsuario() {
+    async eliminarUsuario(row) {
       Notify.create({
         timeout: 0, // mantener la notificación hasta que haga una acción
         message: "quieres eliminar el Usuario?",

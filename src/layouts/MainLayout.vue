@@ -8,8 +8,8 @@
           Central de requerimientos
         </q-toolbar-title>
 
-        <q-select class="q-mr-md" dark dense outlined v-model="empresa" :options="['Loginsa', 'otra Empresa']"
-          label="Empresa" />
+        <q-select class="q-mr-md" dark dense outlined v-model="empresa" :options="empresas" label="Empresa" map-options
+          emit-value />
 
         <q-select dark dense outlined v-model="area" :options="['tecnologias de la informacion', 'otra area']"
           label="Area" />
@@ -133,130 +133,151 @@
   </q-layout>
 </template>
 
-<script setup>
+<script>
 import { useUsuariostore } from 'src/stores/usuario.store';
-import { ref } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router';
 import { Notify } from "quasar";
+export default {
+  data() {
+    return {
+      area: ref('tecnologias de la informacion'),
+      empresa: null,
+      url: ref(''),
+      menu: ref([
+        {
+          'menu': 'Administración',
+          'icon': 'admin_panel_settings',
+          'url': 'Administración',
+          'active': true,
+          'submenu': [
+            {
+              'icon': 'account_circle',
+              'menu': 'Cuentas',
+              'caption': 'Mantenedor',
+              'url': 'cuentas',
+              'active': false
+            },
+            {
+              'icon': 'domain',
+              'menu': 'Empresas',
+              'caption': 'Mantenedor',
+              'url': 'empresas',
+              'active': false
+            },
+            {
+              'icon': 'badge',
+              'menu': 'Areas',
+              'caption': 'Mantenedor',
+              'url': 'areas',
+              'active': false
+            },
+            {
+              'icon': 'group',
+              'menu': 'Usuarios',
+              'caption': 'Mantenedor',
+              'url': 'usuarios',
+              'active': true
+            },
+            {
+              'icon': 'group',
+              'menu': 'Centros',
+              'caption': 'Mantenedor',
+              'url': 'centros',
+              'active': true
+            },
 
-defineOptions({
-  name: 'MainLayout'
-})
+          ]
+        },
+        {
+          'menu': 'Dashboard',
+          'icon': 'dashboard',
+          'url': 'dashboard',
+          'active': true,
 
-const area = ref('tecnologias de la informacion')
-const empresa = ref('Loginsa.')
-const url = ref('')
-const menu = ref([
-  {
-    'menu': 'Administración',
-    'icon': 'admin_panel_settings',
-    'url': 'Administración',
-    'active': true,
-    'submenu': [
-      {
-        'icon': 'account_circle',
-        'menu': 'Cuentas',
-        'caption': 'Mantenedor',
-        'url': 'cuentas',
-        'active': false
-      },
-      {
-        'icon': 'domain',
-        'menu': 'Empresas',
-        'caption': 'Mantenedor',
-        'url': 'empresas',
-        'active': false
-      },
-      {
-        'icon': 'badge',
-        'menu': 'Areas',
-        'caption': 'Mantenedor',
-        'url': 'areas',
-        'active': false
-      },
-      {
-        'icon': 'group',
-        'menu': 'Usuarios',
-        'caption': 'Mantenedor',
-        'url': 'usuarios',
-        'active': true
-      },
+        },
 
-    ]
+        {
+          'menu': 'Requerimientos',
+          'icon': 'description',
+          'url': 'requerimientos en proceso',
+          'active': true,
+          'submenu': [
+            {
+              'menu': 'Nueva solicitud',
+              'caption': 'Requerimientos',
+              'icon': 'add_circle',
+              'url': 'nueva solicitud'
+            },
+            {
+              'menu': 'Solicitudes en proceso',
+              'caption': 'Requerimientos',
+              'url': 'roles',
+              'icon': 'fast_forward',
+              'active': false
+            },
+            {
+              'menu': 'Solicitudes finalizados',
+              'caption': 'Requerimientos',
+              'icon': 'check',
+              'url': 'requerimientos finalizados'
+            },
+            {
+              'menu': 'Tickets asignados',
+              'caption': 'Requerimientos',
+              'icon': 'supervisor_account',
+              'url': 'requerimientos asignados'
+            },
+            {
+              'menu': 'Gestionar tickets',
+              'caption': 'Requerimientos',
+              'icon': 'engineering',
+              'url': 'gestionar requerimientos'
+            },
+
+          ]
+        },
+
+
+      ]),
+      empresas: null,
+      router: null,
+      miniState: ref(true),
+      leftDrawerOpen: ref(false),
+      usuarioStore: null,
+    }
   },
-  {
-    'menu': 'Dashboard',
-    'icon': 'dashboard',
-    'url': 'dashboard',
-    'active': true,
-
+  watch: {
+    empresa() {
+      this.usuarioStore.setEmpresa(this.empresa);
+    }
   },
-
-  {
-    'menu': 'Requerimientos',
-    'icon': 'description',
-    'url': 'requerimientos en proceso',
-    'active': true,
-    'submenu': [
-      {
-        'menu': 'Nueva solicitud',
-        'caption': 'Requerimientos',
-        'icon': 'add_circle',
-        'url': 'nueva solicitud'
-      },
-      {
-        'menu': 'Solicitudes en proceso',
-        'caption': 'Requerimientos',
-        'url': 'roles',
-        'icon': 'fast_forward',
-        'active': false
-      },
-      {
-        'menu': 'Solicitudes finalizados',
-        'caption': 'Requerimientos',
-        'icon': 'check',
-        'url': 'requerimientos finalizados'
-      },
-      {
-        'menu': 'Tickets asignados',
-        'caption': 'Requerimientos',
-        'icon': 'supervisor_account',
-        'url': 'requerimientos asignados'
-      },
-      {
-        'menu': 'Gestionar tickets',
-        'caption': 'Requerimientos',
-        'icon': 'engineering',
-        'url': 'gestionar requerimientos'
-      },
-
-    ]
+  created() {
+    this.usuarioStore = useUsuariostore();
+    this.router = useRouter();
+    this.empresas = this.usuarioStore.empresas
+    // if (this.empresas != null) {
+    //   this.obtenerEmpresas()
+    // }
   },
-
-
-])
-
-const usuarioStore = useUsuariostore();
-const router = useRouter();
-
-
-
-//let drawer = false
-let miniState = ref(true)
-
-const leftDrawerOpen = ref(false)
-
-function logout() {
-  usuarioStore.logout()
-  Notify.create({
-    message: "Hasta luego.",
-    icon: "waving_hand",
-    color: "positive",
-  });
-  router.push('/login')
-}
-
-function toggleLeftDrawer() {
-  leftDrawerOpen.value = !leftDrawerOpen.value
-}
+  methods: {
+    obtenerEmpresas() {
+      // this.empresas = JSON.parse(localStorage.getItem('empresas')) || [];
+      this.empresa = this.empresas[0].value
+    },
+    logout() {
+      const usuarioStore = useUsuariostore();
+      usuarioStore.logout()
+      Notify.create({
+        message: "Hasta luego.",
+        icon: "waving_hand",
+        color: "positive",
+      });
+      this.router.push('/login')
+    },
+    toggleLeftDrawer() {
+      this.leftDrawerOpen.value = !this.leftDrawerOpen.value
+    },
+  },
+};
 </script>

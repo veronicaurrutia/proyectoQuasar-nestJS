@@ -203,6 +203,7 @@ export default {
       // console.log(this.paises[0])
     },
     async obtenerCuentas() {
+      this.cuentas = [];
       const response = await api.get("/cuenta");
       this.cuentas = response.data
     },

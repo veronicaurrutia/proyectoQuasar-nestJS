@@ -7,7 +7,8 @@ export const useUsuariostore = defineStore("usuario", {
   state: () => ({
     token: ref(useLocalStorage("token", null)),
     cuentaId: ref(useLocalStorage("cuentaId", null)),
-    empresas: ref(useLocalStorage("empresas", null)),
+    empresas: ref(JSON.parse(localStorage.getItem("empresas")) || null),
+    empresa: ref(useLocalStorage("empresa", null)),
   }),
 
   getters: {},
@@ -19,23 +20,20 @@ export const useUsuariostore = defineStore("usuario", {
           email: email,
           password: password,
         });
-        console.log(response.data);
         this.token = response.data.token;
         this.cuentaId = response.data.cuentaId;
         if (Array.isArray(response.data.empresas)) {
           this.empresas = response.data.empresas.map((empresa) => {
             return {
-              id: empresa.id,
-              nombre: empresa.nombre,
-              // Agrega aquí otros campos necesarios
+              value: empresa.id,
+              label: empresa.nombre,
             };
           });
+          localStorage.setItem("empresas", JSON.stringify(this.empresas));
         } else {
-          // Manejo de error en caso de que no sea un array
           console.error("Empresas no es un array");
           this.empresas = [];
         }
-
         return { estado: "OK", data: response };
       } catch (error) {
         this.logout();
@@ -45,6 +43,8 @@ export const useUsuariostore = defineStore("usuario", {
     async logout() {
       this.token = null;
       this.cuentaId = null;
+      this.empresas = null;
+      this.empresa = null;
     },
     async refreshToken() {
       try {
@@ -54,6 +54,9 @@ export const useUsuariostore = defineStore("usuario", {
         console.log(e);
         this.logout();
       }
+    },
+    setEmpresa(item) {
+      this.empresa = item;
     },
   },
 });
