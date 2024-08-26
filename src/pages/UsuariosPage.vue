@@ -15,7 +15,7 @@
           <template v-slot:body-cell-actions="props">
             <q-td :props="props">
               <q-btn color="primary" icon="edit" @click="editarUsuario(props.row)" flat />
-              <q-btn color="primary" icon="delete" @click="eliminarUsuario(props.row)" flat />
+              <q-btn color="red" icon="delete" @click="eliminarUsuario(props.row)" flat />
             </q-td>
           </template>
         </q-table>
@@ -180,7 +180,7 @@ export default {
           align: "center",
           headerClasses: "bg-primary text-white glossy",
         },
-        { name: 'actions', label: 'Actions', align: 'center', field: 'actions', headerClasses: "bg-primary text-white glossy" }
+        { name: 'actions', label: 'Acciones', align: 'center', field: 'actions', headerClasses: "bg-primary text-white glossy" }
       ],
     }
   },
@@ -238,15 +238,12 @@ export default {
     async obtenerUsuarios() {
       const response = await api.get("/usuario");
       this.usuarios = response.data
-      console.log("usuarios", this.usuarios)
     },
     async crearUsuario() {
-      console.log(this.usuario)
       const response = await api.post("/usuario", this.usuario)
       this.dialogUsuario = false;
     },
     editarUsuario(row) {
-      console.log("Editing row:", row);
       this.dialogUsuarioEdit = true;
       this.usuario = row;
     },
@@ -256,7 +253,6 @@ export default {
       delete this.usuario.cuenta
       delete this.usuario.empresas
       delete this.usuario.centro
-      console.log(this.usuario)
       const response = await api.patch("/usuario/" + id, this.usuario)
       this.dialogUsuarioEdit = false;
     },
@@ -269,6 +265,7 @@ export default {
     },
     async obtenerCentrosEmpresa(valor) {
       this.centros = []
+      console.log(valor)
       const response = await api.get("centro/empresa/" + valor)
       response.data.forEach((item) => {
         let dato = { value: item.id, label: item.nombre }
@@ -281,15 +278,16 @@ export default {
       let dato = { label: response.data.nombre, value: response.data.id }
       this.cuentas.push(dato);
       this.usuario.cuentaId = dato;
-      console.log(this.cuentas, this.usuario.cuentaId)
     },
     async eliminarUsuario(row) {
       Notify.create({
         timeout: 0, // mantener la notificación hasta que haga una acción
-        message: "quieres eliminar el Usuario?",
+        message: "¿ Desea eliminar el usuario " + row.nombre + " " + row.apellido + " ?",
+        //color: "red",
         actions: [
           {
             label: "Eliminar",
+            color: "red",
             handler: async () => {
               try {
                 const response = await api.delete("/usuario/" + row.id)
@@ -303,7 +301,6 @@ export default {
           {
             label: "Cancelar",
             handler: async () => {
-              console.log("Eliminación cancelada");
             },
           },
         ],

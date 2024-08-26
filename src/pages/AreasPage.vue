@@ -15,7 +15,7 @@
           <template v-slot:body-cell-actions="props">
             <q-td :props="props">
               <q-btn color="primary" icon="edit" @click="editarArea(props.row)" flat />
-              <q-btn color="primary" icon="delete" @click="eliminarArea(props.row)" flat />
+              <q-btn color="red" icon="delete" @click="eliminarArea(props.row)" flat />
             </q-td>
           </template>
           <template v-slot:top-right>
@@ -169,7 +169,6 @@ export default {
     this.usuarioStore = useUsuariostore();
     this.cuentaId = this.usuarioStore.cuentaId;
     this.empresaUsuario = this.usuarioStore.empresa
-    console.log(this.usuarioStore.empresas.length, "sss")
     if (this.usuarioStore.empresas.length > 0) {
       this.obtenerEmpresa()
     }
@@ -210,7 +209,6 @@ export default {
         this.areas = response.data
       } else {
         if (this.empresaUsuario != null) {
-          console.log(this.empresaUsuario)
           const response = await api.get("/area/empresa/" + this.empresaUsuario)
           this.areas = response.data
         }
@@ -228,16 +226,13 @@ export default {
       this.empresas = [];
       let item = this.usuarioStore.empresas.find(empresa => empresa.value === this.empresaUsuario)
       this.empresas.push(item)
-      console.log(this.empresas, this.empresaUsuario)
     },
     async crearArea() {
       const response = await api.post("/area", this.area)
-      console.log(response)
       this.dialogArea = false;
     },
     editarArea(row) {
       this.dialogAreaEdit = true;
-      console.log(row)
       this.area = row;
     },
     async actualizarArea() {
@@ -245,16 +240,16 @@ export default {
       delete this.area.id
       delete this.area.empresa
       const response = await api.patch("/area/" + id, this.area)
-      console.log(response)
       this.dialogAreaEdit = false;
     },
     eliminarArea(row) {
       Notify.create({
         timeout: 0, // mantener la notificación hasta que haga una acción
-        message: "quieres eliminar el Area?",
+        message: "¿ Desea eliminar el Area " + row.nombre + " ?",
         actions: [
           {
             label: "Eliminar",
+            color: "red",
             handler: async () => {
               try {
                 const response = await api.delete("/area/" + row.id)
@@ -268,7 +263,6 @@ export default {
           {
             label: "Cancelar",
             handler: async () => {
-              console.log("Eliminación cancelada");
             },
           },
         ],

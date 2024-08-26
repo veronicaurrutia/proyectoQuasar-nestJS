@@ -11,11 +11,11 @@
         <q-select class="q-mr-md" dark dense outlined v-model="empresa" :options="empresas" label="Empresa" map-options
           emit-value />
 
-        <q-select dark dense outlined v-model="area" :options="['tecnologias de la informacion', 'otra area']"
-          label="Area" />
+        <q-select v-if="false" dark dense outlined v-model="area"
+          :options="['tecnologias de la informacion', 'otra area']" label="Area" />
         <div v-if="false">Quasar v{{ $q.version }}</div>
 
-        <q-item clickable v-ripple>
+        <q-item v-if="false" clickable v-ripple>
           <q-avatar letter color="primary" text-color="white" icon="face" />
         </q-item>
 
@@ -34,7 +34,7 @@
             <q-item-section>
               <q-item-label lines="1">Kurt Muller </q-item-label>
               <q-item-label lines="1">kmuller@loginsa.com </q-item-label>
-              <q-item-label lines="1">Administrador </q-item-label>
+              <q-item-label v-if="false" lines="1">Administrador </q-item-label>
             </q-item-section>
           </q-item>
           <q-item v-ripple>
@@ -180,7 +180,7 @@ export default {
               'active': true
             },
             {
-              'icon': 'group',
+              'icon': 'warehouse',
               'menu': 'Centros',
               'caption': 'Mantenedor',
               'url': 'centros',
@@ -237,8 +237,6 @@ export default {
 
           ]
         },
-
-
       ]),
       empresas: null,
       router: null,
@@ -276,7 +274,7 @@ export default {
       this.router.push('/login')
     },
     toggleLeftDrawer() {
-      this.leftDrawerOpen.value = !this.leftDrawerOpen.value
+      this.leftDrawerOpen = !this.leftDrawerOpen
     },
   },
 };

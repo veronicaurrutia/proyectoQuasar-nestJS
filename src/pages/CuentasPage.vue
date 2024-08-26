@@ -15,7 +15,7 @@
           <template v-slot:body-cell-actions="props">
             <q-td :props="props">
               <q-btn color="primary" icon="edit" @click="editarCuenta(props.row)" flat />
-              <q-btn color="primary" icon="delete" @click="eliminarCuenta(props.row)" flat />
+              <q-btn color="red" icon="delete" @click="eliminarCuenta(props.row)" flat />
             </q-td>
           </template>
           <template v-slot:top-right>
@@ -115,7 +115,7 @@ export default {
           field: (row) => row.nombre,
           format: (val) => `${val}`,
           classes: "",
-          headerClasses: "bg-primary text-white",
+          headerClasses: "bg-primary text-white glossy",
           style: "max-width: 150px",
         },
         {
@@ -123,33 +123,33 @@ export default {
           label: "Correo",
           field: "email",
           align: "center",
-          headerClasses: "bg-primary text-white",
+          headerClasses: "bg-primary text-white glossy",
         },
         {
           name: "direccion",
           label: "Dirección",
           field: "direccion",
           align: "center",
-          headerClasses: "bg-primary text-white",
+          headerClasses: "bg-primary text-white glossy",
         },
         {
           name: "telefono",
           label: "Telefono",
           field: "telefono",
           align: "center",
-          headerClasses: "bg-primary text-white",
+          headerClasses: "bg-primary text-white glossy",
         },
         {
           name: "enabledopt",
           label: "Estado",
           field: "estado",
           align: "center",
-          headerClasses: "bg-primary text-white",
+          headerClasses: "bg-primary text-white glossy",
           format: (val) => val
             ? '<q-icon name="check_circle" color="green" />'
             : '<q-icon name="cancel" color="red" />',
         },
-        { name: 'actions', label: 'Actions', align: 'center', field: 'actions', headerClasses: "bg-primary text-white" }
+        { name: 'actions', label: 'Acciones', align: 'center', field: 'actions', headerClasses: "bg-primary text-white glossy" }
       ],
       estados: [
         { label: "Activada", value: true },
@@ -221,10 +221,11 @@ export default {
     eliminarCuenta(row) {
       Notify.create({
         timeout: 0, // mantener la notificación hasta que haga una acción
-        message: "quieres eliminar la Cuenta?",
+        message: "¿ Desea eliminar la cuenta " + row.nombre + " ?",
         actions: [
           {
             label: "Eliminar",
+            color: "red",
             handler: async () => {
               try {
                 const response = await api.delete("/cuenta/" + row.id)

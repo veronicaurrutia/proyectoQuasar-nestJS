@@ -5,8 +5,7 @@
       Descripción del mantenedor de empresas<br><br>
       <q-btn color="primary" class="glossy" icon="add" @click="dialogEmpresa = true">Agregar</q-btn>
       <div class=" q-mt-md">
-        <q-table bordered title="Empresas" :rows="empresas" :columns="columns" :rows-per-page-options="[10]"
-          :filter="filter">
+        <q-table bordered title="Empresas" :rows="empresas" :columns="columns" :filter="filter">
           <template v-slot:body-cell-enabledopt="props">
             <q-td :props="props" align="center">
               <q-icon :name="props.row.estado ? 'check_circle' : 'cancel'"
@@ -16,7 +15,7 @@
           <template v-slot:body-cell-actions="props">
             <q-td :props="props">
               <q-btn color="primary" icon="edit" @click="editarEmpresa(props.row)" flat />
-              <q-btn color="primary" icon="delete" @click="eliminarEmpresa(props.row)" flat />
+              <q-btn color="red" icon="delete" @click="eliminarEmpresa(props.row)" flat />
             </q-td>
           </template>
           <template v-slot:top-right>
@@ -265,10 +264,11 @@ export default {
     eliminarEmpresa(row) {
       Notify.create({
         timeout: 0, // mantener la notificación hasta que haga una acción
-        message: "quieres eliminar la Empresa?",
+        message: "¿ Desea eliminar la empresa " + row.nombre + " ?",
         actions: [
           {
             label: "Eliminar",
+            color: "red",
             handler: async () => {
               try {
                 const response = await api.delete("/empresa/" + row.id)
