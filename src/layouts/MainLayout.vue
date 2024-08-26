@@ -253,7 +253,7 @@ export default {
   created() {
     this.usuarioStore = useUsuariostore();
     this.router = useRouter();
-    this.empresas = this.usuarioStore.empresas
+    this.empresa = this.usuarioStore.empresa
     // if (this.empresas != null) {
     //   this.obtenerEmpresas()
     // }
@@ -261,7 +261,7 @@ export default {
   methods: {
     obtenerEmpresas() {
       // this.empresas = JSON.parse(localStorage.getItem('empresas')) || [];
-      this.empresa = this.empresas[0].value
+      // this.empresa = this.empresas[0].value
     },
     logout() {
       const usuarioStore = useUsuariostore();

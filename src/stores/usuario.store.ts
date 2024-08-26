@@ -7,7 +7,7 @@ export const useUsuariostore = defineStore("usuario", {
   state: () => ({
     token: ref(useLocalStorage("token", null)),
     cuentaId: ref(useLocalStorage("cuentaId", null)),
-    empresas: ref(JSON.parse(localStorage.getItem("empresas")) || null),
+    // empresas: ref(JSON.parse(localStorage.getItem("empresas")) || null),
     empresa: ref(useLocalStorage("empresa", null)),
   }),
 
@@ -22,18 +22,19 @@ export const useUsuariostore = defineStore("usuario", {
         });
         this.token = response.data.token;
         this.cuentaId = response.data.cuentaId;
-        if (Array.isArray(response.data.empresas)) {
-          this.empresas = response.data.empresas.map((empresa) => {
-            return {
-              value: empresa.id,
-              label: empresa.nombre,
-            };
-          });
-          localStorage.setItem("empresas", JSON.stringify(this.empresas));
-        } else {
-          console.error("Empresas no es un array");
-          this.empresas = [];
-        }
+        this.empresa = response.data.empresaId;
+        // if (Array.isArray(response.data.empresas)) {
+        //   this.empresas = response.data.empresas.map((empresa) => {
+        //     return {
+        //       value: empresa.id,
+        //       label: empresa.nombre,
+        //     };
+        //   });
+        //   localStorage.setItem("empresas", JSON.stringify(this.empresas));
+        // } else {
+        //   console.error("Empresas no es un array");
+        //   this.empresas = [];
+        // }
         return { estado: "OK", data: response };
       } catch (error) {
         this.logout();

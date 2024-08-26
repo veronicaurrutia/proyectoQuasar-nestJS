@@ -40,7 +40,7 @@
           <q-input v-model="cuenta.email" label="Correo" stack-label dense lazy-rules color="primary" />
           <q-input v-model="cuenta.telefono" label="Telefono" stack-label dense lazy-rules color="primary" />
           <q-input v-model="cuenta.direccion" label="Dirección" stack-label dense lazy-rules color="primary" />
-          <q-select dense v-model="cuenta.estado" :options="estados" label="Estado" map-options emit-value />
+          <!-- <q-select dense v-model="cuenta.estado" :options="estados" label="Estado" map-options emit-value /> -->
           <q-select dense v-model="cuenta.paisId" :options="paises" label="País" emit-value map-options />
         </q-card-section>
         <q-card-actions align="right">
@@ -67,7 +67,7 @@
           <q-input v-model="cuenta.email" label="Correo" stack-label dense lazy-rules color="primary" />
           <q-input v-model="cuenta.telefono" label="Telefono" stack-label dense lazy-rules color="primary" />
           <q-input v-model="cuenta.direccion" label="Dirección" stack-label dense lazy-rules color="primary" />
-          <q-select dense v-model="cuenta.estado" :options="estados" label="Estado" map-options emit-value />
+          <!-- <q-select dense v-model="cuenta.estado" :options="estados" label="Estado" map-options emit-value /> -->
           <q-select dense v-model="cuenta.paisId" :options="paises" label="País" map-options emit-value />
         </q-card-section>
         <q-card-actions align="right">
@@ -104,7 +104,7 @@ export default {
         telefono: null,
         direccion: null,
         paisId: null,
-        estado: null,
+        estado: true,
       },
       columns: [
         {
@@ -183,6 +183,7 @@ export default {
           telefono: null,
           direccion: null,
           paisId: null,
+          estado: true,
         }
         this.cuenta = auxiliar
         this.obtenerCuentas()
@@ -193,14 +194,13 @@ export default {
   },
   methods: {
     async obtenerPaises() {
-      const response = await api.get("pais");
+      const response = await api.get("/pais");
       response.data.forEach((item) => {
         let dato = {
           value: item.id, label: item.nombre + " [" + item.codigo + "]"
         }
         this.paises.push(dato)
       })
-      // console.log(this.paises[0])
     },
     async obtenerCuentas() {
       this.cuentas = [];
@@ -208,9 +208,8 @@ export default {
       this.cuentas = response.data
     },
     async crearCuenta() {
-      console.log(this.cuenta, "la cuenta con el pais value")
       const response = await api.post("/cuenta", this.cuenta)
-      console.log(response)
+      console.log(response.status)
       this.dialogCuenta = false;
     },
     editarCuenta(row) {

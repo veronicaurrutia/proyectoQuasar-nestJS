@@ -167,6 +167,13 @@ export default {
           headerClasses: "bg-primary text-white glossy",
         },
         {
+          name: "empresa",
+          label: "Empresa",
+          field: row => row.empresa ? row.empresa.nombre : "Sin Empresa",
+          align: "center",
+          headerClasses: "bg-primary text-white glossy",
+        },
+        {
           name: "centro",
           label: "Centro",
           field: row => row.centro ? row.centro.nombre : "Sin centro",
@@ -238,6 +245,7 @@ export default {
     async obtenerUsuarios() {
       const response = await api.get("/usuario");
       this.usuarios = response.data
+      console.log(this.usuarios)
     },
     async crearUsuario() {
       const response = await api.post("/usuario", this.usuario)
@@ -251,7 +259,7 @@ export default {
       let id = this.usuario.id
       delete this.usuario.id
       delete this.usuario.cuenta
-      delete this.usuario.empresas
+      delete this.usuario.empresa
       delete this.usuario.centro
       const response = await api.patch("/usuario/" + id, this.usuario)
       this.dialogUsuarioEdit = false;

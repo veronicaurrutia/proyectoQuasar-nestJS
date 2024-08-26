@@ -41,7 +41,7 @@
           <q-input v-model="empresa.razon_social" label="Razón Social" lazy-rules stack-label dense color="primary" />
           <q-input v-model="empresa.telefono" label="Telefono" stack-label dense lazy-rules color="primary" />
           <q-input v-model="empresa.direccion" label="Dirección" stack-label dense lazy-rules color="primary" />
-          <q-select dense v-model="empresa.estado" :options="estados" label="Estado" map-options emit-value />
+          <!-- <q-select dense v-model="empresa.estado" :options="estados" label="Estado" map-options emit-value /> -->
           <q-select dense v-model="empresa.paisId" :options="paises" label="País" map-options emit-value />
           <q-select dense v-model="empresa.cuentaId" :options="cuentas" label="Cuenta" map-options emit-value />
         </q-card-section>
@@ -70,7 +70,7 @@
           <q-input v-model="empresa.razon_social" label="Razón Social" lazy-rules stack-label dense color="primary" />
           <q-input v-model="empresa.telefono" label="Telefono" stack-label dense lazy-rules color="primary" />
           <q-input v-model="empresa.direccion" label="Dirección" stack-label dense lazy-rules color="primary" />
-          <q-select dense v-model="empresa.estado" :options="estados" label="Estado" map-options emit-value />
+          <!-- <q-select dense v-model="empresa.estado" :options="estados" label="Estado" map-options emit-value /> -->
           <q-select dense v-model="empresa.paisId" :options="paises" label="País" map-options emit-value />
         </q-card-section>
         <q-card-actions align="right">
@@ -196,7 +196,7 @@ export default {
           telefono: null,
           direccion: null,
           paisId: null,
-          estado: null,
+          estado: true,
           cuentaId: null,
         }
         this.empresa = auxiliar

@@ -180,11 +180,13 @@ export default {
         page: 1, // Página inicial
         rowsPerPage: 10, // Filas por página
       },
+      empresaId: null,
     }
   },
   created() {
     const usuarioStore = useUsuariostore();
     this.cuentaId = usuarioStore.cuentaId;
+    this.empresaId = usuarioStore.empresa;
     this.obtenerPaises();
     this.obtenerCentros();
   },
@@ -226,13 +228,14 @@ export default {
       })
     },
     async obtenerCentros() {
-      if (this.cuentaId == null) {
+      if (this.empresaId == null) {
         const response = await api.get("/centro");
         this.centros = response.data
-      }// else {
-      //     const response = await api.get("/centro/empresa/" + this.cuentaId)
-      //     this.centros = response.data
-      // }
+      } else {
+        const response = await api.get("/centro/empresa/" + this.empresaId)
+        this.centros = response.data
+      }
+      console.log(this.centros)
     },
     async obtenerEmpresas() {
       this.empresas = []

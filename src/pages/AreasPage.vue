@@ -39,7 +39,7 @@
           <q-input v-model="area.nombre" label="Nombre" lazy-rules stack-label dense color="primary" />
           <q-input v-model="area.descripcion" label="Descripción" stack-label dense lazy-rules color="primary" />
           <q-input v-model="area.prefijo" label="prefijo" stack-label dense lazy-rules color="primary" />
-          <q-select dense v-model="area.estado" :options="estados" label="Estado" map-options emit-value />
+          <!-- <q-select dense v-model="area.estado" :options="estados" label="Estado" map-options emit-value /> -->
           <q-select dense v-model="area.empresaId" :options="empresas" label="Empresa" map-options emit-value />
         </q-card-section>
         <q-card-actions align="right">
@@ -65,7 +65,7 @@
           <q-input v-model="area.nombre" label="Nombre" lazy-rules stack-label dense color="primary" />
           <q-input v-model="area.descripcion" label="Descripción" stack-label dense lazy-rules color="primary" />
           <q-input v-model="area.prefijo" label="prefijo" stack-label dense lazy-rules color="primary" />
-          <q-select dense v-model="area.estado" :options="estados" label="Estado" map-options emit-value />
+          <!-- <q-select dense v-model="area.estado" :options="estados" label="Estado" map-options emit-value /> -->
           <q-select dense v-model="area.empresaId" :options="empresas" label="Empresa" map-options emit-value />
         </q-card-section>
         <q-card-actions align="right">
@@ -107,7 +107,7 @@ export default {
         nombre: null,
         direccion: null,
         prefijo: null,
-        estado: null,
+        estado: true,
         empresaId: null,
       },
       columns: [
@@ -169,7 +169,7 @@ export default {
     this.usuarioStore = useUsuariostore();
     this.cuentaId = this.usuarioStore.cuentaId;
     this.empresaUsuario = this.usuarioStore.empresa
-    if (this.usuarioStore.empresas.length > 0) {
+    if (this.usuarioStore.empresas != null) {
       this.obtenerEmpresa()
     }
     else {
@@ -184,7 +184,7 @@ export default {
           nombre: null,
           descripcion: null,
           prefijo: null,
-          estado: null,
+          estado: true,
           empresaId: null,
         }
         // this.obtenerEmpresa()
