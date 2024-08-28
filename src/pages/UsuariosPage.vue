@@ -6,6 +6,11 @@
       <q-btn color="primary" class="glossy" icon="add" @click="dialogUsuario = true">Agregar</q-btn>
       <div class=" q-mt-md">
         <q-table bordered title="Usuarios" :rows="usuarios" :columns="columns">
+          <template v-slot:body-cell-index="props">
+            <q-td :props="props" align="center">
+              {{ props.pageIndex + 1 }}
+            </q-td>
+          </template>
           <template v-slot:body-cell-enabledopt="props">
             <q-td :props="props" align="center">
               <q-icon :name="props.row.estado ? 'check_circle' : 'cancel'"
@@ -130,6 +135,9 @@ export default {
         //   headerClasses: "bg-primary text-white",
         //   style: "max-width: 150px",
         // },
+        {
+          name: 'index', label: '#', headerClasses: "bg-primary text-white glossy", align: 'center', field: row => row.id
+        },
         {
           name: "nombre",
           required: true,

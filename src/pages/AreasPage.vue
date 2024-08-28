@@ -6,6 +6,11 @@
       <q-btn color="primary" class="glossy" icon="add" @click="dialogArea = true">Agregar</q-btn>
       <div class=" q-mt-md">
         <q-table bordered title="Areas" :rows="areas" :columns="columns" :rows-per-page-options="[10]" :filter="filter">
+          <template v-slot:body-cell-index="props">
+            <q-td :props="props" align="center">
+              {{ props.pageIndex + 1 }}
+            </q-td>
+          </template>
           <template v-slot:body-cell-enabledopt="props">
             <q-td :props="props" align="center">
               <q-icon :name="props.row.estado ? 'check_circle' : 'cancel'"
@@ -111,6 +116,9 @@ export default {
         empresaId: null,
       },
       columns: [
+        {
+          name: 'index', label: '#', headerClasses: "bg-primary text-white glossy", align: 'center', field: row => row.id
+        },
         {
           name: "nombre",
           required: true,
