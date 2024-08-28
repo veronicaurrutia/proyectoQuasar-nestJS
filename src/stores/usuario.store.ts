@@ -20,6 +20,7 @@ export const useUsuariostore = defineStore("usuario", {
           email: email,
           password: password,
         });
+        console.log(response.data);
         this.token = response.data.token;
         this.cuentaId = response.data.cuentaId;
         this.empresa = response.data.empresaId;

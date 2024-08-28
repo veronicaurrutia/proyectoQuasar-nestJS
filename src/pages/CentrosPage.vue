@@ -272,6 +272,7 @@ export default {
       delete this.centro.id
       delete this.centro.cuentaEmpresa
       delete this.centro.pais
+      delete this.centro.eliminacion
       const response = await api.patch("/centro/" + id, this.centro)
       console.log(response)
       this.dialogCentroEdit = false;

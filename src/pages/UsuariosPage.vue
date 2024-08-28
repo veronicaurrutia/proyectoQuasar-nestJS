@@ -261,6 +261,7 @@ export default {
       delete this.usuario.cuenta
       delete this.usuario.empresa
       delete this.usuario.centro
+      delete this.usuario.eliminacion
       const response = await api.patch("/usuario/" + id, this.usuario)
       this.dialogUsuarioEdit = false;
     },

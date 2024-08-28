@@ -187,6 +187,14 @@ export default {
               'active': true
             },
 
+            {
+              'icon': 'change_circle',
+              'menu': 'Estados',
+              'caption': 'Mantenedor',
+              'url': 'estados',
+              'active': true
+            },
+
           ]
         },
         {

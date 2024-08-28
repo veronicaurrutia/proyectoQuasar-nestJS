@@ -239,6 +239,7 @@ export default {
       let id = this.area.id
       delete this.area.id
       delete this.area.empresa
+      delete this.area.eliminacion
       const response = await api.patch("/area/" + id, this.area)
       this.dialogAreaEdit = false;
     },
