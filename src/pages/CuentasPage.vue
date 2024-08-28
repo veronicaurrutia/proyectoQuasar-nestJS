@@ -255,7 +255,7 @@ export default {
       let id = this.cuenta.id;
       delete this.cuenta.id;
       delete this.cuenta.empresas;
-      delete this.cuenta.eliminacion
+      delete this.cuenta.eliminacion;
       const response = await api.patch("/cuenta/" + id, this.cuenta)
       console.log(response)
       this.dialogCuentaEdit = false
