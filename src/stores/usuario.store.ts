@@ -9,6 +9,8 @@ export const useUsuariostore = defineStore("usuario", {
     cuentaId: ref(useLocalStorage("cuentaId", null)),
     // empresas: ref(JSON.parse(localStorage.getItem("empresas")) || null),
     empresa: ref(useLocalStorage("empresa", null)),
+    usuario: ref(useLocalStorage("usuario", null)),
+    area: ref(useLocalStorage("area", null)),
   }),
 
   getters: {},
@@ -24,6 +26,8 @@ export const useUsuariostore = defineStore("usuario", {
         this.token = response.data.token;
         this.cuentaId = response.data.cuentaId;
         this.empresa = response.data.empresaId;
+        this.usuario = response.data.id;
+        this.area = response.data.areaId;
         // if (Array.isArray(response.data.empresas)) {
         //   this.empresas = response.data.empresas.map((empresa) => {
         //     return {

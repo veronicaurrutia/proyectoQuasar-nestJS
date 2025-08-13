@@ -36,6 +36,22 @@ const routes = [
         path: "estados",
         component: () => import("pages/EstadosPage.vue"),
       },
+      {
+        path: "categorias",
+        component: () => import("pages/CategoriasPage.vue"),
+      },
+      {
+        path: "tickets",
+        component: () => import("pages/TicketsPage.vue"),
+      },
+      {
+        path: "reporte",
+        component: () => import("pages/DashboardTicket.vue"),
+      },
+      {
+        path: "admintickets",
+        component: () => import("pages/TicketAdmin.vue"),
+      },
     ],
   },
   {
