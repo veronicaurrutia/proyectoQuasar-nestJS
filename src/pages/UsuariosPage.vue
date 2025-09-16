@@ -264,248 +264,258 @@
   </q-page>
 </template>
 
-<script>
+<script setup>
+import { ref, reactive, watch, onMounted } from "vue";
+import { Notify } from "quasar";
 import { api } from "src/boot/axios";
 import { useUsuariostore } from "src/stores/usuario.store";
-import { Notify } from "quasar";
 
-export default {
-  data() {
-    return {
-      filter: "",
-      dialogUsuario: false,
-      dialogUsuarioEdit: false,
-      cargandoIcon: false,
+// ----- STATE -----
+const filter = ref("");
+const dialogUsuario = ref(false);
+const dialogUsuarioEdit = ref(false);
+const cargandoIcon = ref(false);
+
+const usuarios = ref([]);
+const cuentas = ref([]);
+const empresas = ref([]);
+const centros = ref([]);
+
+const usuarioStore = useUsuariostore();
+const cuentaId = ref(usuarioStore.cuentaId);
+
+const usuario = reactive({
+  id: null,
+  nombre: null,
+  apellido: null,
+  email: null,
+  password: null,
+  centroId: null,
+  cuentaId: null,
+  empresasId: null,
+  estado: true,
+});
+
+// ----- TABLE COLUMNS -----
+const columns = [
+  {
+    name: "index",
+    label: "#",
+    headerClasses: "bg-primary text-white glossy",
+    align: "center",
+    field: (row) => row.id,
+  },
+  {
+    name: "nombre",
+    label: "Nombre",
+    align: "left",
+    field: (row) => row.nombre,
+    headerClasses: "bg-primary glossy text-white",
+    style: "max-width: 150px",
+  },
+  {
+    name: "apellido",
+    label: "Apellido",
+    align: "left",
+    field: (row) => row.apellido,
+    headerClasses: "bg-primary text-white glossy",
+    style: "max-width: 150px",
+  },
+  {
+    name: "email",
+    label: "Correo",
+    field: "email",
+    align: "center",
+    headerClasses: "bg-primary text-white glossy",
+  },
+  {
+    name: "cuenta",
+    label: "Cuenta",
+    field: (row) => (row.cuenta ? row.cuenta.nombre : "Sin cuenta"),
+    align: "center",
+    headerClasses: "bg-primary text-white glossy",
+  },
+  {
+    name: "empresa",
+    label: "Empresa",
+    field: (row) => (row.empresa ? row.empresa.nombre : "Sin Empresa"),
+    align: "center",
+    headerClasses: "bg-primary text-white glossy",
+  },
+  {
+    name: "centro",
+    label: "Centro",
+    field: (row) => (row.centro ? row.centro.nombre : "Sin centro"),
+    align: "center",
+    headerClasses: "bg-primary text-white glossy",
+  },
+  {
+    name: "enabledopt",
+    label: "Estado",
+    field: "enabledopt",
+    align: "center",
+    headerClasses: "bg-primary text-white glossy",
+  },
+  {
+    name: "actions",
+    label: "Acciones",
+    field: "actions",
+    align: "center",
+    headerClasses: "bg-primary text-white glossy",
+  },
+];
+
+// ----- WATCHERS -----
+watch(dialogUsuario, async (val) => {
+  if (val) {
+    Object.assign(usuario, {
+      id: null,
+      nombre: null,
+      apellido: null,
+      email: null,
+      password: null,
+      centroId: null,
       cuentaId: null,
-      usuarios: [],
-      cuentas: [],
-      empresas: [],
-      centros: [],
-      usuario: {
-        nombre: null,
-        apellido: null,
-        email: null,
-        password: null,
-        centroId: null,
-        cuentaId: null,
-        empresasId: null,
-        estado: true,
-      },
-      columns: [
-        // {
-        //   name: "ID",
-        //   required: true,
-        //   label: "ID",
-        //   align: "left",
-        //   field: (row) => row.id,
-        //   format: (val) => `${val}`,
-        //   sortable: true,
-        //   classes: "",
-        //   headerClasses: "bg-primary text-white",
-        //   style: "max-width: 150px",
-        // },
-        {
-          name: "index",
-          label: "#",
-          headerClasses: "bg-primary text-white glossy",
-          align: "center",
-          field: (row) => row.id,
-        },
-        {
-          name: "nombre",
-          required: true,
-          label: "Nombre",
-          align: "left",
-          field: (row) => row.nombre,
-          format: (val) => `${val}`,
-          classes: "",
-          headerClasses: "bg-primary glossy text-white",
-          style: "max-width: 150px",
-        },
-        {
-          name: "apellido",
-          required: true,
-          label: "Apellido",
-          align: "left",
-          field: (row) => row.apellido,
-          format: (val) => `${val}`,
-          classes: "",
-          headerClasses: "bg-primary text-white glossy",
-          style: "max-width: 150px",
-        },
-        {
-          name: "email",
-          label: "Correo",
-          field: "email",
-          align: "center",
-          headerClasses: "bg-primary text-white glossy",
-        },
-        {
-          name: "cuenta",
-          label: "Cuenta",
-          field: (row) => (row.cuenta ? row.cuenta.nombre : "Sin cuenta"),
-          align: "center",
-          headerClasses: "bg-primary text-white glossy",
-        },
-        {
-          name: "empresa",
-          label: "Empresa",
-          field: (row) => (row.empresa ? row.empresa.nombre : "Sin Empresa"),
-          align: "center",
-          headerClasses: "bg-primary text-white glossy",
-        },
-        {
-          name: "centro",
-          label: "Centro",
-          field: (row) => (row.centro ? row.centro.nombre : "Sin centro"),
-          align: "center",
-          headerClasses: "bg-primary text-white glossy",
-        },
-        {
-          name: "enabledopt",
-          label: "Estado",
-          field: "enabledopt",
-          align: "center",
-          headerClasses: "bg-primary text-white glossy",
-        },
-        {
-          name: "actions",
-          label: "Acciones",
-          align: "center",
-          field: "actions",
-          headerClasses: "bg-primary text-white glossy",
-        },
-      ],
-    };
-  },
-  created() {
-    const usuarioStore = useUsuariostore();
-    this.cuentaId = usuarioStore.cuentaId;
-    if (this.cuentaId == null) {
-      this.obtenerCuentas();
-    } else {
-      this.obtenerCuentaUser();
-    }
-    this.obtenerUsuarios();
-  },
-  watch: {
-    dialogUsuario() {
-      if (this.dialogUsuario == true) {
-        let auxiliar = {
-          nombre: null,
-          email: null,
-          apellido: null,
-          password: null,
-          estado: true,
-          cuentaId: null,
-          empresaId: null,
-          centroId: null,
-        };
-        this.usuario = auxiliar;
-        this.obtenerUsuarios();
-      } else {
-        this.obtenerUsuarios();
-      }
-    },
-    "usuario.cuentaId"(valor) {
-      if (valor != null) {
-        this.obtenerEmpresasCuenta(valor);
-      }
-    },
-    "usuario.empresasId"(valor) {
-      if (valor != null) {
-        this.obtenerCentrosEmpresa(valor);
-      }
-    },
-  },
-  methods: {
-    async obtenerCuentas() {
-      const response = await api.get("/cuenta");
-      response.data.forEach((item) => {
-        let dato = {
-          value: item.id,
-          label: item.nombre,
-        };
-        this.cuentas.push(dato);
-      });
-    },
-    async obtenerUsuarios() {
-      const response = await api.get("/usuario");
-      this.usuarios = response.data;
-      console.log(this.usuarios);
-    },
-    async crearUsuario() {
-      const response = await api.post("/usuario", this.usuario);
-      this.dialogUsuario = false;
-    },
-    editarUsuario(row) {
-      this.dialogUsuarioEdit = true;
-      this.usuario = row;
-    },
-    async actualizarUsuario() {
-      let id = this.usuario.id;
-      delete this.usuario.id;
-      delete this.usuario.cuenta;
-      delete this.usuario.empresa;
-      delete this.usuario.centro;
-      delete this.usuario.eliminacion;
-      const response = await api.patch("/usuario/" + id, this.usuario);
-      this.dialogUsuarioEdit = false;
-    },
-    async obtenerEmpresasCuenta(valor) {
-      const response = await api.get("/empresa/cuenta/" + valor);
-      response.data.forEach((item) => {
-        let dato = { value: item.id, label: item.nombre };
-        this.empresas.push(dato);
-      });
-    },
-    async obtenerCentrosEmpresa(valor) {
-      this.centros = [];
-      console.log(valor);
-      const response = await api.get("centro/empresa/" + valor);
-      response.data.forEach((item) => {
-        let dato = { value: item.id, label: item.nombre };
-        this.centros.push(dato);
-      });
-    },
-    async obtenerCuentaUser() {
-      const response = await api.get("/cuenta/" + this.cuentaId);
-      this.cuentas = [];
-      let dato = { label: response.data.nombre, value: response.data.id };
-      this.cuentas.push(dato);
-      this.usuario.cuentaId = dato;
-    },
-    async eliminarUsuario(row) {
-      Notify.create({
-        timeout: 0, // mantener la notificación hasta que haga una acción
-        message:
-          "¿ Desea eliminar el usuario " +
-          row.nombre +
-          " " +
-          row.apellido +
-          " ?",
-        //color: "red",
-        actions: [
-          {
-            label: "Eliminar",
-            color: "red",
-            handler: async () => {
-              try {
-                const response = await api.delete("/usuario/" + row.id);
-                this.obtenerUsuarios();
-                // console.log(response)
-              } catch (error) {
-                console.error("Error al eliminar el Usuario:", error);
-              }
-            },
-          },
-          {
-            label: "Cancelar",
-            handler: async () => {},
-          },
-        ],
-      });
-    },
-  },
+      empresasId: null,
+      estado: true,
+    });
+    await obtenerUsuarios();
+  } else {
+    await obtenerUsuarios();
+  }
+});
+
+watch(
+  () => usuario.cuentaId,
+  async (valor) => {
+    if (valor != null) await obtenerEmpresasCuenta(valor);
+  }
+);
+
+watch(
+  () => usuario.empresasId,
+  async (valor) => {
+    if (valor != null) await obtenerCentrosEmpresa(valor);
+  }
+);
+
+// ----- METHODS -----
+const obtenerCuentas = async () => {
+  try {
+    const response = await api.get("/cuenta");
+    cuentas.value = response.data.map((item) => ({
+      value: item.id,
+      label: item.nombre,
+    }));
+  } catch (error) {
+    console.error("Error al obtener cuentas:", error);
+  }
 };
+
+const obtenerUsuarios = async () => {
+  try {
+    const response = await api.get("/usuario");
+    usuarios.value = response.data;
+  } catch (error) {
+    console.error("Error al obtener usuarios:", error);
+  }
+};
+
+const crearUsuario = async () => {
+  try {
+    await api.post("/usuario", usuario);
+    dialogUsuario.value = false;
+    await obtenerUsuarios();
+  } catch (error) {
+    console.error("Error al crear usuario:", error);
+  }
+};
+
+const editarUsuario = (row) => {
+  dialogUsuarioEdit.value = true;
+  Object.assign(usuario, row);
+};
+
+const actualizarUsuario = async () => {
+  try {
+    const payload = { ...usuario };
+    const id = payload.id;
+    delete payload.id;
+    delete payload.cuenta;
+    delete payload.empresa;
+    delete payload.centro;
+    delete payload.eliminacion;
+    await api.patch(`/usuario/${id}`, payload);
+    dialogUsuarioEdit.value = false;
+    await obtenerUsuarios();
+  } catch (error) {
+    console.error("Error al actualizar usuario:", error);
+  }
+};
+
+const obtenerEmpresasCuenta = async (valor) => {
+  try {
+    const response = await api.get(`/empresa/cuenta/${valor}`);
+    empresas.value = response.data.map((item) => ({
+      value: item.id,
+      label: item.nombre,
+    }));
+  } catch (error) {
+    console.error("Error al obtener empresas:", error);
+  }
+};
+
+const obtenerCentrosEmpresa = async (valor) => {
+  try {
+    const response = await api.get(`/centro/empresa/${valor}`);
+    centros.value = response.data.map((item) => ({
+      value: item.id,
+      label: item.nombre,
+    }));
+  } catch (error) {
+    console.error("Error al obtener centros:", error);
+  }
+};
+
+const obtenerCuentaUser = async () => {
+  try {
+    const response = await api.get(`/cuenta/${cuentaId.value}`);
+    cuentas.value = [{ label: response.data.nombre, value: response.data.id }];
+    usuario.cuentaId = response.data.id;
+  } catch (error) {
+    console.error("Error al obtener cuenta:", error);
+  }
+};
+
+const eliminarUsuario = (row) => {
+  Notify.create({
+    timeout: 0,
+    message: `¿Desea eliminar el usuario ${row.nombre} ${row.apellido}?`,
+    actions: [
+      {
+        label: "Eliminar",
+        color: "red",
+        handler: async () => {
+          try {
+            await api.delete(`/usuario/${row.id}`);
+            await obtenerUsuarios();
+          } catch (error) {
+            console.error("Error al eliminar usuario:", error);
+          }
+        },
+      },
+      { label: "Cancelar", handler: () => {} },
+    ],
+  });
+};
+
+// ----- ON MOUNT -----
+onMounted(async () => {
+  if (!cuentaId.value) {
+    await obtenerCuentas();
+  } else {
+    await obtenerCuentaUser();
+  }
+  await obtenerUsuarios();
+});
 </script>

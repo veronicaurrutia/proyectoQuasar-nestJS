@@ -194,200 +194,204 @@
   </q-page>
 </template>
 
-<script>
+<script setup>
+import { ref, watch, onMounted } from "vue";
 import { api } from "src/boot/axios";
 import { Notify } from "quasar";
 import { useUsuariostore } from "src/stores/usuario.store";
-import { dataTool } from "echarts";
 
-export default {
-  data() {
-    return {
-      filter: "",
-      dialogCategoria: false,
-      cargandoIcon: false,
-      dialogCategoriaEdit: false,
-      areas: [],
-      categorias: [],
-      paises: [],
-      cuentas: [],
-      empresas: [],
-      usuarioStore: null,
-      empresaUsuario: null,
-      empresasUsuario: [],
-      categoria: {
-        nombre: null,
-        direccion: null,
-        estado: true,
-        areaId: null,
-      },
-      columns: [
-        {
-          name: "index",
-          label: "#",
-          headerClasses: "bg-primary text-white glossy",
-          align: "center",
-          field: (row) => row.id,
-        },
-        {
-          name: "nombre",
-          required: true,
-          label: "Nombre",
-          align: "left",
-          field: (row) => row.nombre,
-          format: (val) => `${val}`,
-          classes: "",
-          headerClasses: "bg-primary text-white glossy",
-          style: "max-width: 150px",
-        },
-        {
-          name: "Area",
-          label: "Area",
-          field: (row) => (row.area ? row.area.nombre : "Sin Area"),
-          align: "center",
-          headerClasses: "bg-primary text-white glossy",
-        },
-        {
-          name: "enabledopt",
-          label: "Estado",
-          field: "estado",
-          align: "center",
-          headerClasses: "bg-primary text-white glossy",
-          format: (val) =>
-            val
-              ? '<q-icon name="check_circle" color="green" />'
-              : '<q-icon name="cancel" color="red" />',
-        },
-        {
-          name: "actions",
-          label: "Acciones",
-          field: "actions",
-          align: "center",
-          headerClasses: "bg-primary text-white glossy",
-        },
-      ],
-      estados: [
-        { label: "Activada", value: true },
-        { label: "Desactivada", value: false },
-      ],
-      pagination: {
-        page: 1, // Página inicial
-        rowsPerPage: 10, // Filas por página
-      },
-    };
+// --------------------
+// Estado reactivo
+// --------------------
+const filter = ref("");
+const dialogCategoria = ref(false);
+const cargandoIcon = ref(false);
+const dialogCategoriaEdit = ref(false);
+
+const areas = ref([]);
+const categorias = ref([]);
+const paises = ref([]);
+const cuentas = ref([]);
+const empresas = ref([]);
+
+const usuarioStore = useUsuariostore();
+const empresaUsuario = ref(usuarioStore.empresa);
+const empresasUsuario = ref([]);
+
+const categoria = ref({
+  nombre: null,
+  direccion: null,
+  estado: true,
+  areaId: null,
+});
+
+const columns = [
+  {
+    name: "index",
+    label: "#",
+    headerClasses: "bg-primary text-white glossy",
+    align: "center",
+    field: (row) => row.id,
   },
-  created() {
-    this.usuarioStore = useUsuariostore();
-    this.cuentaId = this.usuarioStore.cuentaId;
-    this.empresaUsuario = this.usuarioStore.empresa;
-    if (this.usuarioStore.empresas != null) {
-      this.obtenerEmpresa();
-    } else {
-      this.obtenerAreas();
+  {
+    name: "nombre",
+    required: true,
+    label: "Nombre",
+    align: "left",
+    field: (row) => row.nombre,
+    format: (val) => `${val}`,
+    classes: "",
+    headerClasses: "bg-primary text-white glossy",
+    style: "max-width: 150px",
+  },
+  {
+    name: "Area",
+    label: "Area",
+    field: (row) => (row.area ? row.area.nombre : "Sin Area"),
+    align: "center",
+    headerClasses: "bg-primary text-white glossy",
+  },
+  {
+    name: "enabledopt",
+    label: "Estado",
+    field: "estado",
+    align: "center",
+    headerClasses: "bg-primary text-white glossy",
+    format: (val) =>
+      val
+        ? '<q-icon name="check_circle" color="green" />'
+        : '<q-icon name="cancel" color="red" />',
+  },
+  {
+    name: "actions",
+    label: "Acciones",
+    field: "actions",
+    align: "center",
+    headerClasses: "bg-primary text-white glossy",
+  },
+];
+
+const estados = [
+  { label: "Activada", value: true },
+  { label: "Desactivada", value: false },
+];
+
+const pagination = ref({
+  page: 1,
+  rowsPerPage: 10,
+});
+
+// --------------------
+// Métodos
+// --------------------
+async function obtenerCategorias() {
+  if (usuarioStore.cuentaId == null) {
+    const response = await api.get("/categoria");
+    categorias.value = response.data;
+  } else {
+    if (empresaUsuario.value != null) {
+      const response = await api.get("/categoria");
+      categorias.value = response.data;
     }
-    this.obtenerCategorias();
-  },
-  watch: {
-    dialogCategoria() {
-      if (this.dialogCategoria == true) {
-        let auxiliar = {
-          nombre: null,
-          descripcion: null,
-          estado: true,
-          areaId: null,
-        };
-        // this.obtenerEmpresa()
-        this.categoria = auxiliar;
-        this.obtenerCategorias();
-      } else {
-        this.obtenerCategorias();
-      }
-    },
-    dialogCategoriaEdit() {
-      if (this.dialogCategoriaEdit == false) {
-        this.obtenerCategorias();
-      } else {
-        this.obtenerAreas();
-      }
-    },
-  },
-  methods: {
-    async obtenerCategorias() {
-      if (this.cuentaId == null) {
-        const response = await api.get("/categoria");
-        this.categorias = response.data;
-      } else {
-        if (this.empresaUsuario != null) {
-          const response = await api.get("/categoria");
-          this.categorias = response.data;
-        }
-      }
-    },
-    // async obtenerEmpresas() {
-    //   this.empresas = [];
-    //   const response = await api.get("/empresa");
-    //   response.data.forEach((item) => {
-    //     let dato = { value: item.id, label: item.nombre };
-    //     this.empresas.push(dato);
-    //   });
-    // },
-    async obtenerAreas() {
-      this.areas = [];
-      const response = await api.get("/area/empresa/" + this.empresaUsuario);
-      // this.areas = response.data;
-      response.data.forEach((item) => {
-        let dato = { label: item.nombre, value: item.id };
-        this.areas.push(dato);
-      });
-    },
-    async obtenerEmpresa() {
-      this.empresas = [];
-      let item = this.usuarioStore.empresas.find(
-        (empresa) => empresa.value === this.empresaUsuario
-      );
-      this.empresas.push(item);
-    },
-    async crearCategoria() {
-      const response = await api.post("/categoria", this.categoria);
-      this.dialogCategoria = false;
-    },
-    editarArea(row) {
-      this.dialogCategoriaEdit = true;
-      this.categoria = row;
-    },
-    async actualizarCategoria() {
-      let id = this.categoria.id;
-      delete this.categoria.id;
-      delete this.categoria.area;
-      delete this.categoria.eliminacion;
-      const response = await api.patch("/categoria/" + id, this.categoria);
-      this.dialogCategoriaEdit = false;
-    },
-    eliminarCategoria(row) {
-      Notify.create({
-        timeout: 0, // mantener la notificación hasta que haga una acción
-        message: "¿ Desea eliminar el Categoria " + row.nombre + " ?",
-        actions: [
-          {
-            label: "Eliminar",
-            color: "red",
-            handler: async () => {
-              try {
-                const response = await api.delete("/categoria/" + row.id);
-                this.obtenerCategorias();
-                // console.log(response)
-              } catch (error) {
-                console.error("Error al eliminar el Categoria:", error);
-              }
-            },
-          },
-          {
-            label: "Cancelar",
-            handler: async () => {},
-          },
-        ],
-      });
-    },
-  },
-};
+  }
+}
+
+async function obtenerAreas() {
+  areas.value = [];
+  const response = await api.get("/area/empresa/" + empresaUsuario.value);
+  response.data.forEach((item) => {
+    let dato = { label: item.nombre, value: item.id };
+    areas.value.push(dato);
+  });
+}
+
+async function obtenerEmpresa() {
+  empresas.value = [];
+  let item = usuarioStore.empresas.find(
+    (empresa) => empresa.value === empresaUsuario.value
+  );
+  empresas.value.push(item);
+}
+
+async function crearCategoria() {
+  await api.post("/categoria", categoria.value);
+  dialogCategoria.value = false;
+}
+
+function editarArea(row) {
+  dialogCategoriaEdit.value = true;
+  categoria.value = row;
+}
+
+async function actualizarCategoria() {
+  let id = categoria.value.id;
+  delete categoria.value.id;
+  delete categoria.value.area;
+  delete categoria.value.eliminacion;
+
+  await api.patch("/categoria/" + id, categoria.value);
+  dialogCategoriaEdit.value = false;
+}
+
+function eliminarCategoria(row) {
+  Notify.create({
+    timeout: 0,
+    message: "¿Desea eliminar la Categoría " + row.nombre + " ?",
+    actions: [
+      {
+        label: "Eliminar",
+        color: "red",
+        handler: async () => {
+          try {
+            await api.delete("/categoria/" + row.id);
+            obtenerCategorias();
+          } catch (error) {
+            console.error("Error al eliminar la Categoría:", error);
+          }
+        },
+      },
+      {
+        label: "Cancelar",
+        handler: async () => {},
+      },
+    ],
+  });
+}
+
+// --------------------
+// Watchers
+// --------------------
+watch(dialogCategoria, (val) => {
+  if (val === true) {
+    categoria.value = {
+      nombre: null,
+      descripcion: null,
+      estado: true,
+      areaId: null,
+    };
+    obtenerCategorias();
+  } else {
+    obtenerCategorias();
+  }
+});
+
+watch(dialogCategoriaEdit, (val) => {
+  if (val === false) {
+    obtenerCategorias();
+  } else {
+    obtenerAreas();
+  }
+});
+
+// --------------------
+// Ciclo de vida
+// --------------------
+onMounted(() => {
+  if (usuarioStore.empresas != null) {
+    obtenerEmpresa();
+  } else {
+    obtenerAreas();
+  }
+  obtenerCategorias();
+});
 </script>

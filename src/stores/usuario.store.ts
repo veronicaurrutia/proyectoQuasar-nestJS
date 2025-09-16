@@ -11,6 +11,8 @@ export const useUsuariostore = defineStore("usuario", {
     empresa: ref(useLocalStorage("empresa", null)),
     usuario: ref(useLocalStorage("usuario", null)),
     area: ref(useLocalStorage("area", null)),
+    perfil: ref(useLocalStorage("perfil", null)),
+    perfilArea: ref(useLocalStorage("perfilArea", null)),
   }),
 
   getters: {},
@@ -28,18 +30,7 @@ export const useUsuariostore = defineStore("usuario", {
         this.empresa = response.data.empresaId;
         this.usuario = response.data.id;
         this.area = response.data.areaId;
-        // if (Array.isArray(response.data.empresas)) {
-        //   this.empresas = response.data.empresas.map((empresa) => {
-        //     return {
-        //       value: empresa.id,
-        //       label: empresa.nombre,
-        //     };
-        //   });
-        //   localStorage.setItem("empresas", JSON.stringify(this.empresas));
-        // } else {
-        //   console.error("Empresas no es un array");
-        //   this.empresas = [];
-        // }
+        this.perfilArea = response.data.perfilesPorArea;
         return { estado: "OK", data: response };
       } catch (error) {
         this.logout();
@@ -63,6 +54,12 @@ export const useUsuariostore = defineStore("usuario", {
     },
     setEmpresa(item) {
       this.empresa = item;
+    },
+    setArea(item) {
+      this.area = item;
+    },
+    setPerfil(item) {
+      this.perfil = item;
     },
   },
 });
