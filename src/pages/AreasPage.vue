@@ -3,14 +3,14 @@
     <div class="text-center">
       <q-card-section class="col-12 text-center">
         <h5 class="q-ma-xs text-white">
-          <q-icon name="badge" />Mantendor de Areas
+          <q-icon name="badge" />Mantendor de Areas *
         </h5>
         <!-- <div class="text-subtitle2">by John Doe</div> -->
       </q-card-section>
     </div>
     <div>
       <q-card class="q-ma-md q-pa-md" elevation="13">
-        Descripción del mantenedor de areas<br /><br />
+        Problemas al mostrar datos en la tabla<br /><br />
         <q-btn
           color="primary"
           class="glossy"
@@ -303,6 +303,7 @@ const pagination = ref({
 // Métodos
 // --------------------
 async function obtenerAreas() {
+  console.log(empresaUsuario.value);
   if (usuarioStore.cuentaId == null) {
     const response = await api.get("/area");
     areas.value = response.data;
