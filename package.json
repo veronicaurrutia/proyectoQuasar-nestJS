@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Central requerimientos loginsa",
   "productName": "Central Requerimientos",
-  "author": "Kurt Muller Cheuquepan <kmuller@loginsa.com>",
+  "author": " ",
   "private": true,
   "scripts": {
     "lint": "eslint --ext .js,.vue ./",

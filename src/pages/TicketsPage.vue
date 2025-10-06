@@ -63,6 +63,11 @@
                 debounce="300"
                 v-model="filter"
                 placeholder="Search"
+                style="
+                  border: 1px solid #bbb;
+                  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.28);
+                  border-radius: 6px;
+                "
               >
                 <template v-slot:append>
                   <q-icon name="search" />
@@ -287,8 +292,7 @@ export default {
         {
           name: "Area",
           label: "Area",
-          field: (row) =>
-            row.area ? row.area.nombre : "Sin Area",
+          field: (row) => (row.area ? row.area.nombre : "Sin Area"),
           align: "center",
           headerClasses: "bg-primary text-white glossy",
         },
@@ -303,16 +307,14 @@ export default {
         {
           name: "Centro",
           label: "Centro",
-          field: (row) =>
-            row.centro ? row.centro.nombre : "Sin Centro",
+          field: (row) => (row.centro ? row.centro.nombre : "Sin Centro"),
           align: "center",
           headerClasses: "bg-primary text-white glossy",
         },
         {
           name: "Solicitante",
           label: "Solicitante",
-          field: (row) =>
-            row.usuario ? row.usuario.email : "Sin Usuario",
+          field: (row) => (row.usuario ? row.usuario.email : "Sin Usuario"),
           align: "center",
           headerClasses: "bg-primary text-white glossy",
         },

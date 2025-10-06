@@ -104,6 +104,11 @@
                 debounce="300"
                 v-model="filter"
                 placeholder="Search"
+                style="
+                  border: 1px solid #bbb;
+                  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.28);
+                  border-radius: 6px;
+                "
               >
                 <template v-slot:append>
                   <q-icon name="search" />
