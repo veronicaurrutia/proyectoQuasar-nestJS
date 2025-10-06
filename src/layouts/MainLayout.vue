@@ -10,7 +10,6 @@
           aria-label="Menu"
           @click="toggleLeftDrawer"
         />
-
         <q-toolbar-title> Central de requerimientos </q-toolbar-title>
         <q-select
           class="q-mr-md"
@@ -68,9 +67,13 @@
               <q-avatar letter color="" text-color="" icon="face" />
             </q-item-section>
             <q-item-section>
-              <q-item-label lines="1">Kurt Muller </q-item-label>
-              <q-item-label lines="1">kmuller@loginsa.com </q-item-label>
-              <q-item-label v-if="false" lines="1">Administrador </q-item-label>
+              <div class="text-h6 q-mt-md">
+                {{ user.nombre || "Sin nombre"
+                }}<span v-if="user.apellido"> {{ user.apellido }}</span>
+              </div>
+              <div class="text-subtitle2 text-grey">
+                {{ user.email || "Sin correo" }}
+              </div>
             </q-item-section>
           </q-item>
           <q-item v-ripple>
@@ -218,6 +221,63 @@ const areaOptions = ref([]); // se llenará con la data del endpoint
 const perfilOptions = ref([]);
 const perfil = ref(null);
 const menu = ref([]);
+const user = ref({
+  nombre: "",
+  apellido: "",
+  avatar: null,
+  area: "",
+});
+async function usuarioVista(id) {
+  // Chequeo y log del id recibido
+  let userId = id;
+  if (!userId) {
+    // Intentar obtener el id desde el store o localStorage
+    userId = usuarioStore.usuario;
+    if (typeof userId === "object" && userId !== null && userId.id) {
+      userId = userId.id;
+    }
+    if (!userId) {
+      userId = localStorage.getItem("usuarioId");
+    }
+  }
+  console.log("ID usado para cargar usuario:", userId);
+  if (!userId) {
+    if (Notify && typeof Notify.create === "function") {
+      Notify.create({
+        type: "negative",
+        message: "No se encontró el ID del usuario.",
+      });
+    } else {
+      alert("No se encontró el ID del usuario.");
+    }
+    return;
+  }
+  try {
+    const response = await api.get(`/usuario/${userId}`);
+    const u = response.data;
+    user.value = {
+      nombre: u.nombre || "Sin nombre",
+      apellido: u.apellido || "",
+      email: u.email || "Sin correo",
+      avatar: u.avatar || null,
+      birthdate: u.fechaNacimiento || u.birthdate || "",
+      phone: u.telefono || u.phone || "",
+      address: u.direccion || u.address || "",
+      area: u.area || "",
+    };
+    console.log("Datos usuario cargados:", user.value);
+  } catch (error) {
+    if (Notify && typeof Notify.create === "function") {
+      Notify.create({
+        type: "negative",
+        message: "Error al cargar datos del usuario.",
+      });
+    } else {
+      alert("Error al cargar datos del usuario.");
+    }
+  }
+}
+
 // Menu
 // const menu = ref([
 //   {
@@ -399,6 +459,9 @@ async function obtenerMenuPerfil() {
     );
     console.log(response.data, "los permisos", usuarioStore.perfil);
     menu.value = response.data;
+    this.usuario = response.data.id;
+    this.area = response.data.areaId;
+    this.perfilArea = response.data.perfilesPorArea;
   } catch (error) {
     console.error("error al obtener los datos", error);
   }
@@ -409,6 +472,7 @@ onMounted(() => {
   obtenerAreasUsuario();
   obtenerEmpresas();
   obtenerPerfiles();
+  usuarioVista();
   // obtenerMenuPerfil();
 });
 </script>

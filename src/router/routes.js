@@ -9,8 +9,16 @@ const routes = [
         component: () => import("pages/IndexPage.vue"),
       },
       {
+        path: "home",
+        component: () => import("layouts/Home.vue"),
+      },
+      {
         path: "perfil",
-        component: () => import("pages/PerfilPage.vue"),
+        component: () => import("layouts/PerfilPage.vue"),
+      },
+      {
+        path: "edit-perfil",
+        component: () => import("layouts/EditPerfil.vue"),
       },
       {
         path: "cuentas",

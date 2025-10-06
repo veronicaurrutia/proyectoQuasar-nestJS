@@ -22,7 +22,7 @@
           <q-table
             bordered
             title="Usuarios"
-            :rows="usuarios"
+            :rows="usuariosFiltrados"
             :columns="columns"
             :filter="filter"
           >
@@ -33,6 +33,11 @@
                 debounce="300"
                 v-model="filter"
                 placeholder="Search"
+                style="
+                  border: 1px solid #bbb;
+                  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.28);
+                  border-radius: 6px;
+                "
               >
                 <template v-slot:append>
                   <q-icon name="search" />
@@ -107,12 +112,28 @@
             />
             <q-input
               v-model="usuario.password"
+              :type="showPassword ? 'text' : 'password'"
               label="Password"
               stack-label
               dense
               lazy-rules
               color="primary"
-            />
+              :rules="[
+                (val) => !!val || 'El password es requerido',
+                (val) => (val && val.length >= 6) || 'Mínimo 6 caracteres',
+                (val) =>
+                  /[A-Z]/.test(val) || 'Debe tener al menos una mayúscula',
+                (val) => /[0-9]/.test(val) || 'Debe tener al menos un número',
+              ]"
+            >
+              <template v-slot:append>
+                <q-icon
+                  :name="showPassword ? 'visibility_off' : 'visibility'"
+                  class="cursor-pointer"
+                  @click="showPassword = !showPassword"
+                />
+              </template>
+            </q-input>
             <q-select
               dense
               v-if="cuentaId == null"
@@ -146,15 +167,16 @@
           <q-card-actions align="right">
             <template v-if="!cargandoIcon">
               <q-btn
-                flat
-                label="Cancelar"
                 color="primary"
+                class="glossy shadow-4"
+                label="Cancelar"
                 v-close-popup
                 @click="dialogUsuario = false"
               />
               <q-btn
                 label="Confirmar"
                 color="primary"
+                class="glossy shadow-4"
                 @click="crearUsuario()"
               />
             </template>
@@ -202,12 +224,35 @@
             />
             <q-input
               v-model="usuario.password"
+              :type="showPassword ? 'text' : 'password'"
               label="Password"
               stack-label
               dense
               lazy-rules
               color="primary"
-            />
+              :rules="[
+                (val) => !!val || 'El password es requerido',
+                (val) => (val && val.length >= 6) || 'Mínimo 6 caracteres',
+                (val) =>
+                  /[A-Z]/.test(val) || 'Debe tener al menos una mayúscula',
+                (val) => /[0-9]/.test(val) || 'Debe tener al menos un número',
+              ]"
+            >
+              <template v-slot:append>
+                <q-icon
+                  :name="showPassword ? 'visibility_off' : 'visibility'"
+                  class="cursor-pointer"
+                  @click="showPassword = !showPassword"
+                />
+                <q-btn
+                  flat
+                  dense
+                  size="sm"
+                  label="Recuperar"
+                  @click="recuperarPassword"
+                />
+              </template>
+            </q-input>
             <q-select
               dense
               v-if="cuentaId == null"
@@ -241,15 +286,16 @@
           <q-card-actions align="right">
             <template v-if="!cargandoIcon">
               <q-btn
-                flat
-                label="Cancelar"
                 color="primary"
+                class="glossy shadow-4"
+                label="Cancelar"
                 v-close-popup
                 @click="dialogUsuarioEdit = false"
               />
               <q-btn
                 label="Confirmar"
                 color="primary"
+                class="glossy shadow-4"
                 @click="actualizarUsuario()"
               />
             </template>
@@ -267,10 +313,20 @@
 <script setup>
 import { ref, reactive, watch, onMounted } from "vue";
 import { Notify } from "quasar";
+import { computed } from "vue";
 import { api } from "src/boot/axios";
 import { useUsuariostore } from "src/stores/usuario.store";
 
 // ----- STATE -----
+const showPassword = ref(false);
+// ----- RECUPERAR PASSWORD -----
+function recuperarPassword() {
+  Notify.create({
+    color: "info",
+    message: "Funcionalidad de recuperación de contraseña (simulada).",
+    icon: "info",
+  });
+}
 const filter = ref("");
 const dialogUsuario = ref(false);
 const dialogUsuarioEdit = ref(false);
@@ -295,7 +351,18 @@ const usuario = reactive({
   empresasId: null,
   estado: true,
 });
-
+const usuariosFiltrados = computed(() => {
+  if (!filter.value) return usuarios.value;
+  const letra = filter.value.trim().toLowerCase()[0];
+  if (!letra) return usuarios.value;
+  return usuarios.value.filter((u) => {
+    return (
+      (u.nombre && u.nombre[0]?.toLowerCase() === letra) ||
+      (u.apellido && u.apellido[0]?.toLowerCase() === letra) ||
+      (u.email && u.email[0]?.toLowerCase() === letra)
+    );
+  });
+});
 // ----- TABLE COLUMNS -----
 const columns = [
   {
