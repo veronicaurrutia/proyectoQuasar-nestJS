@@ -60,6 +60,10 @@ const routes = [
         path: "admintickets",
         component: () => import("pages/TicketAdmin.vue"),
       },
+      {
+        path: "permisos",
+        component: () => import("pages/PermisosPage.vue"),
+      },
     ],
   },
   {
