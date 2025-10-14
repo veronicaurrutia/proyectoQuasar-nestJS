@@ -11,8 +11,8 @@
           </template>
         </q-avatar>
         <div class="text-h6 q-mt-md">
-          {{ user.nombre || "Sin nombre"
-          }}<span v-if="user.apellido"> {{ user.apellido }}</span>
+          {{ user.nombre || "Sin nombre" }}
+          <span v-if="user.apellido"> {{ user.apellido }}</span>
         </div>
         <div class="text-subtitle2 text-grey">
           {{ user.email || "Sin correo" }}

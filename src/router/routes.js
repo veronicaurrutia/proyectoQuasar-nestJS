@@ -64,6 +64,10 @@ const routes = [
         path: "permisos",
         component: () => import("pages/PermisosPage.vue"),
       },
+      {
+        path: "menus",
+        component: () => import("pages/MenusPage.vue"),
+      },
     ],
   },
   {
