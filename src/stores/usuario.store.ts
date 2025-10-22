@@ -24,7 +24,25 @@ export const useUsuariostore = defineStore("usuario", {
           email: email,
           password: password,
         });
-        console.log(response.data);
+        this.token = response.data.token;
+        this.cuentaId = response.data.cuentaId;
+        this.empresa = response.data.empresaId;
+        this.usuario = response.data.id;
+        this.area = response.data.areaId;
+        this.perfilArea = response.data.perfilesPorArea;
+        return { estado: "OK", data: response };
+      } catch (error) {
+        this.logout();
+        return { estado: "ERROR", data: error };
+      }
+    },
+    async loginEmpresa(email, password, empresaId) {
+      try {
+        const response = await api.post("/auth/login-empresa", {
+          email: email,
+          password: password,
+          empresaId: empresaId,
+        });
         this.token = response.data.token;
         this.cuentaId = response.data.cuentaId;
         this.empresa = response.data.empresaId;
@@ -56,10 +74,12 @@ export const useUsuariostore = defineStore("usuario", {
       this.empresa = item;
     },
     setArea(item) {
+      console.log("entro aca en el select area?", item);
       this.area = item;
     },
     setPerfil(item) {
       this.perfil = item;
     },
   },
+  persist: true,
 });

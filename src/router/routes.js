@@ -70,6 +70,16 @@ const routes = [
       },
     ],
   },
+
+  // 🔹 RUTA FUERA DEL MAINLAYOUT
+  {
+    path: "/select-area",
+    name: "select-area",
+    meta: { requiresAuth: true },
+    component: () => import("pages/SelectAreaPage.vue"),
+  },
+
+  // 🔹 LOGIN (ya fuera del MainLayout)
   {
     title: "Login",
     name: "login",
@@ -77,8 +87,8 @@ const routes = [
     meta: { requiresAuth: false },
     component: () => import("layouts/LoginLayout.vue"),
   },
-  // Always leave this as last one,
-  // but you can also remove it
+
+  // 🔹 ERROR 404
   {
     path: "/:catchAll(.*)*",
     component: () => import("pages/ErrorNotFound.vue"),
