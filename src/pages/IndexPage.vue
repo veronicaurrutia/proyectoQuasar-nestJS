@@ -331,7 +331,7 @@ const navigateTo = (route) => {
 }
 
 .hero-section {
-  background: linear-gradient(135deg, #667eea 0%, #1976d2 100%);
+  background: linear-gradient(135deg, #667eea 0%, primary 100%);
   min-height: 60vh;
   display: flex;
   align-items: center;

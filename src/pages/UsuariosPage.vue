@@ -119,19 +119,7 @@
                   emit-value
                 />
               </div>
-              <div class="col-12 col-sm-6 col-md-3">
-                <q-select
-                  v-model="empresaFilter"
-                  :options="empresaFilterOptions"
-                  label="Empresa"
-                  outlined
-                  dense
-                  clearable
-                  map-options
-                  emit-value
-                />
-              </div>
-              <div class="col-12 col-md-3">
+              <div class="col-12 col-md-6">
                 <div class="row q-gutter-sm">
                   <q-btn
                     color="primary"
@@ -198,9 +186,9 @@
               >
                 <template v-slot:body-cell-index="props">
                   <q-td :props="props" class="text-center">
-                    <q-chip 
-                      color="primary" 
-                      text-color="white" 
+                    <q-chip
+                      color="primary"
+                      text-color="white"
                       :label="props.pageIndex + 1"
                       size="sm"
                     />
@@ -212,8 +200,14 @@
                     <div class="user-info">
                       <div class="row items-center">
                         <div class="col-auto">
-                          <q-avatar color="primary" text-color="white" size="40px">
-                            {{ getInitials(props.row.nombre, props.row.apellido) }}
+                          <q-avatar
+                            color="primary"
+                            text-color="white"
+                            size="40px"
+                          >
+                            {{
+                              getInitials(props.row.nombre, props.row.apellido)
+                            }}
                           </q-avatar>
                         </div>
                         <div class="col q-ml-md">
@@ -231,8 +225,8 @@
 
                 <template v-slot:body-cell-enabledopt="props">
                   <q-td :props="props" class="text-center">
-                    <q-badge 
-                      :color="props.row.estado ? 'green' : 'red'" 
+                    <q-badge
+                      :color="props.row.estado ? 'green' : 'red'"
                       :label="props.row.estado ? 'Activo' : 'Inactivo'"
                       class="estado-badge"
                     />
@@ -270,7 +264,9 @@
                         flat
                         @click="toggleEstadoUsuario(props.row)"
                       >
-                        <q-tooltip>{{ props.row.estado ? 'Desactivar' : 'Activar' }}</q-tooltip>
+                        <q-tooltip>{{
+                          props.row.estado ? "Desactivar" : "Activar"
+                        }}</q-tooltip>
                       </q-btn>
                       <q-btn
                         color="negative"
@@ -291,12 +287,20 @@
             <!-- Card View -->
             <div v-else-if="vistaActual === 'cards'" class="cards-view">
               <div class="row q-col-gutter-md">
-                <div class="col-12 col-md-6 col-xl-4" v-for="usuario in usuariosFiltrados" :key="usuario.id">
+                <div
+                  class="col-12 col-md-6 col-xl-4"
+                  v-for="usuario in usuariosFiltrados"
+                  :key="usuario.id"
+                >
                   <q-card class="user-card hover-lift">
                     <q-card-section>
                       <div class="row items-center q-mb-md">
                         <div class="col-auto">
-                          <q-avatar color="primary" text-color="white" size="60px">
+                          <q-avatar
+                            color="primary"
+                            text-color="white"
+                            size="60px"
+                          >
                             {{ getInitials(usuario.nombre, usuario.apellido) }}
                           </q-avatar>
                         </div>
@@ -304,45 +308,63 @@
                           <h4 class="user-name q-my-xs">
                             {{ usuario.nombre }} {{ usuario.apellido }}
                           </h4>
-                          <div class="user-email text-grey-7">{{ usuario.email }}</div>
-                          <q-badge 
-                            :color="usuario.estado ? 'green' : 'red'" 
+                          <div class="user-email text-grey-7">
+                            {{ usuario.email }}
+                          </div>
+                          <q-badge
+                            :color="usuario.estado ? 'green' : 'red'"
                             :label="usuario.estado ? 'Activo' : 'Inactivo'"
                             class="q-mt-xs"
                           />
                         </div>
                       </div>
-                      
+
                       <div class="user-details">
                         <div class="detail-row">
                           <q-icon name="domain" class="q-mr-sm" />
-                          <span>{{ usuario.empresa?.nombre || 'Sin empresa' }}</span>
+                          <span>{{
+                            usuario.empresa?.nombre || "Sin empresa"
+                          }}</span>
                         </div>
                         <div class="detail-row">
                           <q-icon name="location_city" class="q-mr-sm" />
-                          <span>{{ usuario.centro?.nombre || 'Sin centro' }}</span>
+                          <span>{{
+                            usuario.centro?.nombre || "Sin centro"
+                          }}</span>
                         </div>
                         <div class="detail-row">
                           <q-icon name="account_balance" class="q-mr-sm" />
-                          <span>{{ usuario.cuenta?.nombre || 'Sin cuenta' }}</span>
+                          <span>{{
+                            usuario.cuenta?.nombre || "Sin cuenta"
+                          }}</span>
                         </div>
                       </div>
                     </q-card-section>
-                    
+
                     <q-card-actions align="right">
-                      <q-btn flat color="primary" icon="visibility" @click="verUsuario(usuario)">
+                      <q-btn
+                        flat
+                        color="primary"
+                        icon="visibility"
+                        @click="verUsuario(usuario)"
+                      >
                         Ver
                       </q-btn>
-                      <q-btn flat color="secondary" icon="edit" @click="editarUsuario(usuario)">
+                      <q-btn
+                        flat
+                        color="secondary"
+                        icon="edit"
+                        @click="editarUsuario(usuario)"
+                      >
                         Editar
                       </q-btn>
-                      <q-btn 
-                        flat 
-                        :color="usuario.estado ? 'orange' : 'green'" 
+                      <q-btn
+                        flat
+                        :color="usuario.estado ? 'orange' : 'green'"
                         :icon="usuario.estado ? 'lock' : 'lock_open'"
                         @click="toggleEstadoUsuario(usuario)"
                       >
-                        {{ usuario.estado ? 'Desactivar' : 'Activar' }}
+                        {{ usuario.estado ? "Desactivar" : "Activar" }}
                       </q-btn>
                     </q-card-actions>
                   </q-card>
@@ -359,7 +381,12 @@
       <q-card class="dialog-card" style="width: 900px; max-width: 95vw">
         <q-card-section class="dialog-header bg-accent text-white">
           <div class="row items-center">
-            <q-avatar square icon="person_add" color="white" text-color="accent" />
+            <q-avatar
+              square
+              icon="person_add"
+              color="white"
+              text-color="accent"
+            />
             <span class="q-ml-sm text-h6">Agregar Nuevo Usuario</span>
           </div>
         </q-card-section>
@@ -371,16 +398,16 @@
                 v-model="usuario.nombre"
                 label="Nombre *"
                 outlined
-                :rules="[val => !!val || 'El nombre es requerido']"
+                :rules="[(val) => !!val || 'El nombre es requerido']"
               />
             </div>
-            
+
             <div class="col-12 col-md-6">
               <q-input
                 v-model="usuario.apellido"
                 label="Apellido *"
                 outlined
-                :rules="[val => !!val || 'El apellido es requerido']"
+                :rules="[(val) => !!val || 'El apellido es requerido']"
               />
             </div>
 
@@ -391,8 +418,8 @@
                 type="email"
                 outlined
                 :rules="[
-                  val => !!val || 'El correo es requerido',
-                  val => /.+@.+\..+/.test(val) || 'Ingresa un correo válido'
+                  (val) => !!val || 'El correo es requerido',
+                  (val) => /.+@.+\..+/.test(val) || 'Ingresa un correo válido',
                 ]"
               />
             </div>
@@ -406,7 +433,8 @@
                 :rules="[
                   (val) => !!val || 'La contraseña es requerida',
                   (val) => (val && val.length >= 6) || 'Mínimo 6 caracteres',
-                  (val) => /[A-Z]/.test(val) || 'Debe tener al menos una mayúscula',
+                  (val) =>
+                    /[A-Z]/.test(val) || 'Debe tener al menos una mayúscula',
                   (val) => /[0-9]/.test(val) || 'Debe tener al menos un número',
                 ]"
                 hint="Mínimo 6 caracteres, una mayúscula y un número"
@@ -429,24 +457,11 @@
                 outlined
                 map-options
                 emit-value
-                :rules="[val => !!val || 'Selecciona una cuenta']"
+                :rules="[(val) => !!val || 'Selecciona una cuenta']"
               />
             </div>
 
             <div class="col-12 col-md-6" v-if="usuario.cuentaId != null">
-              <q-select
-                v-model="usuario.empresasId"
-                :options="empresas"
-                label="Empresas"
-                outlined
-                map-options
-                emit-value
-                multiple
-                use-chips
-              />
-            </div>
-
-            <div class="col-12 col-md-6" v-if="usuario.empresasId != null">
               <q-select
                 v-model="usuario.centroId"
                 :options="centros"
@@ -502,19 +517,11 @@
         <q-card-section class="q-pa-lg">
           <div class="row q-col-gutter-md">
             <div class="col-12 col-md-6">
-              <q-input
-                v-model="usuario.nombre"
-                label="Nombre"
-                outlined
-              />
+              <q-input v-model="usuario.nombre" label="Nombre" outlined />
             </div>
-            
+
             <div class="col-12 col-md-6">
-              <q-input
-                v-model="usuario.apellido"
-                label="Apellido"
-                outlined
-              />
+              <q-input v-model="usuario.apellido" label="Apellido" outlined />
             </div>
 
             <div class="col-12">
@@ -535,8 +542,14 @@
                 hint="Deja en blanco para mantener la actual"
                 :rules="[
                   (val) => !val || val.length >= 6 || 'Mínimo 6 caracteres',
-                  (val) => !val || /[A-Z]/.test(val) || 'Debe tener al menos una mayúscula',
-                  (val) => !val || /[0-9]/.test(val) || 'Debe tener al menos un número',
+                  (val) =>
+                    !val ||
+                    /[A-Z]/.test(val) ||
+                    'Debe tener al menos una mayúscula',
+                  (val) =>
+                    !val ||
+                    /[0-9]/.test(val) ||
+                    'Debe tener al menos un número',
                 ]"
               >
                 <template v-slot:append>
@@ -568,19 +581,6 @@
             </div>
 
             <div class="col-12 col-md-6" v-if="usuario.cuentaId != null">
-              <q-select
-                v-model="usuario.empresasId"
-                :options="empresas"
-                label="Empresas"
-                outlined
-                map-options
-                emit-value
-                multiple
-                use-chips
-              />
-            </div>
-
-            <div class="col-12 col-md-6" v-if="usuario.empresasId != null">
               <q-select
                 v-model="usuario.centroId"
                 :options="centros"
@@ -637,15 +637,13 @@ const filter = ref("");
 const dialogUsuario = ref(false);
 const dialogUsuarioEdit = ref(false);
 const cargandoIcon = ref(false);
-const vistaActual = ref('tabla');
+const vistaActual = ref("tabla");
 
 // Filtros
 const estadoFilter = ref(null);
-const empresaFilter = ref(null);
 
 const usuarios = ref([]);
 const cuentas = ref([]);
-const empresas = ref([]);
 const centros = ref([]);
 
 const usuarioStore = useUsuariostore();
@@ -659,27 +657,22 @@ const usuario = reactive({
   password: null,
   centroId: null,
   cuentaId: null,
-  empresasId: null,
   estado: true,
 });
 
 // ----- COMPUTED -----
 const usuariosFiltrados = computed(() => {
   let filtrados = usuarios.value;
-  
+
   if (estadoFilter.value !== null) {
-    filtrados = filtrados.filter(u => u.estado === estadoFilter.value);
+    filtrados = filtrados.filter((u) => u.estado === estadoFilter.value);
   }
-  
-  if (empresaFilter.value) {
-    filtrados = filtrados.filter(u => u.empresa?.id === empresaFilter.value);
-  }
-  
+
   return filtrados;
 });
 
 const usuariosActivos = computed(() => {
-  return usuarios.value.filter(u => u.estado).length;
+  return usuarios.value.filter((u) => u.estado).length;
 });
 
 const usuariosRecientes = computed(() => {
@@ -688,23 +681,20 @@ const usuariosRecientes = computed(() => {
 });
 
 const empresasUnicas = computed(() => {
-  const empresasSet = new Set(usuarios.value.map(u => u.empresa?.id).filter(Boolean));
+  const empresasSet = new Set(
+    usuarios.value.map((u) => u.empresa?.id).filter(Boolean)
+  );
   return empresasSet.size;
 });
 
 const estadoFilterOptions = computed(() => [
-  { label: 'Activos', value: true },
-  { label: 'Inactivos', value: false }
+  { label: "Activos", value: true },
+  { label: "Inactivos", value: false },
 ]);
 
-const empresaFilterOptions = computed(() => {
-  const empresasUnicas = [...new Set(usuarios.value.map(u => u.empresa).filter(Boolean))];
-  return empresasUnicas.map(emp => ({ label: emp.nombre, value: emp.id }));
-});
-
 const vistaOptions = [
-  { label: 'Tabla', value: 'tabla', icon: 'table_view' },
-  { label: 'Tarjetas', value: 'cards', icon: 'view_module' }
+  { label: "Tabla", value: "tabla", icon: "table_view" },
+  { label: "Tarjetas", value: "cards", icon: "view_module" },
 ];
 
 // ----- TABLE COLUMNS -----
@@ -772,7 +762,6 @@ watch(dialogUsuario, async (val) => {
       password: null,
       centroId: null,
       cuentaId: null,
-      empresasId: null,
       estado: true,
     });
     await obtenerUsuarios();
@@ -784,14 +773,9 @@ watch(dialogUsuario, async (val) => {
 watch(
   () => usuario.cuentaId,
   async (valor) => {
-    if (valor != null) await obtenerEmpresasCuenta(valor);
-  }
-);
-
-watch(
-  () => usuario.empresasId,
-  async (valor) => {
-    if (valor != null) await obtenerCentrosEmpresa(valor);
+    if (valor != null) {
+      await obtenerCentrosCuenta(valor);
+    }
   }
 );
 
@@ -822,17 +806,17 @@ const crearUsuario = async () => {
   try {
     await api.post("/usuario", usuario);
     Notify.create({
-      type: 'positive',
-      message: 'Usuario creado exitosamente',
-      icon: 'check_circle'
+      type: "positive",
+      message: "Usuario creado exitosamente",
+      icon: "check_circle",
     });
     dialogUsuario.value = false;
     await obtenerUsuarios();
   } catch (error) {
     console.error("Error al crear usuario:", error);
     Notify.create({
-      type: 'negative',
-      message: 'Error al crear el usuario'
+      type: "negative",
+      message: "Error al crear el usuario",
     });
   } finally {
     cargandoIcon.value = false;
@@ -846,9 +830,9 @@ const editarUsuario = (row) => {
 
 const verUsuario = (row) => {
   Notify.create({
-    type: 'info',
+    type: "info",
     message: `Visualizando perfil de ${row.nombre} ${row.apellido}`,
-    icon: 'visibility'
+    icon: "visibility",
   });
 };
 
@@ -856,19 +840,21 @@ const toggleEstadoUsuario = async (row) => {
   try {
     const nuevoEstado = !row.estado;
     await api.patch(`/usuario/${row.id}`, { estado: nuevoEstado });
-    
+
     Notify.create({
-      type: 'positive',
-      message: `Usuario ${nuevoEstado ? 'activado' : 'desactivado'} exitosamente`,
-      icon: nuevoEstado ? 'lock_open' : 'lock'
+      type: "positive",
+      message: `Usuario ${
+        nuevoEstado ? "activado" : "desactivado"
+      } exitosamente`,
+      icon: nuevoEstado ? "lock_open" : "lock",
     });
-    
+
     await obtenerUsuarios();
   } catch (error) {
     console.error("Error al cambiar estado del usuario:", error);
     Notify.create({
-      type: 'negative',
-      message: 'Error al cambiar el estado del usuario'
+      type: "negative",
+      message: "Error al cambiar el estado del usuario",
     });
   }
 };
@@ -883,46 +869,34 @@ const actualizarUsuario = async () => {
     delete payload.empresa;
     delete payload.centro;
     delete payload.eliminacion;
-    
+
     // Si no hay password, no enviarlo
     if (!payload.password) {
       delete payload.password;
     }
-    
+
     await api.patch(`/usuario/${id}`, payload);
     Notify.create({
-      type: 'positive',
-      message: 'Usuario actualizado exitosamente',
-      icon: 'save'
+      type: "positive",
+      message: "Usuario actualizado exitosamente",
+      icon: "save",
     });
     dialogUsuarioEdit.value = false;
     await obtenerUsuarios();
   } catch (error) {
     console.error("Error al actualizar usuario:", error);
     Notify.create({
-      type: 'negative',
-      message: 'Error al actualizar el usuario'
+      type: "negative",
+      message: "Error al actualizar el usuario",
     });
   } finally {
     cargandoIcon.value = false;
   }
 };
 
-const obtenerEmpresasCuenta = async (valor) => {
+const obtenerCentrosCuenta = async (valor) => {
   try {
-    const response = await api.get(`/empresa/cuenta/${valor}`);
-    empresas.value = response.data.map((item) => ({
-      value: item.id,
-      label: item.nombre,
-    }));
-  } catch (error) {
-    console.error("Error al obtener empresas:", error);
-  }
-};
-
-const obtenerCentrosEmpresa = async (valor) => {
-  try {
-    const response = await api.get(`/centro/empresa/${valor}`);
+    const response = await api.get(`/centro/cuenta/${valor}`);
     centros.value = response.data.map((item) => ({
       value: item.id,
       label: item.nombre,
@@ -954,15 +928,15 @@ const eliminarUsuario = (row) => {
           try {
             await api.delete(`/usuario/${row.id}`);
             Notify.create({
-              type: 'positive',
-              message: 'Usuario eliminado exitosamente'
+              type: "positive",
+              message: "Usuario eliminado exitosamente",
             });
             await obtenerUsuarios();
           } catch (error) {
             console.error("Error al eliminar usuario:", error);
             Notify.create({
-              type: 'negative',
-              message: 'Error al eliminar el usuario'
+              type: "negative",
+              message: "Error al eliminar el usuario",
             });
           }
         },
@@ -982,34 +956,33 @@ const recuperarPassword = () => {
 
 const aplicarFiltros = () => {
   Notify.create({
-    type: 'info',
-    message: 'Filtros aplicados',
-    icon: 'filter_list'
+    type: "info",
+    message: "Filtros aplicados",
+    icon: "filter_list",
   });
 };
 
 const limpiarFiltros = () => {
   estadoFilter.value = null;
-  empresaFilter.value = null;
-  filter.value = '';
+  filter.value = "";
   Notify.create({
-    type: 'info',
-    message: 'Filtros limpiados',
-    icon: 'clear'
+    type: "info",
+    message: "Filtros limpiados",
+    icon: "clear",
   });
 };
 
 const exportarUsuarios = () => {
   Notify.create({
-    type: 'info',
-    message: 'Exportando usuarios...',
-    icon: 'download'
+    type: "info",
+    message: "Exportando usuarios...",
+    icon: "download",
   });
 };
 
 const getInitials = (nombre, apellido) => {
-  const inicial1 = nombre ? nombre.charAt(0).toUpperCase() : '';
-  const inicial2 = apellido ? apellido.charAt(0).toUpperCase() : '';
+  const inicial1 = nombre ? nombre.charAt(0).toUpperCase() : "";
+  const inicial2 = apellido ? apellido.charAt(0).toUpperCase() : "";
   return inicial1 + inicial2;
 };
 
@@ -1031,14 +1004,14 @@ onMounted(async () => {
 }
 
 .bg-gradient-accent {
-  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%);
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
 }
 
 .page-title {
   font-size: 2.5rem;
   font-weight: 700;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-  
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+
   @media (max-width: 768px) {
     font-size: 2rem;
   }
@@ -1057,17 +1030,17 @@ onMounted(async () => {
 
 .stat-card {
   border-radius: 15px;
-  border: 1px solid rgba(0,0,0,0.05);
+  border: 1px solid rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
-  
+
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
   }
 }
 
 .stat-value {
-  background: linear-gradient(45deg, #FF6B6B, #FF8E8E);
+  background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -1079,10 +1052,11 @@ onMounted(async () => {
   z-index: 1;
 }
 
-.filters-card, .table-card {
+.filters-card,
+.table-card {
   border-radius: 15px;
-  border: 1px solid rgba(0,0,0,0.05);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .table-title {
@@ -1099,12 +1073,12 @@ onMounted(async () => {
 
 .user-card {
   border-radius: 12px;
-  border: 1px solid rgba(0,0,0,0.05);
+  border: 1px solid rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
-  
+
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
   }
 }
 
@@ -1169,15 +1143,15 @@ onMounted(async () => {
   .stats-section {
     margin-top: -20px;
   }
-  
+
   .filters-section {
     margin-top: -10px;
   }
-  
+
   .page-header {
     text-align: center;
   }
-  
+
   .actions-container {
     justify-content: center;
   }
