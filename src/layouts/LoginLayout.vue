@@ -6,6 +6,16 @@
           <q-card-section>
             <h6 color="primary" class="row justify-center">Bienvenido</h6>
             <h6 class="row justify-center">Central de requerimientos</h6>
+            <q-select
+              v-model="empresaSeleccionada"
+              :options="empresas"
+              option-label="nombre"
+              option-value="id"
+              label="Seleccionar Empresa"
+              outlined
+              dense
+              class="q-mb-sm"
+            />
             <q-input
               ref="emailRef"
               autocomplete="current-password"
@@ -61,6 +71,7 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
+import { api } from "src/boot/axios";
 import { useUsuariostore } from "src/stores/usuario.store";
 
 const email = ref("");
@@ -70,6 +81,8 @@ const rememberMe = ref(true);
 
 const emailRef = ref(null);
 const passwordRef = ref(null);
+const empresaSeleccionada = ref(null);
+const empresas = ref(null);
 
 const router = useRouter();
 const quasar = useQuasar();
@@ -85,10 +98,15 @@ const login = async () => {
   else localStorage.removeItem("email");
 
   try {
-    const response = await usuarioStore.login(email.value, password.value);
+    console.log(empresaSeleccionada.value.id, "la empresa");
+    const response = await usuarioStore.loginEmpresa(
+      email.value,
+      password.value,
+      empresaSeleccionada.value.id
+    );
 
     if (response.estado === "OK") {
-      router.push("/");
+      router.push("/select-area");
       quasar.notify({
         message: `Bienvenido ${response.data?.usuario?.nombre ?? ""}`,
         icon: "waving_hand",
@@ -112,10 +130,15 @@ const login = async () => {
     });
   }
 };
+const getEmpresas = async () => {
+  const response = await api.get("/empresa");
+  empresas.value = response.data;
+};
 
 // ----- ON MOUNT -----
 onMounted(() => {
   const storedEmail = localStorage.getItem("email");
+  getEmpresas();
   if (storedEmail) {
     email.value = storedEmail;
     rememberMe.value = true;

@@ -16,34 +16,23 @@
           dark
           dense
           outlined
-          v-model="perfil"
-          :options="perfilOptions"
-          label="Perfil"
-          map-options
-          emit-value
-          readonly
-        />
-        <q-select
-          class="q-mr-md"
-          dark
-          dense
-          outlined
           v-model="area"
           :options="areaOptions"
           label="Area"
           map-options
           emit-value
+          readonly
         />
-
-        <q-select
-          v-if="false"
+        <q-btn
+          class="q-mr-md"
           dark
           dense
           outlined
-          v-model="area"
-          :options="['tecnologias de la informacion', 'otra area']"
-          label="Area"
+          label="Cambiar Area"
+          color="primary"
+          @click="cambioArea"
         />
+
         <div v-if="false">Quasar v{{ $q.version }}</div>
 
         <q-item v-if="false" clickable v-ripple>
@@ -211,7 +200,11 @@ const usuarioStore = useUsuariostore();
 const router = useRouter();
 
 // Estado reactivo
-const area = ref(usuarioStore.area);
+
+const usuario = ref(null);
+const perfilArea = ref(null);
+
+const area = ref(null);
 const empresa = ref(usuarioStore.empresa);
 const url = ref("");
 const miniState = ref(true);
@@ -265,7 +258,6 @@ async function usuarioVista(id) {
       address: u.direccion || u.address || "",
       area: u.area || "",
     };
-    console.log("Datos usuario cargados:", user.value);
   } catch (error) {
     if (Notify && typeof Notify.create === "function") {
       Notify.create({
@@ -385,16 +377,16 @@ async function usuarioVista(id) {
 // ]);
 
 // Watchers
-watch(empresa, (newValue) => {
-  usuarioStore.setEmpresa(newValue);
-});
-watch(area, (newValue) => {
-  usuarioStore.setArea(newValue);
-  obtenerPerfilAreaUsuario();
-});
-watch(perfil, (newValue) => {
-  usuarioStore.setPerfil(newValue);
-});
+// watch(empresa, (newValue) => {
+//   usuarioStore.setEmpresa(newValue);
+// });
+// watch(area, (newValue) => {
+//   usuarioStore.setArea(newValue);
+//   obtenerPerfilAreaUsuario();
+// });
+// watch(perfil, (newValue) => {
+//   usuarioStore.setPerfil(newValue);
+// });
 
 // Métodos
 function toggleLeftDrawer() {
@@ -422,7 +414,14 @@ async function obtenerAreasUsuario() {
       label: a.nombre,
       value: a.id,
     }));
-    console.log(areaOptions.value, "las areas del usuario");
+    if (usuarioStore.area) {
+      const existe = areaOptions.value.find(
+        (a) => a.value === usuarioStore.area
+      );
+      if (existe) area.value = usuarioStore.area;
+    } else if (areaOptions.value.length > 0) {
+      area.value = areaOptions.value[0].value; // fallback
+    }
   } catch (error) {
     console.error("error al obtener las Areas", error);
   }
@@ -454,25 +453,30 @@ async function obtenerPerfilAreaUsuario() {
 
 async function obtenerMenuPerfil() {
   try {
+    console.log(usuarioStore.perfil, "el perfil en la funcion");
     const response = await api.get(
       `/permisos/perfilactivo/${usuarioStore.perfil}`
     );
     console.log(response.data, "los permisos", usuarioStore.perfil);
     menu.value = response.data;
-    this.usuario = response.data.id;
-    this.area = response.data.areaId;
-    this.perfilArea = response.data.perfilesPorArea;
+    usuario.value = response.data.id;
+    area.value = response.data.areaId;
+    perfilArea.value = response.data.perfilesPorArea;
   } catch (error) {
     console.error("error al obtener los datos", error);
   }
 }
+
+const cambioArea = () => {
+  router.push("/select-area");
+};
 // Funciones que quieres ejecutar al cargar la página
 onMounted(() => {
-  obtenerPerfilAreaUsuario();
+  // obtenerPerfilAreaUsuario();
   obtenerAreasUsuario();
-  obtenerEmpresas();
+  // obtenerEmpresas();
   obtenerPerfiles();
   usuarioVista();
-  // obtenerMenuPerfil();
+  obtenerMenuPerfil();
 });
 </script>
