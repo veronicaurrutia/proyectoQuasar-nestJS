@@ -772,8 +772,14 @@ const eliminarArea = async (row) => {
         areaIds: [String(usuarioStore.area)], // 👈 array de strings
       },
     });
-    if (response.estado === "OK") {
-      obtenerUsuarios();
+    if (response.status === 200) {
+      const resp = await api.delete(
+        `/usuario/${row.id}/perfil-area/${usuarioStore.area}`
+      );
+      if (response.status == 200) {
+        obtenerUsuarios();
+        dialogArea.value = false;
+      }
     } else {
       obtenerUsuarios();
     }
@@ -785,33 +791,37 @@ const eliminarArea = async (row) => {
 const agregarUsuarioArea = async () => {
   try {
     const data = {
-      areaIds: [String(usuarioStore.area)], // 👈 array de strings
+      areaIds: [String(usuarioStore.area)], // array de strings
     };
+
+    const body = {
+      perfilId: perfil.value,
+      areaId: usuarioStore.area,
+    };
+
+    // Primero agrega el área al usuario
     const response = await api.post(
       `/usuario/${usuarioSeleccionado.value.id}/areas`,
       data
     );
-    if (response.estado == "OK") {
-      const resp = await api.patch(
-        `/usuario/${usuarioSeleccionado.value.id}/cambiar-perfil-area`,
-        {
-          data: {
-            perfilId: perfil.value,
-            areaId: usuarioStore.area,
-          },
-        }
+    console.log(response, "la respuesta");
+    if (response.status === 201) {
+      // Luego asigna el perfil en esa área
+      const resp = await api.post(
+        `/usuario/${usuarioSeleccionado.value.id}/perfil-area`,
+        body // ✅ sin { body }
       );
+
       if (resp.estado === "OK") {
         obtenerUsuariosNoArea();
         dialogArea.value = false;
       } else {
         obtenerUsuariosNoArea();
-
         dialogArea.value = false;
       }
     }
   } catch (error) {
-    console.error("error al agregar el area del usuario", error);
+    console.error("Error al agregar el área del usuario", error);
   }
 };
 
