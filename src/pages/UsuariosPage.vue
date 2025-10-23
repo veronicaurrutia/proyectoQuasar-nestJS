@@ -954,71 +954,36 @@ const recuperarPassword = () => {
   });
 };
 
-const eliminarArea = async (row) => {
-  const eliminar = { areaIds: [usuarioStore.area] };
-  try {
-    const response = await api.delete(`/usuario/${row.id}/areas`, {
-      data: {
-        areaIds: [String(usuarioStore.area)], // 👈 array de strings
-      },
-    });
-    if (response.status === 200) {
-      const resp = await api.delete(
-        `/usuario/${row.id}/perfil-area/${usuarioStore.area}`
-      );
-      if (response.status == 200) {
-        obtenerUsuarios();
-        dialogArea.value = false;
-      }
-    } else {
-      obtenerUsuarios();
-    }
-  } catch (error) {
-    console.error("error al elminar el area del usuario", error);
-  }
+const aplicarFiltros = () => {
+  Notify.create({
+    type: "info",
+    message: "Filtros aplicados",
+    icon: "filter_list",
+  });
 };
 
-const agregarUsuarioArea = async () => {
-  try {
-    const data = {
-      areaIds: [String(usuarioStore.area)], // array de strings
-    };
-
-    const body = {
-      perfilId: perfil.value,
-      areaId: usuarioStore.area,
-    };
-
-    // Primero agrega el área al usuario
-    const response = await api.post(
-      `/usuario/${usuarioSeleccionado.value.id}/areas`,
-      data
-    );
-    console.log(response, "la respuesta");
-    if (response.status === 201) {
-      // Luego asigna el perfil en esa área
-      const resp = await api.post(
-        `/usuario/${usuarioSeleccionado.value.id}/perfil-area`,
-        body // ✅ sin { body }
-      );
-
-      if (resp.estado === "OK") {
-        obtenerUsuariosNoArea();
-        dialogArea.value = false;
-      } else {
-        obtenerUsuariosNoArea();
-        dialogArea.value = false;
-      }
-    }
-  } catch (error) {
-    console.error("Error al agregar el área del usuario", error);
-  }
+const limpiarFiltros = () => {
+  estadoFilter.value = null;
+  filter.value = "";
+  Notify.create({
+    type: "info",
+    message: "Filtros limpiados",
+    icon: "clear",
+  });
 };
 
-const abrirDialogArea = (usuario) => {
-  usuarioSeleccionado.value = usuario; // guardamos el usuario
-  perfil.value = usuario.perfilId; // si quieres cargar su perfil actual
-  dialogArea.value = true; // abrimos el diálogo
+const exportarUsuarios = () => {
+  Notify.create({
+    type: "info",
+    message: "Exportando usuarios...",
+    icon: "download",
+  });
+};
+
+const getInitials = (nombre, apellido) => {
+  const inicial1 = nombre ? nombre.charAt(0).toUpperCase() : "";
+  const inicial2 = apellido ? apellido.charAt(0).toUpperCase() : "";
+  return inicial1 + inicial2;
 };
 
 // ----- ON MOUNT -----
