@@ -76,13 +76,28 @@ module.exports = configure(function (/* ctx */) {
       ],
     },
 
+    // // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
+    // devServer: {
+    //   // https: true
+    //   port: 8000,
+    //   open: true, // opens browser window automatically
+    // },
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
+    // devServer: {
+    //   // https: true
+    //   port: 8000,
+    //   open: true, // opens browser window automatically
+    // },
     devServer: {
-      // https: true
-      port: 8000,
-      open: true, // opens browser window automatically
+      port: 9000,
+      open: true,
+      proxy: {
+        "/auth": {
+          target: "http://localhost:3000",
+          changeOrigin: true,
+        },
+      },
     },
-
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework
     framework: {
       config: {
