@@ -971,7 +971,6 @@ export default {
 
 <style lang="scss" scoped>
 .tickets-page {
-  background-color: #f5f7fa;
   min-height: 100vh;
 }
 

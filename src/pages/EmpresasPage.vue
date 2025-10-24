@@ -1,256 +1,410 @@
 <template>
-  <q-page>
-    <div class="text-center">
-      <q-card-section class="col-12 text-center">
-        <h5 class="q-ma-xs text-white">
-          <q-icon name="domain" />Mantendor de Empresas
-        </h5>
-        <!-- <div class="text-subtitle2">by John Doe</div> -->
-      </q-card-section>
+  <q-page class="q-pa-md">
+    <!-- Header Section -->
+    <div class="page-header q-pa-lg bg-gradient-primary">
+      <div class="container">
+        <div class="row items-center">
+          <div class="col-12 col-md-8">
+            <h1 class="page-title text-white q-mb-sm">
+              <q-icon name="domain" size="48px" class="q-mr-md" />
+              Mantenedor de Empresas
+            </h1>
+            <p class="page-subtitle text-white">
+              Gestiona y administra las empresas del sistema
+            </p>
+          </div>
+          <div class="col-12 col-md-4 text-right">
+            <q-btn
+              color="white"
+              text-color="primary"
+              icon="add"
+              label="Nueva Empresa"
+              size="lg"
+              class="glossy shadow-5"
+              @click="dialogEmpresa = true"
+            />
+          </div>
+        </div>
+      </div>
     </div>
-    <div>
-      <q-card class="q-ma-md q-pa-md" elevation="13">
-        Descripción del mantenedor de empresas<br /><br />
-        <q-btn
-          color="primary"
-          class="glossy"
-          icon="add"
-          @click="dialogEmpresa = true"
-          >Agregar</q-btn
+
+    <!-- Main Content -->
+    <div class="table-section q-pa-lg">
+      <div class="container">
+        <q-card class="q-mb-lg table-card" elevation="2">
+          <q-card-section class="q-pb-none">
+            <div class="row items-center justify-between q-mb-md">
+              <div class="col-auto">
+                <h3 class="table-title">
+                  <q-icon name="business" class="q-mr-sm" />
+                  Lista de Empresas
+                </h3>
+                <div class="text-caption text-grey-6">
+                  Administra la información de las empresas registradas
+                </div>
+              </div>
+            </div>
+          </q-card-section>
+      <q-separator class="q-mx-md" />
+      <q-card-section>
+        <q-table
+          flat
+          bordered
+          :rows="empresas"
+          :columns="columns"
+          :filter="filter"
+          row-key="id"
+          :pagination="pagination"
+          class="empresa-table"
         >
-        <div class="q-mt-md">
-          <q-table
-            bordered
-            title="Empresas"
-            :rows="empresas"
-            :columns="columns"
-            :filter="filter"
-          >
-            <template v-slot:body-cell-index="props">
-              <q-td :props="props" align="center">
-                {{ props.pageIndex + 1 }}
-              </q-td>
-            </template>
-            <template v-slot:body-cell-enabledopt="props">
-              <q-td :props="props" align="center">
+          <template v-slot:top-right>
+            <q-input
+              dense
+              debounce="300"
+              v-model="filter"
+              placeholder="Buscar empresa..."
+              outlined
+              class="search-input"
+            >
+              <template v-slot:prepend>
+                <q-icon name="search" />
+              </template>
+              <template v-slot:append>
                 <q-icon
-                  :name="props.row.estado ? 'check_circle' : 'cancel'"
-                  :color="props.row.estado ? 'green' : 'red'"
+                  v-if="filter !== ''"
+                  name="clear"
+                  class="cursor-pointer"
+                  @click="filter = ''"
                 />
-              </q-td>
-            </template>
-            <template v-slot:body-cell-actions="props">
-              <q-td :props="props">
+              </template>
+            </q-input>
+          </template>
+
+          <template v-slot:body-cell-index="props">
+            <q-td :props="props" class="text-center">
+              <q-chip size="sm" color="grey-3" text-color="grey-8">
+                {{ props.pageIndex + 1 }}
+              </q-chip>
+            </q-td>
+          </template>
+
+          <template v-slot:body-cell-enabledopt="props">
+            <q-td :props="props" class="text-center">
+              <q-badge
+                :color="props.row.estado ? 'positive' : 'negative'"
+                :label="props.row.estado ? 'Activa' : 'Inactiva'"
+                class="q-px-sm"
+              />
+            </q-td>
+          </template>
+
+          <template v-slot:body-cell-actions="props">
+            <q-td :props="props" class="text-center">
+              <div class="q-gutter-xs">
                 <q-btn
+                  size="sm"
                   color="primary"
                   icon="edit"
+                  round
+                  flat
                   @click="editarEmpresa(props.row)"
-                  flat
-                />
+                >
+                  <q-tooltip>Editar empresa</q-tooltip>
+                </q-btn>
                 <q-btn
-                  color="red"
+                  size="sm"
+                  color="negative"
                   icon="delete"
-                  @click="eliminarEmpresa(props.row)"
+                  round
                   flat
-                />
-              </q-td>
-            </template>
-            <template v-slot:top-right>
+                  @click="eliminarEmpresa(props.row)"
+                >
+                  <q-tooltip>Eliminar empresa</q-tooltip>
+                </q-btn>
+              </div>
+            </q-td>
+          </template>
+        </q-table>
+      </q-card-section>
+    </q-card>
+      </div>
+    </div>
+    <!-- DIALOGO CREAR EMPRESA -->
+    <q-dialog v-model="dialogEmpresa" persistent>
+      <q-card style="width: 800px; max-width: 90vw">
+        <q-card-section class="bg-primary text-white">
+          <div class="text-h6">
+            <q-icon name="add_business" class="q-mr-sm" />
+            Nueva Empresa
+          </div>
+          <div class="text-subtitle2">
+            Completa la información de la nueva empresa
+          </div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-lg">
+          <div class="row q-col-gutter-md">
+            <div class="col-12 col-md-6">
               <q-input
-                borderless
-                dense
-                debounce="300"
-                v-model="filter"
-                placeholder="Search"
-                style="
-                  border: 1px solid #bbb;
-                  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.28);
-                  border-radius: 6px;
-                "
+                v-model="empresa.nombre"
+                label="Nombre de la empresa"
+                outlined
+                lazy-rules
+                color="primary"
+                :rules="[(val) => !!val || 'El nombre es requerido']"
               >
-                <template v-slot:append>
-                  <q-icon name="search" />
+                <template v-slot:prepend>
+                  <q-icon name="business" />
                 </template>
               </q-input>
-            </template>
-          </q-table>
-        </div>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <q-input
+                v-model="empresa.email"
+                label="Correo electrónico"
+                outlined
+                lazy-rules
+                color="primary"
+                type="email"
+                :rules="[(val) => !!val || 'El correo es requerido']"
+              >
+                <template v-slot:prepend>
+                  <q-icon name="email" />
+                </template>
+              </q-input>
+            </div>
+
+            <div class="col-12">
+              <q-input
+                v-model="empresa.razon_social"
+                label="Razón Social"
+                outlined
+                lazy-rules
+                color="primary"
+              >
+                <template v-slot:prepend>
+                  <q-icon name="assignment" />
+                </template>
+              </q-input>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <q-input
+                v-model="empresa.telefono"
+                label="Teléfono"
+                outlined
+                lazy-rules
+                color="primary"
+              >
+                <template v-slot:prepend>
+                  <q-icon name="phone" />
+                </template>
+              </q-input>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <q-select
+                v-model="empresa.paisId"
+                :options="paises"
+                label="País"
+                outlined
+                map-options
+                emit-value
+                color="primary"
+              >
+                <template v-slot:prepend>
+                  <q-icon name="public" />
+                </template>
+              </q-select>
+            </div>
+
+            <div class="col-12">
+              <q-input
+                v-model="empresa.direccion"
+                label="Dirección"
+                outlined
+                lazy-rules
+                color="primary"
+                type="textarea"
+                rows="2"
+              >
+                <template v-slot:prepend>
+                  <q-icon name="location_on" />
+                </template>
+              </q-input>
+            </div>
+
+            <div class="col-12" v-if="cuentas.length > 0">
+              <q-select
+                v-model="empresa.cuentaId"
+                :options="cuentas"
+                label="Cuenta"
+                outlined
+                map-options
+                emit-value
+                color="primary"
+              >
+                <template v-slot:prepend>
+                  <q-icon name="account_balance" />
+                </template>
+              </q-select>
+            </div>
+          </div>
+        </q-card-section>
+
+        <q-separator />
+
+        <q-card-actions align="right" class="q-pa-md">
+          <q-btn
+            flat
+            label="Cancelar"
+            color="grey-7"
+            v-close-popup
+            @click="dialogEmpresa = false"
+            class="q-mr-sm"
+          />
+          <q-btn
+            unelevated
+            label="Crear Empresa"
+            color="primary"
+            @click="crearEmpresa()"
+            :loading="cargandoIcon"
+            :disable="cargandoIcon"
+          />
+        </q-card-actions>
       </q-card>
-      <!-- DIALOGO CREAR EMPRESA -->
-      <q-dialog v-model="dialogEmpresa" persistent>
-        <q-card
-          class="q-gutter-sm my-card"
-          style="width: 700px; max-width: 80vw"
-        >
-          <q-card-section class="row items-center">
-            <q-avatar square icon="domain" color="primary" text-color="white" />
-            <span class="q-ml-sm">Agregar Nueva Empresa</span>
-          </q-card-section>
-          <q-card-section>
-            <q-input
-              v-model="empresa.nombre"
-              label="Nombre"
-              lazy-rules
-              stack-label
-              dense
-              color="primary"
-            />
-            <q-input
-              v-model="empresa.email"
-              label="Correo"
-              stack-label
-              dense
-              lazy-rules
-              color="primary"
-            />
-            <q-input
-              v-model="empresa.razon_social"
-              label="Razón Social"
-              lazy-rules
-              stack-label
-              dense
-              color="primary"
-            />
-            <q-input
-              v-model="empresa.telefono"
-              label="Telefono"
-              stack-label
-              dense
-              lazy-rules
-              color="primary"
-            />
-            <q-input
-              v-model="empresa.direccion"
-              label="Dirección"
-              stack-label
-              dense
-              lazy-rules
-              color="primary"
-            />
-            <!-- <q-select dense v-model="empresa.estado" :options="estados" label="Estado" map-options emit-value /> -->
-            <q-select
-              dense
-              v-model="empresa.paisId"
-              :options="paises"
-              label="País"
-              map-options
-              emit-value
-            />
-            <q-select
-              dense
-              v-model="empresa.cuentaId"
-              :options="cuentas"
-              label="Cuenta"
-              map-options
-              emit-value
-            />
-          </q-card-section>
-          <q-card-actions align="right">
-            <template v-if="!cargandoIcon">
-              <q-btn
-                flat
-                label="Cancelar"
+    </q-dialog>
+    <!-- DIALOGO EDITAR EMPRESA -->
+    <q-dialog v-model="dialogEmpresaEdit" persistent>
+      <q-card style="width: 800px; max-width: 90vw">
+        <q-card-section class="bg-primary text-white">
+          <div class="text-h6">
+            <q-icon name="edit_note" class="q-mr-sm" />
+            Editar Empresa
+          </div>
+          <div class="text-subtitle2">
+            Modifica la información de la empresa
+          </div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-lg">
+          <div class="row q-col-gutter-md">
+            <div class="col-12 col-md-6">
+              <q-input
+                v-model="empresa.nombre"
+                label="Nombre de la empresa"
+                outlined
+                lazy-rules
                 color="primary"
-                v-close-popup
-                @click="dialogEmpresa = false"
-              />
-              <q-btn
-                label="Confirmar"
+                :rules="[(val) => !!val || 'El nombre es requerido']"
+              >
+                <template v-slot:prepend>
+                  <q-icon name="business" />
+                </template>
+              </q-input>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <q-input
+                v-model="empresa.email"
+                label="Correo electrónico"
+                outlined
+                lazy-rules
                 color="primary"
-                @click="crearEmpresa()"
-              />
-            </template>
-            <template v-if="cargandoIcon">
-              <span color="primary">Registrando...</span>
-              <q-spinner-hourglass color="primary" size="2em" />
-            </template>
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
-      <!-- DIALOGO EDITAR EMPRESA -->
-      <q-dialog v-model="dialogEmpresaEdit" persistent>
-        <q-card
-          class="q-gutter-sm my-card"
-          style="width: 700px; max-width: 80vw"
-        >
-          <q-card-section class="row items-center">
-            <q-avatar square icon="domain" color="primary" text-color="white" />
-            <span class="q-ml-sm">Modificar la Empresa</span>
-          </q-card-section>
-          <q-card-section>
-            <q-input
-              v-model="empresa.nombre"
-              label="Nombre"
-              lazy-rules
-              stack-label
-              dense
-              color="primary"
-            />
-            <q-input
-              v-model="empresa.email"
-              label="Correo"
-              stack-label
-              dense
-              lazy-rules
-              color="primary"
-            />
-            <q-input
-              v-model="empresa.razon_social"
-              label="Razón Social"
-              lazy-rules
-              stack-label
-              dense
-              color="primary"
-            />
-            <q-input
-              v-model="empresa.telefono"
-              label="Telefono"
-              stack-label
-              dense
-              lazy-rules
-              color="primary"
-            />
-            <q-input
-              v-model="empresa.direccion"
-              label="Dirección"
-              stack-label
-              dense
-              lazy-rules
-              color="primary"
-            />
-            <!-- <q-select dense v-model="empresa.estado" :options="estados" label="Estado" map-options emit-value /> -->
-            <q-select
-              dense
-              v-model="empresa.paisId"
-              :options="paises"
-              label="País"
-              map-options
-              emit-value
-            />
-          </q-card-section>
-          <q-card-actions align="right">
-            <template v-if="!cargandoIcon">
-              <q-btn
-                flat
-                label="Cancelar"
+                type="email"
+                :rules="[(val) => !!val || 'El correo es requerido']"
+              >
+                <template v-slot:prepend>
+                  <q-icon name="email" />
+                </template>
+              </q-input>
+            </div>
+
+            <div class="col-12">
+              <q-input
+                v-model="empresa.razon_social"
+                label="Razón Social"
+                outlined
+                lazy-rules
                 color="primary"
-                v-close-popup
-                @click="dialogEmpresaEdit = false"
-              />
-              <q-btn
-                label="Confirmar"
+              >
+                <template v-slot:prepend>
+                  <q-icon name="assignment" />
+                </template>
+              </q-input>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <q-input
+                v-model="empresa.telefono"
+                label="Teléfono"
+                outlined
+                lazy-rules
                 color="primary"
-                @click="actualizarEmpresa()"
-              />
-            </template>
-            <template v-if="cargandoIcon">
-              <span color="primary">Registrando...</span>
-              <q-spinner-hourglass color="primary" size="2em" />
-            </template>
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
-    </div>
+              >
+                <template v-slot:prepend>
+                  <q-icon name="phone" />
+                </template>
+              </q-input>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <q-select
+                v-model="empresa.paisId"
+                :options="paises"
+                label="País"
+                outlined
+                map-options
+                emit-value
+                color="primary"
+              >
+                <template v-slot:prepend>
+                  <q-icon name="public" />
+                </template>
+              </q-select>
+            </div>
+
+            <div class="col-12">
+              <q-input
+                v-model="empresa.direccion"
+                label="Dirección"
+                outlined
+                lazy-rules
+                color="primary"
+                type="textarea"
+                rows="2"
+              >
+                <template v-slot:prepend>
+                  <q-icon name="location_on" />
+                </template>
+              </q-input>
+            </div>
+          </div>
+        </q-card-section>
+
+        <q-separator />
+
+        <q-card-actions align="right" class="q-pa-md">
+          <q-btn
+            flat
+            label="Cancelar"
+            color="grey-7"
+            v-close-popup
+            @click="dialogEmpresaEdit = false"
+            class="q-mr-sm"
+          />
+          <q-btn
+            unelevated
+            label="Actualizar"
+            color="primary"
+            @click="actualizarEmpresa()"
+            :loading="cargandoIcon"
+            :disable="cargandoIcon"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 <script setup>
@@ -351,6 +505,7 @@ const estados = [
 const pagination = ref({
   page: 1,
   rowsPerPage: 10,
+  rowsNumber: 0,
 });
 
 // ✅ methods
@@ -386,10 +541,31 @@ const obtenerCuentaMaestra = async () => {
 };
 
 const crearEmpresa = async () => {
-  empresa.paisId = empresa.paisId.value;
-  await api.post("/empresa", empresa);
-  dialogEmpresa.value = false;
-  obtenerEmpresas();
+  try {
+    cargandoIcon.value = true;
+    const payload = { ...empresa };
+    if (payload.paisId && typeof payload.paisId === "object") {
+      payload.paisId = payload.paisId.value;
+    }
+    await api.post("/empresa", payload);
+
+    Notify.create({
+      type: "positive",
+      message: "Empresa creada exitosamente",
+      position: "top-right",
+    });
+
+    dialogEmpresa.value = false;
+    obtenerEmpresas();
+  } catch (error) {
+    Notify.create({
+      type: "negative",
+      message: "Error al crear la empresa",
+      position: "top-right",
+    });
+  } finally {
+    cargandoIcon.value = false;
+  }
 };
 
 const editarEmpresa = (row) => {
@@ -398,32 +574,69 @@ const editarEmpresa = (row) => {
 };
 
 const actualizarEmpresa = async () => {
-  const id = empresa.id;
-  const payload = { ...empresa };
-  delete payload.id;
-  delete payload.cuenta;
-  delete payload.eliminacion;
+  try {
+    cargandoIcon.value = true;
+    const id = empresa.id;
+    const payload = { ...empresa };
+    delete payload.id;
+    delete payload.cuenta;
+    delete payload.eliminacion;
 
-  await api.patch("/empresa/" + id, payload);
-  dialogEmpresaEdit.value = false;
-  obtenerEmpresas();
+    await api.patch("/empresa/" + id, payload);
+
+    Notify.create({
+      type: "positive",
+      message: "Empresa actualizada exitosamente",
+      position: "top-right",
+    });
+
+    dialogEmpresaEdit.value = false;
+    obtenerEmpresas();
+  } catch (error) {
+    Notify.create({
+      type: "negative",
+      message: "Error al actualizar la empresa",
+      position: "top-right",
+    });
+  } finally {
+    cargandoIcon.value = false;
+  }
 };
 
 const eliminarEmpresa = (row) => {
   Notify.create({
     timeout: 0,
-    message: "¿Desea eliminar la empresa " + row.nombre + " ?",
+    message: `¿Está seguro de eliminar la empresa "${row.nombre}"?`,
+    html: true,
+    icon: "warning",
+    color: "warning",
+    position: "center",
     actions: [
       {
         label: "Eliminar",
-        color: "red",
+        color: "negative",
         handler: async () => {
-          await api.delete("/empresa/" + row.id);
-          obtenerEmpresas();
+          try {
+            await api.delete("/empresa/" + row.id);
+            Notify.create({
+              type: "positive",
+              message: "Empresa eliminada exitosamente",
+              position: "top-right",
+            });
+            obtenerEmpresas();
+          } catch (error) {
+            Notify.create({
+              type: "negative",
+              message: "Error al eliminar la empresa",
+              position: "top-right",
+            });
+          }
         },
       },
       {
         label: "Cancelar",
+        color: "primary",
+        flat: true,
         handler: () => {
           console.log("Eliminación cancelada");
         },
@@ -468,3 +681,72 @@ watch(dialogEmpresaEdit, (val) => {
   }
 });
 </script>
+
+<style lang="scss" scoped>
+.empresa-table {
+  .q-table__top {
+    padding: 16px;
+  }
+
+  .q-table thead th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+  }
+
+  .q-table tbody td {
+    padding: 12px 8px;
+  }
+}
+
+.search-input {
+  min-width: 300px;
+
+  .q-field__control {
+    border-radius: 8px;
+  }
+}
+
+.q-card {
+  border-radius: 12px;
+
+  &.bg-primary {
+    background: linear-gradient(
+      135deg,
+      var(--q-primary) 0%,
+      rgba(25, 118, 210, 0.9) 100%
+    );
+  }
+}
+
+.q-btn {
+  border-radius: 8px;
+  font-weight: 500;
+
+  &.q-btn--unelevated {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+  }
+}
+
+.q-input,
+.q-select {
+  .q-field__control {
+    border-radius: 8px;
+  }
+}
+
+.q-badge {
+  border-radius: 6px;
+  font-weight: 500;
+  padding: 4px 8px;
+}
+
+.q-chip {
+  border-radius: 6px;
+}
+</style>

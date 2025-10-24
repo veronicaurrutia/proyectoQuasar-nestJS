@@ -1,201 +1,322 @@
 <template>
-  <q-page>
-    <div class="text-center">
-      <q-card-section class="col-12 text-center">
-        <h5 class="q-ma-xs text-white">
-          <q-icon name="badge" />Mantendor de Categorias
-        </h5>
-        <!-- <div class="text-subtitle2">by John Doe</div> -->
-      </q-card-section>
+  <q-page class="q-pa-md">
+    <!-- Header Section -->
+    <div class="page-header q-pa-lg bg-gradient-primary">
+      <div class="container">
+        <div class="row items-center">
+          <div class="col-12 col-md-8">
+            <h1 class="page-title text-white q-mb-sm">
+              <q-icon name="category" size="48px" class="q-mr-md" />
+              Administrador de Categorías
+            </h1>
+            <p class="page-subtitle text-white">
+              Gestiona las categorías de tickets organizadas por áreas
+            </p>
+          </div>
+          <div class="col-12 col-md-4 text-right">
+            <q-btn
+              color="white"
+              text-color="primary"
+              icon="add"
+              label="Nueva Categoría"
+              size="lg"
+              class="glossy shadow-5"
+              @click="dialogCategoria = true"
+            />
+          </div>
+        </div>
+      </div>
     </div>
-    <div>
-      <q-card class="q-ma-md q-pa-md" elevation="13">
-        Descripción del mantenedor de Categorias<br /><br />
-        <q-btn
-          color="primary"
-          class="glossy"
-          icon="add"
-          @click="dialogCategoria = true"
-          >Agregar</q-btn
-        >
-        <div class="q-mt-md">
-          <q-table
-            bordered
-            title="Areas"
-            :rows="categorias"
-            :columns="columns"
-            :rows-per-page-options="[10]"
-            :filter="filter"
-          >
-            <template v-slot:body-cell-index="props">
-              <q-td :props="props" align="center">
-                {{ props.pageIndex + 1 }}
-              </q-td>
-            </template>
-            <template v-slot:body-cell-enabledopt="props">
-              <q-td :props="props" align="center">
+
+    <!-- Main Content -->
+    <div class="table-section q-pa-lg">
+      <div class="container">
+        <q-card class="q-mb-lg table-card" elevation="2">
+          <q-card-section class="q-pb-none">
+            <div class="row items-center justify-between q-mb-md">
+              <div class="col-auto">
+                <h3 class="table-title">
+                  <q-icon name="list_alt" class="q-mr-sm" />
+                  Lista de Categorías
+                </h3>
+                <div class="text-caption text-grey-6">
+                  Administra las categorías disponibles para la clasificación de
+                  tickets
+                </div>
+              </div>
+            </div>
+          </q-card-section>
+
+          <q-separator class="q-mx-md" />
+          <q-card-section>
+            <q-table
+              flat
+              bordered
+              :rows="categorias"
+              :columns="columns"
+              :filter="filter"
+              row-key="id"
+              :pagination="pagination"
+              class="categoria-table"
+            >
+          <template v-slot:top-right>
+            <q-input
+              dense
+              debounce="300"
+              v-model="filter"
+              placeholder="Buscar categoría..."
+              outlined
+              class="search-input"
+            >
+              <template v-slot:prepend>
+                <q-icon name="search" />
+              </template>
+              <template v-slot:append>
                 <q-icon
-                  :name="props.row.estado ? 'check_circle' : 'cancel'"
-                  :color="props.row.estado ? 'green' : 'red'"
+                  v-if="filter !== ''"
+                  name="clear"
+                  class="cursor-pointer"
+                  @click="filter = ''"
                 />
-              </q-td>
-            </template>
-            <template v-slot:body-cell-actions="props">
-              <q-td :props="props">
+              </template>
+            </q-input>
+          </template>
+
+          <template v-slot:body-cell-index="props">
+            <q-td :props="props" class="text-center">
+              <q-chip size="sm" color="grey-3" text-color="grey-8">
+                {{ props.pageIndex + 1 }}
+              </q-chip>
+            </q-td>
+          </template>
+
+          <template v-slot:body-cell-enabledopt="props">
+            <q-td :props="props" class="text-center">
+              <q-badge
+                :color="props.row.estado ? 'positive' : 'negative'"
+                :label="props.row.estado ? 'Activa' : 'Inactiva'"
+                class="q-px-sm"
+              />
+            </q-td>
+          </template>
+
+          <template v-slot:body-cell-actions="props">
+            <q-td :props="props" class="text-center">
+              <div class="q-gutter-xs">
                 <q-btn
+                  size="sm"
                   color="primary"
                   icon="edit"
+                  round
+                  flat
                   @click="editarArea(props.row)"
-                  flat
-                />
+                >
+                  <q-tooltip>Editar categoría</q-tooltip>
+                </q-btn>
                 <q-btn
-                  color="red"
+                  size="sm"
+                  color="negative"
                   icon="delete"
-                  @click="eliminarCategoria(props.row)"
+                  round
                   flat
-                />
-              </q-td>
-            </template>
-            <template v-slot:top-right>
+                  @click="eliminarCategoria(props.row)"
+                >
+                  <q-tooltip>Eliminar categoría</q-tooltip>
+                </q-btn>
+              </div>
+            </q-td>
+          </template>
+        </q-table>
+      </q-card-section>
+    </q-card>
+      </div>
+    </div>
+    <!-- DIALOGO CREAR CATEGORIA -->
+    <q-dialog v-model="dialogCategoria" persistent>
+      <q-card style="width: 700px; max-width: 90vw">
+        <q-card-section class="bg-primary text-white">
+          <div class="dialog-title">
+            <q-icon name="add_circle" class="q-mr-sm" />
+            Nueva Categoría
+          </div>
+          <div class="text-subtitle2">
+            Crea una nueva categoría para la clasificación de tickets
+          </div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-lg">
+          <div class="row q-col-gutter-md">
+            <div class="col-12">
               <q-input
-                borderless
-                dense
-                debounce="300"
-                v-model="filter"
-                placeholder="Search"
-                style="
-                  border: 1px solid #bbb;
-                  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.28);
-                  border-radius: 6px;
-                "
+                v-model="categoria.nombre"
+                label="Nombre de la categoría"
+                outlined
+                color="primary"
+                :rules="[(val) => !!val || 'El nombre es requerido']"
               >
-                <template v-slot:append>
-                  <q-icon name="search" />
+                <template v-slot:prepend>
+                  <q-icon name="label" />
                 </template>
               </q-input>
-            </template>
-          </q-table>
-        </div>
+            </div>
+
+            <div class="col-12">
+              <q-input
+                v-model="categoria.descripcion"
+                label="Descripción"
+                outlined
+                color="primary"
+                type="textarea"
+                rows="3"
+                hint="Describe el propósito de esta categoría"
+              >
+                <template v-slot:prepend>
+                  <q-icon name="description" />
+                </template>
+              </q-input>
+            </div>
+
+            <div class="col-12">
+              <q-select
+                v-model="categoria.areaId"
+                :options="areas"
+                label="Área asociada"
+                outlined
+                map-options
+                emit-value
+                color="primary"
+                :rules="[(val) => !!val || 'Debe seleccionar un área']"
+              >
+                <template v-slot:prepend>
+                  <q-icon name="business" />
+                </template>
+                <template v-slot:no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">
+                      No hay áreas disponibles
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+            </div>
+          </div>
+        </q-card-section>
+
+        <q-separator />
+
+        <q-card-actions align="right" class="q-pa-md">
+          <q-btn
+            flat
+            label="Cancelar"
+            color="grey-7"
+            v-close-popup
+            @click="dialogCategoria = false"
+            class="q-mr-sm"
+          />
+          <q-btn
+            unelevated
+            label="Crear Categoría"
+            color="primary"
+            @click="crearCategoria()"
+            :loading="cargandoIcon"
+            :disable="cargandoIcon"
+          />
+        </q-card-actions>
       </q-card>
-      <!-- DIALOGO CREAR EMPRESA -->
-      <q-dialog v-model="dialogCategoria" persistent>
-        <q-card
-          class="q-gutter-sm my-card"
-          style="width: 700px; max-width: 80vw"
-        >
-          <q-card-section class="row items-center">
-            <q-avatar square icon="domain" color="primary" text-color="white" />
-            <span class="q-ml-sm">Agregar Nueva Categoria</span>
-          </q-card-section>
-          <q-card-section>
-            <q-input
-              v-model="categoria.nombre"
-              label="Nombre"
-              lazy-rules
-              stack-label
-              dense
-              color="primary"
-            />
-            <q-input
-              v-model="categoria.descripcion"
-              label="Descripción"
-              stack-label
-              dense
-              lazy-rules
-              color="primary"
-            />
-            <!-- <q-select dense v-model="categoria.estado" :options="estados" label="Estado" map-options emit-value /> -->
-            <q-select
-              dense
-              v-model="categoria.areaId"
-              :options="areas"
-              label="Area"
-              map-options
-              emit-value
-            />
-          </q-card-section>
-          <q-card-actions align="right">
-            <template v-if="!cargandoIcon">
-              <q-btn
-                flat
-                label="Cancelar"
+    </q-dialog>
+    <!-- DIALOGO EDITAR CATEGORIA -->
+    <q-dialog v-model="dialogCategoriaEdit" persistent>
+      <q-card style="width: 700px; max-width: 90vw">
+        <q-card-section class="bg-primary text-white">
+          <div class="dialog-title">
+            <q-icon name="edit" class="q-mr-sm" />
+            Editar Categoría
+          </div>
+          <div class="text-subtitle2">
+            Modifica la información de la categoría seleccionada
+          </div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-lg">
+          <div class="row q-col-gutter-md">
+            <div class="col-12">
+              <q-input
+                v-model="categoria.nombre"
+                label="Nombre de la categoría"
+                outlined
                 color="primary"
-                v-close-popup
-                @click="dialogCategoria = false"
-              />
-              <q-btn
-                label="Confirmar"
+                :rules="[(val) => !!val || 'El nombre es requerido']"
+              >
+                <template v-slot:prepend>
+                  <q-icon name="label" />
+                </template>
+              </q-input>
+            </div>
+
+            <div class="col-12">
+              <q-input
+                v-model="categoria.descripcion"
+                label="Descripción"
+                outlined
                 color="primary"
-                @click="crearCategoria()"
-              />
-            </template>
-            <template v-if="cargandoIcon">
-              <span color="primary">Registrando...</span>
-              <q-spinner-hourglass color="primary" size="2em" />
-            </template>
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
-      <!-- DIALOGO EDITAR EMPRESA -->
-      <q-dialog v-model="dialogCategoriaEdit" persistent>
-        <q-card
-          class="q-gutter-sm my-card"
-          style="width: 700px; max-width: 80vw"
-        >
-          <q-card-section class="row items-center">
-            <q-avatar square icon="domain" color="primary" text-color="white" />
-            <span class="q-ml-sm">Modificar la Categoria</span>
-          </q-card-section>
-          <q-card-section>
-            <q-input
-              v-model="categoria.nombre"
-              label="Nombre"
-              lazy-rules
-              stack-label
-              dense
-              color="primary"
-            />
-            <q-input
-              v-model="categoria.descripcion"
-              label="Descripción"
-              stack-label
-              dense
-              lazy-rules
-              color="primary"
-            />
-            <!-- <q-select dense v-model="categoria.estado" :options="estados" label="Estado" map-options emit-value /> -->
-            <q-select
-              dense
-              v-model="categoria.areaId"
-              :options="areas"
-              label="Area"
-              map-options
-              emit-value
-            />
-          </q-card-section>
-          <q-card-actions align="right">
-            <template v-if="!cargandoIcon">
-              <q-btn
-                flat
-                label="Cancelar"
+                type="textarea"
+                rows="3"
+                hint="Describe el propósito de esta categoría"
+              >
+                <template v-slot:prepend>
+                  <q-icon name="description" />
+                </template>
+              </q-input>
+            </div>
+
+            <div class="col-12">
+              <q-select
+                v-model="categoria.areaId"
+                :options="areas"
+                label="Área asociada"
+                outlined
+                map-options
+                emit-value
                 color="primary"
-                v-close-popup
-                @click="dialogCategoriaEdit = false"
-              />
-              <q-btn
-                label="Confirmar"
-                color="primary"
-                @click="actualizarCategoria()"
-              />
-            </template>
-            <template v-if="cargandoIcon">
-              <span color="primary">Registrando...</span>
-              <q-spinner-hourglass color="primary" size="2em" />
-            </template>
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
-    </div>
+                :rules="[(val) => !!val || 'Debe seleccionar un área']"
+              >
+                <template v-slot:prepend>
+                  <q-icon name="business" />
+                </template>
+                <template v-slot:no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">
+                      No hay áreas disponibles
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+            </div>
+          </div>
+        </q-card-section>
+
+        <q-separator />
+
+        <q-card-actions align="right" class="q-pa-md">
+          <q-btn
+            flat
+            label="Cancelar"
+            color="grey-7"
+            v-close-popup
+            @click="dialogCategoriaEdit = false"
+            class="q-mr-sm"
+          />
+          <q-btn
+            unelevated
+            label="Actualizar"
+            color="primary"
+            @click="actualizarCategoria()"
+            :loading="cargandoIcon"
+            :disable="cargandoIcon"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -290,24 +411,42 @@ const pagination = ref({
 // Métodos
 // --------------------
 async function obtenerCategorias() {
-  if (usuarioStore.cuentaId == null) {
-    const response = await api.get("/categoria");
-    categorias.value = response.data;
-  } else {
-    if (empresaUsuario.value != null) {
+  try {
+    if (usuarioStore.cuentaId == null) {
       const response = await api.get("/categoria");
       categorias.value = response.data;
+    } else {
+      if (empresaUsuario.value != null) {
+        const response = await api.get("/categoria");
+        categorias.value = response.data;
+      }
     }
+  } catch (error) {
+    console.error("Error al obtener categorías:", error);
+    Notify.create({
+      message: "Error al cargar las categorías",
+      color: "negative",
+      icon: "error",
+    });
   }
 }
 
 async function obtenerAreas() {
-  areas.value = [];
-  const response = await api.get("/area/empresa/" + empresaUsuario.value);
-  response.data.forEach((item) => {
-    let dato = { label: item.nombre, value: item.id };
-    areas.value.push(dato);
-  });
+  try {
+    areas.value = [];
+    const response = await api.get("/area/empresa/" + empresaUsuario.value);
+    areas.value = response.data.map((item) => ({
+      label: item.nombre,
+      value: item.id,
+    }));
+  } catch (error) {
+    console.error("Error al obtener áreas:", error);
+    Notify.create({
+      message: "Error al cargar las áreas",
+      color: "negative",
+      icon: "error",
+    });
+  }
 }
 
 async function obtenerEmpresa() {
@@ -319,8 +458,46 @@ async function obtenerEmpresa() {
 }
 
 async function crearCategoria() {
-  await api.post("/categoria", categoria.value);
-  dialogCategoria.value = false;
+  if (!categoria.value.nombre?.trim()) {
+    Notify.create({
+      message: "El nombre de la categoría es requerido",
+      color: "warning",
+      icon: "warning",
+    });
+    return;
+  }
+
+  if (!categoria.value.areaId) {
+    Notify.create({
+      message: "Debe seleccionar un área",
+      color: "warning",
+      icon: "warning",
+    });
+    return;
+  }
+
+  try {
+    cargandoIcon.value = true;
+    await api.post("/categoria", categoria.value);
+
+    Notify.create({
+      message: "Categoría creada exitosamente",
+      color: "positive",
+      icon: "check_circle",
+    });
+
+    dialogCategoria.value = false;
+    obtenerCategorias();
+  } catch (error) {
+    console.error("Error al crear categoría:", error);
+    Notify.create({
+      message: "Error al crear la categoría",
+      color: "negative",
+      icon: "error",
+    });
+  } finally {
+    cargandoIcon.value = false;
+  }
 }
 
 function editarArea(row) {
@@ -329,35 +506,92 @@ function editarArea(row) {
 }
 
 async function actualizarCategoria() {
-  let id = categoria.value.id;
-  delete categoria.value.id;
-  delete categoria.value.area;
-  delete categoria.value.eliminacion;
+  if (!categoria.value.nombre?.trim()) {
+    Notify.create({
+      message: "El nombre de la categoría es requerido",
+      color: "warning",
+      icon: "warning",
+    });
+    return;
+  }
 
-  await api.patch("/categoria/" + id, categoria.value);
-  dialogCategoriaEdit.value = false;
+  if (!categoria.value.areaId) {
+    Notify.create({
+      message: "Debe seleccionar un área",
+      color: "warning",
+      icon: "warning",
+    });
+    return;
+  }
+
+  try {
+    cargandoIcon.value = true;
+    const id = categoria.value.id;
+    const payload = { ...categoria.value };
+    delete payload.id;
+    delete payload.area;
+    delete payload.eliminacion;
+
+    await api.patch("/categoria/" + id, payload);
+
+    Notify.create({
+      message: "Categoría actualizada exitosamente",
+      color: "positive",
+      icon: "check_circle",
+    });
+
+    dialogCategoriaEdit.value = false;
+    obtenerCategorias();
+  } catch (error) {
+    console.error("Error al actualizar categoría:", error);
+    Notify.create({
+      message: "Error al actualizar la categoría",
+      color: "negative",
+      icon: "error",
+    });
+  } finally {
+    cargandoIcon.value = false;
+  }
 }
 
 function eliminarCategoria(row) {
   Notify.create({
     timeout: 0,
-    message: "¿Desea eliminar la Categoría " + row.nombre + " ?",
+    message: `¿Está seguro de eliminar la categoría "${row.nombre}"?`,
+    html: true,
+    icon: "warning",
+    color: "warning",
+    position: "center",
     actions: [
       {
         label: "Eliminar",
-        color: "red",
+        color: "negative",
         handler: async () => {
           try {
             await api.delete("/categoria/" + row.id);
+            Notify.create({
+              message: "Categoría eliminada exitosamente",
+              color: "positive",
+              icon: "check_circle",
+            });
             obtenerCategorias();
           } catch (error) {
-            console.error("Error al eliminar la Categoría:", error);
+            console.error("Error al eliminar la categoría:", error);
+            Notify.create({
+              message: "Error al eliminar la categoría",
+              color: "negative",
+              icon: "error",
+            });
           }
         },
       },
       {
         label: "Cancelar",
-        handler: async () => {},
+        color: "primary",
+        flat: true,
+        handler: () => {
+          console.log("Eliminación cancelada");
+        },
       },
     ],
   });
@@ -400,3 +634,105 @@ onMounted(() => {
   obtenerCategorias();
 });
 </script>
+
+<style lang="scss" scoped>
+// Aprovecha los estilos globales definidos en app.scss
+.table-card {
+  border-radius: 20px;
+  border: 1px solid rgba(var(--q-primary-rgb), 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95);
+  overflow: hidden;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.categoria-table {
+  .q-table__top {
+    padding: 16px;
+  }
+
+  .q-table thead th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+  }
+
+  .q-table tbody td {
+    padding: 12px 8px;
+  }
+}
+
+.search-input {
+  min-width: 300px;
+
+  .q-field__control {
+    border-radius: 8px;
+  }
+}
+
+.q-card {
+  border-radius: 12px;
+
+  &.bg-primary {
+    background: linear-gradient(
+      135deg,
+      var(--q-primary) 0%,
+      rgba(25, 118, 210, 0.9) 100%
+    );
+  }
+}
+
+.q-btn {
+  border-radius: 8px;
+  font-weight: 500;
+
+  &.q-btn--unelevated {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+  }
+}
+
+.q-input,
+.q-select {
+  .q-field__control {
+    border-radius: 8px;
+  }
+}
+
+.q-badge {
+  border-radius: 6px;
+  font-weight: 500;
+  padding: 4px 8px;
+}
+
+.q-chip {
+  border-radius: 6px;
+}
+
+// Estados de hover mejorados
+.cursor-pointer {
+  cursor: pointer;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--q-primary) !important;
+  }
+}
+
+// Mejoras responsivas
+@media (max-width: $breakpoint-sm-max) {
+  .search-input {
+    min-width: 250px;
+  }
+}
+</style>

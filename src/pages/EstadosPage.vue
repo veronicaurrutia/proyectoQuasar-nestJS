@@ -1,218 +1,359 @@
 <template>
-  <q-page>
-    <div class="text-center">
-      <q-card-section class="col-12 text-center">
-        <h5 class="q-ma-xs text-white">
-          <q-icon name="change_circle" />Mantendor de Estados
-        </h5>
-        <!-- <div class="text-subtitle2">by John Doe</div> -->
-      </q-card-section>
+  <q-page class="q-pa-md">
+    <!-- Header Section -->
+    <div class="page-header q-pa-lg bg-gradient-primary">
+      <div class="container">
+        <div class="row items-center">
+          <div class="col-12 col-md-8">
+            <h1 class="page-title text-white q-mb-sm">
+              <q-icon name="assignment_turned_in" size="48px" class="q-mr-md" />
+              Administrador de Estados
+            </h1>
+            <p class="page-subtitle text-white">
+              Gestiona los estados del ciclo de vida de tickets
+            </p>
+          </div>
+          <div class="col-12 col-md-4 text-right">
+            <q-btn
+              color="white"
+              text-color="primary"
+              icon="add"
+              label="Nuevo Estado"
+              size="lg"
+              class="glossy shadow-5"
+              @click="dialogEstado = true"
+            />
+          </div>
+        </div>
+      </div>
     </div>
-    <div>
-      <q-card class="q-ma-md q-pa-md" elevation="13">
-        Descripción del mantenedor de estados<br /><br />
-        <q-btn
-          color="primary"
-          class="glossy"
-          icon="add"
-          @click="dialogEstado = true"
-          >Agregar</q-btn
+
+    <!-- Main Content -->
+    <div class="table-section q-pa-lg">
+      <div class="container">
+        <q-card class="q-mb-lg table-card" elevation="2">
+          <q-card-section class="q-pb-none">
+            <div class="row items-center justify-between q-mb-md">
+              <div class="col-auto">
+                <h3 class="table-title">
+                  <q-icon name="rule" class="q-mr-sm" />
+                  Lista de Estados
+                </h3>
+                <div class="text-caption text-grey-6">
+                  Define los estados disponibles para el seguimiento de tickets
+                </div>
+              </div>
+            </div>
+          </q-card-section>
+
+          <q-separator class="q-mx-md" />
+      <q-card-section>
+        <q-table
+          flat
+          bordered
+          :rows="estados"
+          :columns="columns"
+          :filter="filter"
+          row-key="id"
+          :pagination="pagination"
+          class="estados-table"
         >
-        <div class="q-mt-md">
-          <q-table
-            bordered
-            title="Estados"
-            :rows="estados"
-            :columns="columns"
-            :rows-per-page-options="[10]"
-            :filter="filter"
-          >
-            <template v-slot:body-cell-enabledopt="props">
-              <q-td :props="props" align="center">
+          <template v-slot:top-right>
+            <q-input
+              dense
+              debounce="300"
+              v-model="filter"
+              placeholder="Buscar estado..."
+              outlined
+              class="search-input"
+            >
+              <template v-slot:prepend>
+                <q-icon name="search" />
+              </template>
+              <template v-slot:append>
                 <q-icon
-                  :name="props.row.estado ? 'check_circle' : 'cancel'"
-                  :color="props.row.estado ? 'green' : 'red'"
+                  v-if="filter !== ''"
+                  name="clear"
+                  class="cursor-pointer"
+                  @click="filter = ''"
                 />
-              </q-td>
-            </template>
-            <template v-slot:body-cell-actions="props">
-              <q-td :props="props">
+              </template>
+            </q-input>
+          </template>
+
+          <template v-slot:body-cell-enabledopt="props">
+            <q-td :props="props" class="text-center">
+              <q-badge
+                :color="props.row.estado ? 'positive' : 'negative'"
+                :label="props.row.estado ? 'Activo' : 'Inactivo'"
+                class="q-px-sm"
+              />
+            </q-td>
+          </template>
+
+          <template v-slot:body-cell-actions="props">
+            <q-td :props="props" class="text-center">
+              <div class="q-gutter-xs">
                 <q-btn
+                  size="sm"
                   color="primary"
                   icon="edit"
+                  round
+                  flat
                   @click="editarEstado(props.row)"
-                  flat
-                />
+                >
+                  <q-tooltip>Editar estado</q-tooltip>
+                </q-btn>
                 <q-btn
-                  color="red"
+                  size="sm"
+                  color="negative"
                   icon="delete"
-                  @click="eliminarEstado(props.row)"
+                  round
                   flat
-                />
-              </q-td>
-            </template>
-            <template v-slot:top-right>
-              <q-input
-                borderless
-                dense
-                debounce="300"
-                v-model="filter"
-                placeholder="Search"
-                style="
-                  border: 1px solid #bbb;
-                  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.28);
-                  border-radius: 6px;
-                "
-              >
-                <template v-slot:append>
-                  <q-icon name="search" />
-                </template>
-              </q-input>
-            </template>
-          </q-table>
-        </div>
-      </q-card>
-      <!-- DIALOGO CREAR EMPRESA  -->
-      <q-dialog v-model="dialogEstado" persistent>
-        <q-card
-          class="q-gutter-sm my-card"
-          style="width: 700px; max-width: 80vw"
-        >
-          <q-card-section class="row items-center">
-            <q-avatar square icon="domain" color="primary" text-color="white" />
-            <span class="q-ml-sm">Agregar Nuevo Estado</span>
-          </q-card-section>
-          <q-card-section>
+                  @click="eliminarEstado(props.row)"
+                >
+                  <q-tooltip>Eliminar estado</q-tooltip>
+                </q-btn>
+              </div>
+            </q-td>
+          </template>
+        </q-table>
+      </q-card-section>
+    </q-card>
+      </div>
+    </div>
+    <!-- DIALOGO CREAR ESTADO -->
+    <q-dialog v-model="dialogEstado" persistent>
+      <q-card style="width: 800px; max-width: 90vw">
+        <q-card-section class="bg-primary text-white">
+          <div class="text-h6">
+            <q-icon name="add_task" class="q-mr-sm" />
+            Nuevo Estado
+          </div>
+          <div class="text-subtitle2">
+            Configura un nuevo estado para el flujo de tickets
+          </div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-lg">
+          <div class="q-mb-lg">
+            <div class="text-subtitle1 q-mb-md text-grey-8">
+              <q-icon name="settings" class="q-mr-sm" />
+              Nivel de aplicación
+            </div>
             <q-option-group
               v-model="group"
               :options="options"
               color="primary"
               inline
+              class="scope-selector"
             />
-          </q-card-section>
-          <q-card-section>
-            <q-input
-              v-model="estado.nombre"
-              label="Nombre"
-              lazy-rules
-              stack-label
-              dense
-              color="primary"
-            />
-            <q-input
-              v-model="estado.descripcion"
-              label="Descripción"
-              stack-label
-              dense
-              lazy-rules
-              color="primary"
-            />
-            <q-input
-              v-model="estado.codigo"
-              label="Codigo"
-              stack-label
-              dense
-              lazy-rules
-              color="primary"
-            />
-            <q-select
-              v-if="group != null"
-              dense
-              v-model="estado.empresaId"
-              :options="empresas"
-              label="Empresa"
-              map-options
-              emit-value
-            />
-            <q-select
-              v-if="group == 2 && estado.empresaId != null"
-              dense
-              v-model="estado.areaId"
-              :options="areas"
-              label="Area"
-              map-options
-              emit-value
-            />
-          </q-card-section>
-          <q-card-actions align="right">
-            <template v-if="!cargandoIcon">
-              <q-btn
-                flat
-                label="Cancelar"
+          </div>
+
+          <q-separator class="q-mb-lg" />
+
+          <div class="row q-col-gutter-md">
+            <div class="col-12 col-md-6">
+              <q-input
+                v-model="estado.nombre"
+                label="Nombre del estado"
+                outlined
                 color="primary"
-                v-close-popup
-                @click="dialogEstado = false"
-              />
-              <q-btn label="Confirmar" color="primary" @click="crearEstado()" />
-            </template>
-            <template v-if="cargandoIcon">
-              <span color="primary">Registrando...</span>
-              <q-spinner-hourglass color="primary" size="2em" />
-            </template>
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
-      <!-- DIALOGO EDITAR ESTADO -->
-      <q-dialog v-model="dialogEstadoEdit" persistent>
-        <q-card
-          class="q-gutter-sm my-card"
-          style="width: 700px; max-width: 80vw"
-        >
-          <q-card-section class="row items-center">
-            <q-avatar square icon="domain" color="primary" text-color="white" />
-            <span class="q-ml-sm">Modificar la Estado</span>
-          </q-card-section>
-          <q-card-section>
-            <q-input
-              v-model="estado.nombre"
-              label="Nombre"
-              lazy-rules
-              stack-label
-              dense
-              color="primary"
-            />
-            <q-input
-              v-model="estado.descripcion"
-              label="Descripción"
-              stack-label
-              dense
-              lazy-rules
-              color="primary"
-            />
-            <q-input
-              v-model="estado.codigo"
-              label="Codigo"
-              stack-label
-              dense
-              lazy-rules
-              color="primary"
-            />
-            <!-- <q-select dense v-model="estado.empresaId" :options="empresas" label="Empresa" map-options
-                            emit-value /> -->
-          </q-card-section>
-          <q-card-actions align="right">
-            <template v-if="!cargandoIcon">
-              <q-btn
-                flat
-                label="Cancelar"
+                :rules="[(val) => !!val || 'El nombre es requerido']"
+              >
+                <template v-slot:prepend>
+                  <q-icon name="label" />
+                </template>
+              </q-input>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <q-input
+                v-model="estado.codigo"
+                label="Código identificador"
+                outlined
                 color="primary"
-                v-close-popup
-                @click="dialogEstadoEdit = false"
-              />
-              <q-btn
-                label="Confirmar"
+                hint="Código único para el estado"
+                :rules="[(val) => !!val || 'El código es requerido']"
+              >
+                <template v-slot:prepend>
+                  <q-icon name="tag" />
+                </template>
+              </q-input>
+            </div>
+
+            <div class="col-12">
+              <q-input
+                v-model="estado.descripcion"
+                label="Descripción"
+                outlined
                 color="primary"
-                @click="actualizarEstado()"
-              />
-            </template>
-            <template v-if="cargandoIcon">
-              <span color="primary">Registrando...</span>
-              <q-spinner-hourglass color="primary" size="2em" />
-            </template>
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
-    </div>
+                type="textarea"
+                rows="3"
+                hint="Describe el propósito de este estado"
+              >
+                <template v-slot:prepend>
+                  <q-icon name="description" />
+                </template>
+              </q-input>
+            </div>
+
+            <div class="col-12" v-if="group != null">
+              <q-select
+                v-model="estado.empresaId"
+                :options="empresas"
+                label="Empresa"
+                outlined
+                map-options
+                emit-value
+                color="primary"
+                :rules="[(val) => !!val || 'Debe seleccionar una empresa']"
+              >
+                <template v-slot:prepend>
+                  <q-icon name="business" />
+                </template>
+                <template v-slot:no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">
+                      No hay empresas disponibles
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+            </div>
+
+            <div class="col-12" v-if="group == 2 && estado.empresaId != null">
+              <q-select
+                v-model="estado.areaId"
+                :options="areas"
+                label="Área específica"
+                outlined
+                map-options
+                emit-value
+                color="primary"
+                hint="Selecciona el área donde aplicará este estado"
+              >
+                <template v-slot:prepend>
+                  <q-icon name="domain" />
+                </template>
+                <template v-slot:no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">
+                      No hay áreas disponibles para esta empresa
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+            </div>
+          </div>
+        </q-card-section>
+
+        <q-separator />
+
+        <q-card-actions align="right" class="q-pa-md">
+          <q-btn
+            flat
+            label="Cancelar"
+            color="grey-7"
+            v-close-popup
+            @click="dialogEstado = false"
+            class="q-mr-sm"
+          />
+          <q-btn
+            unelevated
+            label="Crear Estado"
+            color="primary"
+            @click="crearEstado()"
+            :loading="cargandoIcon"
+            :disable="cargandoIcon"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <!-- DIALOGO EDITAR ESTADO -->
+    <q-dialog v-model="dialogEstadoEdit" persistent>
+      <q-card style="width: 700px; max-width: 90vw">
+        <q-card-section class="bg-primary text-white">
+          <div class="text-h6">
+            <q-icon name="edit" class="q-mr-sm" />
+            Editar Estado
+          </div>
+          <div class="text-subtitle2">
+            Modifica la información del estado seleccionado
+          </div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-lg">
+          <div class="row q-col-gutter-md">
+            <div class="col-12 col-md-6">
+              <q-input
+                v-model="estado.nombre"
+                label="Nombre del estado"
+                outlined
+                color="primary"
+                :rules="[(val) => !!val || 'El nombre es requerido']"
+              >
+                <template v-slot:prepend>
+                  <q-icon name="label" />
+                </template>
+              </q-input>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <q-input
+                v-model="estado.codigo"
+                label="Código identificador"
+                outlined
+                color="primary"
+                hint="Código único para el estado"
+                :rules="[(val) => !!val || 'El código es requerido']"
+              >
+                <template v-slot:prepend>
+                  <q-icon name="tag" />
+                </template>
+              </q-input>
+            </div>
+
+            <div class="col-12">
+              <q-input
+                v-model="estado.descripcion"
+                label="Descripción"
+                outlined
+                color="primary"
+                type="textarea"
+                rows="3"
+                hint="Describe el propósito de este estado"
+              >
+                <template v-slot:prepend>
+                  <q-icon name="description" />
+                </template>
+              </q-input>
+            </div>
+          </div>
+        </q-card-section>
+
+        <q-separator />
+
+        <q-card-actions align="right" class="q-pa-md">
+          <q-btn
+            flat
+            label="Cancelar"
+            color="grey-7"
+            v-close-popup
+            @click="dialogEstadoEdit = false"
+            class="q-mr-sm"
+          />
+          <q-btn
+            unelevated
+            label="Actualizar"
+            color="primary"
+            @click="actualizarEstado()"
+            :loading="cargandoIcon"
+            :disable="cargandoIcon"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -322,24 +463,88 @@ const areaId = ref(null);
 
 // ✅ methods
 const obtenerEstados = async () => {
-  estados.value = [];
-  const response = await api.get("/estados");
-  estados.value = response.data;
+  try {
+    estados.value = [];
+    const response = await api.get("/estados");
+    estados.value = response.data;
+  } catch (error) {
+    console.error("Error al obtener estados:", error);
+    Notify.create({
+      message: "Error al cargar los estados",
+      color: "negative",
+      icon: "error",
+    });
+  }
 };
 
 const crearEstado = async () => {
-  await api.post("/estados", estado);
-  dialogEstado.value = false;
-  obtenerEstados();
+  if (!estado.nombre?.trim()) {
+    Notify.create({
+      message: "El nombre del estado es requerido",
+      color: "warning",
+      icon: "warning",
+    });
+    return;
+  }
+
+  if (!estado.codigo?.trim()) {
+    Notify.create({
+      message: "El código del estado es requerido",
+      color: "warning",
+      icon: "warning",
+    });
+    return;
+  }
+
+  if (group.value && !estado.empresaId) {
+    Notify.create({
+      message: "Debe seleccionar una empresa",
+      color: "warning",
+      icon: "warning",
+    });
+    return;
+  }
+
+  try {
+    cargandoIcon.value = true;
+    await api.post("/estados", estado);
+
+    Notify.create({
+      message: "Estado creado exitosamente",
+      color: "positive",
+      icon: "check_circle",
+    });
+
+    dialogEstado.value = false;
+    obtenerEstados();
+  } catch (error) {
+    console.error("Error al crear estado:", error);
+    Notify.create({
+      message: "Error al crear el estado",
+      color: "negative",
+      icon: "error",
+    });
+  } finally {
+    cargandoIcon.value = false;
+  }
 };
 
 const obtenerAreasEmpresa = async () => {
-  areas.value = [];
-  const response = await api.get("/area/empresa/" + estado.empresaId);
-  areas.value = response.data.map((item) => ({
-    value: item.id,
-    label: item.nombre,
-  }));
+  try {
+    areas.value = [];
+    const response = await api.get("/area/empresa/" + estado.empresaId);
+    areas.value = response.data.map((item) => ({
+      value: item.id,
+      label: item.nombre,
+    }));
+  } catch (error) {
+    console.error("Error al obtener áreas:", error);
+    Notify.create({
+      message: "Error al cargar las áreas de la empresa",
+      color: "negative",
+      icon: "error",
+    });
+  }
 };
 
 const editarEstado = (row) => {
@@ -348,34 +553,103 @@ const editarEstado = (row) => {
 };
 
 const obtenerEmpresa = async () => {
-  const response = await api.get("/empresa/" + empresaId.value);
-  empresas.value = [{ value: response.data.id, label: response.data.nombre }];
+  try {
+    const response = await api.get("/empresa/" + empresaId.value);
+    empresas.value = [{ value: response.data.id, label: response.data.nombre }];
+  } catch (error) {
+    console.error("Error al obtener empresa:", error);
+    Notify.create({
+      message: "Error al cargar la información de la empresa",
+      color: "negative",
+      icon: "error",
+    });
+  }
 };
 
 const actualizarEstado = async () => {
-  const id = estado.id;
-  const payload = { ...estado };
-  delete payload.id;
-  await api.patch("/estados/" + id, payload);
-  dialogEstadoEdit.value = false;
-  obtenerEstados();
+  if (!estado.nombre?.trim()) {
+    Notify.create({
+      message: "El nombre del estado es requerido",
+      color: "warning",
+      icon: "warning",
+    });
+    return;
+  }
+
+  if (!estado.codigo?.trim()) {
+    Notify.create({
+      message: "El código del estado es requerido",
+      color: "warning",
+      icon: "warning",
+    });
+    return;
+  }
+
+  try {
+    cargandoIcon.value = true;
+    const id = estado.id;
+    const payload = { ...estado };
+    delete payload.id;
+    delete payload.empresa;
+    delete payload.area;
+
+    await api.patch("/estados/" + id, payload);
+
+    Notify.create({
+      message: "Estado actualizado exitosamente",
+      color: "positive",
+      icon: "check_circle",
+    });
+
+    dialogEstadoEdit.value = false;
+    obtenerEstados();
+  } catch (error) {
+    console.error("Error al actualizar estado:", error);
+    Notify.create({
+      message: "Error al actualizar el estado",
+      color: "negative",
+      icon: "error",
+    });
+  } finally {
+    cargandoIcon.value = false;
+  }
 };
 
 const eliminarEstado = (row) => {
   Notify.create({
     timeout: 0,
-    message: "¿ Desea eliminar el estado " + row.nombre + " ? ",
+    message: `¿Está seguro de eliminar el estado "${row.nombre}"?`,
+    html: true,
+    icon: "warning",
+    color: "warning",
+    position: "center",
     actions: [
       {
         label: "Eliminar",
-        color: "red",
+        color: "negative",
         handler: async () => {
-          await api.delete("/estados/" + row.id);
-          obtenerEstados();
+          try {
+            await api.delete("/estados/" + row.id);
+            Notify.create({
+              message: "Estado eliminado exitosamente",
+              color: "positive",
+              icon: "check_circle",
+            });
+            obtenerEstados();
+          } catch (error) {
+            console.error("Error al eliminar estado:", error);
+            Notify.create({
+              message: "Error al eliminar el estado",
+              color: "negative",
+              icon: "error",
+            });
+          }
         },
       },
       {
         label: "Cancelar",
+        color: "primary",
+        flat: true,
         handler: () => {
           console.log("Eliminación cancelada");
         },
@@ -421,3 +695,116 @@ watch(
   }
 );
 </script>
+
+<style lang="scss" scoped>
+.estados-table {
+  .q-table__top {
+    padding: 16px;
+  }
+
+  .q-table thead th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+  }
+
+  .q-table tbody td {
+    padding: 12px 8px;
+  }
+}
+
+.search-input {
+  min-width: 300px;
+
+  .q-field__control {
+    border-radius: 8px;
+  }
+}
+
+.scope-selector {
+  .q-radio {
+    padding: 8px 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    margin-right: 12px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background-color: rgba(25, 118, 210, 0.1);
+    }
+
+    &.q-radio--checked {
+      background-color: rgba(25, 118, 210, 0.1);
+      border-color: var(--q-primary);
+    }
+  }
+}
+
+.q-card {
+  border-radius: 12px;
+
+  &.bg-primary {
+    background: linear-gradient(
+      135deg,
+      var(--q-primary) 0%,
+      rgba(25, 118, 210, 0.9) 100%
+    );
+  }
+}
+
+.q-btn {
+  border-radius: 8px;
+  font-weight: 500;
+
+  &.q-btn--unelevated {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+  }
+}
+
+.q-input,
+.q-select {
+  .q-field__control {
+    border-radius: 8px;
+  }
+}
+
+.q-badge {
+  border-radius: 6px;
+  font-weight: 500;
+  padding: 4px 8px;
+}
+
+// Estados de hover mejorados
+.cursor-pointer {
+  cursor: pointer;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--q-primary) !important;
+  }
+}
+
+// Separadores visuales
+.q-separator {
+  margin: 16px 0;
+}
+
+// Mejoras responsivas
+@media (max-width: $breakpoint-sm-max) {
+  .search-input {
+    min-width: 250px;
+  }
+
+  .scope-selector {
+    .q-radio {
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+  }
+}
+</style>

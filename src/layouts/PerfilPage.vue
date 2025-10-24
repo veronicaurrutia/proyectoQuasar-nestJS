@@ -126,6 +126,6 @@ function goToEditPerfil() {
 }
 
 function logout() {
-  router.push("/home");
+  router.push("/");
 }
 </script>

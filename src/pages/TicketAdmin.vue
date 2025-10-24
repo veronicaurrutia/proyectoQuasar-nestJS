@@ -1,24 +1,42 @@
 <template>
-  <q-page>
-    <div class="text-center">
-      <q-card-section class="col-12 text-center">
-        <h5 class="q-ma-xs text-white">
-          <q-icon name="local_activity" />Administración de Tickets
-        </h5>
-        <!-- <div class="text-subtitle2">by John Doe</div> -->
-      </q-card-section>
+  <q-page class="tickets-admin-page">
+    <!-- Header Section -->
+    <div class="page-header q-pa-lg bg-gradient-primary">
+      <div class="container">
+        <div class="row items-center">
+          <div class="col-12 col-md-8">
+            <h1 class="page-title text-white q-mb-sm">
+              <q-icon name="local_activity" size="48px" class="q-mr-md" />
+              Administración de Tickets
+            </h1>
+            <p class="page-subtitle text-white">
+              Administra los tickets para los requerimientos de tu área
+            </p>
+          </div>
+          <div class="col-12 col-md-4 text-right">
+            <q-btn
+              color="white"
+              text-color="primary"
+              icon="add"
+              label="Crear Ticket"
+              size="lg"
+              class="glossy shadow-5"
+              @click="dialogTicket = true"
+            />
+          </div>
+        </div>
+      </div>
     </div>
-    <div>
-      <q-card class="q-ma-md q-pa-md" elevation="13">
-        aquí podrás administrar los ticket para los requerimientos de tu Area<br /><br />
-        <q-btn
-          color="primary"
-          class="glossy"
-          icon="add"
-          @click="dialogTicket = true"
-          >CrearTicket?</q-btn
-        >
-        <div class="q-mt-md">
+
+    <!-- Main Content -->
+    <div class="table-section q-pa-lg">
+      <div class="container">
+        <q-card class="table-card" elevation="13">
+          <q-card-section>
+            <h3 class="table-title q-mb-md">
+              <q-icon name="list_alt" class="q-mr-sm" />
+              Lista de Tickets
+            </h3>
           <q-table
             bordered
             title="Tickets"
@@ -126,8 +144,10 @@
               </q-td>
             </template>
           </q-table>
-        </div>
+        </q-card-section>
       </q-card>
+      </div>
+    </div>
       <!-- DIALOGO CREAR EMPRESA -->
       <q-dialog v-model="dialogTicket" persistent>
         <q-card
@@ -288,7 +308,6 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
-    </div>
   </q-page>
 </template>
 
@@ -560,3 +579,21 @@ onMounted(() => {
   obtenerAreas();
 });
 </script>
+
+<style lang="scss" scoped>
+// Aprovecha los estilos globales definidos en app.scss
+.table-card {
+  border-radius: 20px;
+  border: 1px solid rgba(var(--q-primary-rgb), 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95);
+  overflow: hidden;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+</style>

@@ -1,119 +1,265 @@
 <template>
   <q-page class="q-pa-md">
-    <!-- Título -->
-    <div class="text-center">
-      <q-card-section class="col-12 text-center">
-        <h5 class="q-ma-xs text-white">
-          <q-icon name="badge" /> Mantenedor de Permisos
-        </h5>
-      </q-card-section>
-    </div>
-
-    <!-- Selector de perfil -->
-    <q-card class="q-pa-md q-mb-md" bordered>
-      <q-select
-        v-model="perfilSeleccionado"
-        :options="perfiles"
-        option-label="nombre"
-        option-value="id"
-        label="Seleccionar Perfil"
-        outlined
-        dense
-        class="q-mb-sm"
-        @update:model-value="cargarPermisos"
-      />
-    </q-card>
-
-    <!-- Contenido principal -->
-    <div v-if="perfilSeleccionado" class="row q-col-gutter-md">
-      <!-- Menús Nivel 1 -->
-      <div class="col-3">
-        <q-card
-          v-for="menu1 in permisos"
-          :key="menu1.id"
-          class="q-mb-sm cursor-pointer"
-          @click="seleccionarMenu(menu1)"
-          :class="{ 'bg-grey-2': menuSeleccionado?.id === menu1.id }"
-        >
-          <q-card-section class="row items-center justify-between">
-            <div class="row items-center">
-              <q-icon
-                :name="menu1.icono || 'folder'"
-                size="24px"
-                class="q-mr-sm"
-              />
-              <div class="text-subtitle2">{{ menu1.nombre }}</div>
-            </div>
-            <q-toggle
-              v-model="menu1.habilitado"
-              @click.stop="togglePermiso(menu1)"
-              color="primary"
-            />
-          </q-card-section>
-        </q-card>
-      </div>
-
-      <!-- Menús Nivel 2 -->
-      <div class="col">
-        <q-card v-if="menuSeleccionado">
-          <q-card-section>
-            <div class="text-h6 row items-center">
-              <q-icon
-                :name="menuSeleccionado.icono || 'folder'"
-                class="q-mr-sm"
-              />
-              {{ menuSeleccionado.nombre }}
-            </div>
-            <div class="text-caption text-grey">Submenús disponibles</div>
-          </q-card-section>
-
-          <q-separator />
-
-          <q-card-section>
-            <div class="row q-col-gutter-md">
-              <div
-                v-for="submenu in menuSeleccionado.nivel2"
-                :key="submenu.id"
-                class="col-6 col-md-4"
-              >
-                <q-card flat bordered class="q-pa-sm">
-                  <div class="row items-center justify-between">
-                    <div class="row items-center">
-                      <q-icon
-                        :name="submenu.icon || 'menu'"
-                        size="22px"
-                        class="q-mr-sm"
-                      />
-                      <div>{{ submenu.nombre }}</div>
-                    </div>
-                    <q-toggle
-                      v-model="submenu.habilitado"
-                      color="primary"
-                      @click.stop="togglePermiso(submenu, menuSeleccionado)"
-                    />
-                  </div>
-                </q-card>
-              </div>
-            </div>
-          </q-card-section>
-        </q-card>
-
-        <div v-else class="text-white text-center q-mt-xl">
-          <q-icon name="arrow_back" size="40px" class="q-mb-sm" />
-          <div>Selecciona un menú de la izquierda</div>
+    <!-- Header Section -->
+    <div class="page-header q-pa-lg bg-gradient-primary">
+      <div class="container">
+        <div class="row items-center">
+          <div class="col-12 col-md-8">
+            <h1 class="page-title text-white q-mb-sm">
+              <q-icon name="security" size="48px" class="q-mr-md" />
+              Administrador de Permisos
+            </h1>
+            <p class="page-subtitle text-white">
+              Gestiona los permisos y accesos por perfil de usuario
+            </p>
+          </div>
         </div>
       </div>
     </div>
 
-    <div v-else class="text-center text-grey q-mt-lg">
-      <q-icon name="person_search" size="40px" class="q-mb-sm" />
-      <div>Selecciona un perfil para administrar permisos</div>
+    <!-- Selector de perfil -->
+    <div class="table-section q-pa-lg">
+      <div class="container">
+        <q-card class="q-mb-lg table-card" elevation="2">
+          <q-card-section class="q-pb-none">
+            <h3 class="table-title q-mb-sm">
+              <q-icon name="person" class="q-mr-sm" />
+              Selección de Perfil
+            </h3>
+            <div class="text-caption text-grey-6 q-mb-md">
+              Elige el perfil de usuario para administrar sus permisos
+            </div>
+          </q-card-section>
+
+      <q-separator class="q-mx-md" />
+
+      <q-card-section>
+        <q-select
+          v-model="perfilSeleccionado"
+          :options="perfiles"
+          option-label="nombre"
+          option-value="id"
+          label="Seleccionar Perfil"
+          outlined
+          dense
+          class="q-mb-sm"
+          @update:model-value="cargarPermisos"
+        />
+        </q-card-section>
+      </q-card>
+      </div>
     </div>
+
+    <!-- Contenido principal -->
+    <div v-if="perfilSeleccionado" class="row q-col-gutter-lg">
+      <!-- Panel de navegación - Menús Nivel 1 -->
+      <div class="col-12 col-md-4">
+        <q-card elevation="2" class="modules-panel">
+          <q-card-section class="bg-grey-1">
+            <h3 class="table-title">
+              <q-icon name="account_tree" class="q-mr-sm" />
+              Módulos Principales
+            </h3>
+            <div class="text-caption text-grey-6">
+              {{ permisos.length }} módulos disponibles
+            </div>
+          </q-card-section>
+
+          <q-separator />
+
+          <q-card-section class="q-pa-none">
+            <q-list class="modules-list">
+              <q-item
+                v-for="menu1 in permisos"
+                :key="menu1.id"
+                clickable
+                @click="seleccionarMenu(menu1)"
+                :class="{
+                  'bg-primary text-white': menuSeleccionado?.id === menu1.id,
+                  'menu-item': true,
+                }"
+                class="menu-item-transition"
+              >
+                <q-item-section avatar>
+                  <q-icon
+                    :name="menu1.icono || 'folder'"
+                    size="24px"
+                    :color="
+                      menuSeleccionado?.id === menu1.id ? 'white' : 'primary'
+                    "
+                  />
+                </q-item-section>
+
+                <q-item-section>
+                  <q-item-label class="text-weight-medium">
+                    {{ menu1.nombre }}
+                  </q-item-label>
+                  <q-item-label
+                    caption
+                    :class="
+                      menuSeleccionado?.id === menu1.id
+                        ? 'text-grey-3'
+                        : 'text-grey-6'
+                    "
+                  >
+                    {{ menu1.nivel2?.length || 0 }} submenús
+                  </q-item-label>
+                </q-item-section>
+
+                <q-item-section side>
+                  <q-toggle
+                    v-model="menu1.habilitado"
+                    @click.stop="togglePermiso(menu1)"
+                    :color="
+                      menuSeleccionado?.id === menu1.id ? 'white' : 'primary'
+                    "
+                    size="sm"
+                  />
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-card-section>
+        </q-card>
+      </div>
+
+      <!-- Panel de detalles - Menús Nivel 2 -->
+      <div class="col-12 col-md-8">
+        <q-card v-if="menuSeleccionado" elevation="2">
+          <q-card-section class="bg-grey-1">
+            <div class="row items-center justify-between">
+              <div>
+                <h3 class="table-title row items-center">
+                  <q-icon
+                    :name="menuSeleccionado.icono || 'folder'"
+                    class="q-mr-sm"
+                    color="primary"
+                  />
+                  {{ menuSeleccionado.nombre }}
+                </h3>
+                <div class="text-caption text-grey-6">
+                  Configuración de submenús y permisos específicos
+                </div>
+              </div>
+              <q-badge
+                :color="menuSeleccionado.habilitado ? 'positive' : 'negative'"
+                :label="
+                  menuSeleccionado.habilitado ? 'Habilitado' : 'Deshabilitado'
+                "
+                class="q-px-sm"
+              />
+            </div>
+          </q-card-section>
+
+          <q-separator />
+
+          <q-card-section
+            v-if="menuSeleccionado.nivel2 && menuSeleccionado.nivel2.length > 0"
+          >
+            <div class="row q-col-gutter-md">
+              <div
+                v-for="submenu in menuSeleccionado.nivel2"
+                :key="submenu.id"
+                class="col-12 col-sm-6 col-lg-4"
+              >
+                <q-card
+                  flat
+                  bordered
+                  class="submenu-card"
+                  :class="{ 'submenu-disabled': !submenu.habilitado }"
+                >
+                  <q-card-section class="q-pa-md">
+                    <div class="row items-center justify-between q-mb-sm">
+                      <div class="row items-center">
+                        <q-icon
+                          :name="submenu.icon || 'menu'"
+                          size="20px"
+                          class="q-mr-sm"
+                          :color="submenu.habilitado ? 'primary' : 'grey-5'"
+                        />
+                        <div
+                          class="text-subtitle2 text-weight-medium"
+                          :class="
+                            submenu.habilitado ? 'text-grey-8' : 'text-grey-5'
+                          "
+                        >
+                          {{ submenu.nombre }}
+                        </div>
+                      </div>
+                      <q-toggle
+                        v-model="submenu.habilitado"
+                        color="primary"
+                        @click.stop="togglePermiso(submenu, menuSeleccionado)"
+                        size="sm"
+                      />
+                    </div>
+                    <div
+                      class="text-caption"
+                      :class="
+                        submenu.habilitado ? 'text-grey-6' : 'text-grey-4'
+                      "
+                    >
+                      Acceso al módulo {{ submenu.nombre.toLowerCase() }}
+                    </div>
+                  </q-card-section>
+                </q-card>
+              </div>
+            </div>
+          </q-card-section>
+
+          <q-card-section v-else class="text-center q-py-xl">
+            <q-icon
+              name="folder_open"
+              size="48px"
+              color="grey-4"
+              class="q-mb-md"
+            />
+            <div class="text-h6 text-grey-5 q-mb-sm">Sin submenús</div>
+            <div class="text-body2 text-grey-6">
+              Este módulo no tiene submenús configurados
+            </div>
+          </q-card-section>
+        </q-card>
+
+        <!-- Estado inicial -->
+        <q-card v-else class="text-center q-py-xl" elevation="2">
+          <q-card-section>
+            <q-icon
+              name="touch_app"
+              size="48px"
+              color="grey-4"
+              class="q-mb-md"
+            />
+            <div class="text-h6 text-grey-5 q-mb-sm">Selecciona un módulo</div>
+            <div class="text-body2 text-grey-6">
+              Elige un módulo del panel izquierdo para gestionar sus permisos
+            </div>
+          </q-card-section>
+        </q-card>
+      </div>
+    </div>
+
+    <!-- Estado sin perfil seleccionado -->
+    <q-card v-else class="text-center q-py-xl" elevation="2">
+      <q-card-section>
+        <q-icon
+          name="person_search"
+          size="64px"
+          color="grey-4"
+          class="q-mb-md"
+        />
+        <div class="text-h5 text-grey-5 q-mb-sm">
+          Administración de Permisos
+        </div>
+        <div class="text-body1 text-grey-6 q-mb-lg">
+          Selecciona un perfil de usuario para comenzar a gestionar sus permisos
+        </div>
+      </q-card-section>
+    </q-card>
   </q-page>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { api } from "src/boot/axios";
 import { useQuasar } from "quasar";
 
@@ -123,30 +269,88 @@ const perfiles = ref([]);
 const perfilSeleccionado = ref(null);
 const permisos = ref([]);
 const menuSeleccionado = ref(null);
+const cargando = ref(false);
+
+// Computed para estadísticas
+const estadisticas = computed(() => {
+  if (!permisos.value.length) return null;
+
+  const totalModulos = permisos.value.length;
+  const modulosHabilitados = permisos.value.filter((m) => m.habilitado).length;
+  const totalSubmenus = permisos.value.reduce(
+    (acc, m) => acc + (m.nivel2?.length || 0),
+    0
+  );
+  const submenusHabilitados = permisos.value.reduce(
+    (acc, m) => acc + (m.nivel2?.filter((s) => s.habilitado).length || 0),
+    0
+  );
+
+  return {
+    totalModulos,
+    modulosHabilitados,
+    totalSubmenus,
+    submenusHabilitados,
+  };
+});
 
 //Cargar perfiles desde backend
 const cargarPerfiles = async () => {
   try {
+    cargando.value = true;
     const { data } = await api.get("/perfil");
     perfiles.value = data;
+
+    if (data.length === 0) {
+      $q.notify({
+        message: "No hay perfiles disponibles",
+        color: "warning",
+        icon: "warning",
+      });
+    }
   } catch (err) {
-    $q.notify({ message: "Error al cargar perfiles", color: "negative" });
+    $q.notify({
+      message: "Error al cargar perfiles",
+      color: "negative",
+      icon: "error",
+    });
     console.error(err);
+  } finally {
+    cargando.value = false;
   }
 };
 
 //Cargar permisos según perfil seleccionado
 const cargarPermisos = async () => {
-  if (!perfilSeleccionado.value) return;
+  if (!perfilSeleccionado.value) {
+    permisos.value = [];
+    menuSeleccionado.value = null;
+    return;
+  }
+
   try {
+    cargando.value = true;
     const { data } = await api.get(
       `/permisos/perfil/${perfilSeleccionado.value.id}`
     );
     permisos.value = data;
     menuSeleccionado.value = null;
+
+    $q.notify({
+      message: `Permisos cargados para ${perfilSeleccionado.value.nombre}`,
+      color: "positive",
+      icon: "check_circle",
+    });
   } catch (err) {
-    $q.notify({ message: "Error al cargar permisos", color: "negative" });
+    $q.notify({
+      message: "Error al cargar permisos",
+      color: "negative",
+      icon: "error",
+    });
     console.error(err);
+    permisos.value = [];
+  } finally {
+    cargando.value = false;
   }
 };
 
@@ -157,23 +361,41 @@ const seleccionarMenu = (menu) => {
 
 //Cambiar estado de un permiso (nivel 1 o nivel 2)
 const togglePermiso = async (permiso, parent = null) => {
+  const estadoAnterior = permiso.habilitado;
+
   try {
     await api.patch(`/permisos/${permiso.idPermiso}`, {
       habilitado: permiso.habilitado,
     });
+
+    const accion = permiso.habilitado ? "habilitado" : "deshabilitado";
+    const tipoPermiso = parent ? "submenú" : "módulo";
+
     $q.notify({
-      message: `${permiso.nombre} ${
-        permiso.habilitado ? "habilitado" : "deshabilitado"
-      }`,
+      message: `${tipoPermiso} "${permiso.nombre}" ${accion} correctamente`,
       color: "positive",
-      icon: "check",
+      icon: permiso.habilitado ? "check_circle" : "block",
+      position: "top-right",
     });
+
+    // Si es un módulo principal y se deshabilita, deshabilitar todos sus submenús
+    if (!parent && !permiso.habilitado && permiso.nivel2) {
+      permiso.nivel2.forEach((submenu) => {
+        if (submenu.habilitado) {
+          submenu.habilitado = false;
+          // Aquí podrías hacer llamadas individuales a la API si es necesario
+        }
+      });
+    }
   } catch (err) {
-    permiso.habilitado = !permiso.habilitado; // revertir si falla
+    // Revertir el cambio si falla
+    permiso.habilitado = estadoAnterior;
+
     $q.notify({
       message: "Error al actualizar el permiso",
       color: "negative",
       icon: "error",
+      position: "top-right",
     });
     console.error(err);
   }
@@ -184,8 +406,170 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
-.cursor-pointer {
-  cursor: pointer;
+<style lang="scss" scoped>
+.modules-panel {
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  
+  .q-card__section:last-child {
+    flex: 1;
+    overflow: hidden;
+  }
+}
+
+.modules-list {
+  max-height: 60vh;
+  overflow-y: auto;
+  
+  /* Estilos para la barra de scroll */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+    
+    &:hover {
+      background: #a8a8a8;
+    }
+  }
+  
+  /* Para Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: #c1c1c1 #f1f1f1;
+}
+
+.menu-item {
+  transition: all 0.3s ease;
+  border-radius: 0;
+
+  &:hover {
+    background-color: rgba(25, 118, 210, 0.1);
+  }
+
+  &.bg-primary {
+    border-radius: 0;
+  }
+}
+
+.menu-item-transition {
+  transition: all 0.2s ease-in-out;
+}
+
+.submenu-card {
+  transition: all 0.3s ease;
+  border-radius: 8px;
+
+  &:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+
+  &.submenu-disabled {
+    opacity: 0.6;
+
+    &:hover {
+      transform: none;
+      box-shadow: none;
+    }
+  }
+}
+
+.q-card {
+  border-radius: 12px;
+
+  &.bg-primary {
+    background: linear-gradient(
+      135deg,
+      var(--q-primary) 0%,
+      rgba(25, 118, 210, 0.9) 100%
+    );
+  }
+}
+
+.q-btn {
+  border-radius: 8px;
+  font-weight: 500;
+
+  &.q-btn--unelevated {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+  }
+}
+
+.q-input,
+.q-select {
+  .q-field__control {
+    border-radius: 8px;
+  }
+}
+
+.q-badge {
+  border-radius: 6px;
+  font-weight: 500;
+  padding: 4px 8px;
+}
+
+.q-list .q-item {
+  border-radius: 0;
+
+  &:first-child {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+
+  &:last-child {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+}
+
+// Mejoras responsivas
+@media (max-width: $breakpoint-sm-max) {
+  .row.q-col-gutter-lg > .col-12:first-child {
+    margin-bottom: 16px;
+  }
+
+  .submenu-card {
+    margin-bottom: 12px;
+  }
+}
+
+// Estados de hover mejorados
+.q-toggle {
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+// Estilo para iconos
+.q-icon {
+  transition: all 0.2s ease;
+}
+
+// Loading states
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
 }
 </style>

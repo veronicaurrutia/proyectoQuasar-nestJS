@@ -9,10 +9,6 @@ const routes = [
         component: () => import("pages/IndexPage.vue"),
       },
       {
-        path: "home",
-        component: () => import("layouts/Home.vue"),
-      },
-      {
         path: "perfil",
         component: () => import("layouts/PerfilPage.vue"),
       },

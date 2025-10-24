@@ -141,9 +141,9 @@
             active-class="my-menu-url"
           >
             <q-item-section avatar>
-              <q-icon name="home" />
+              <q-icon name="" />
             </q-item-section>
-            <q-item-section>home </q-item-section>
+            <q-item-section> </q-item-section>
           </q-item>
 
           <q-item
