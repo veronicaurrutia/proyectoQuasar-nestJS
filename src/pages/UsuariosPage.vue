@@ -162,130 +162,273 @@
                     Lista de Usuarios ({{ usuariosFiltrados.length }})
                   </h3>
                 </div>
-                <div class="col-auto">
+                <!-- <div class="col-auto">
                   <q-btn-toggle
                     v-model="vistaActual"
                     :options="vistaOptions"
                     color="primary"
                     outline
                   />
-                </div>
+                </div> -->
               </div>
             </div>
+            <q-tabs
+              v-model="tab"
+              dense
+              class="text-primary"
+              align="justify"
+              active-color="primary"
+              indicator-color="primary"
+            >
+              <q-tab
+                name="usuariosArea"
+                label="Usuarios de mi Área"
+                icon="group"
+              />
+              <q-tab
+                name="usuariosNoArea"
+                label="Usuarios sin Área"
+                icon="person_off"
+              />
+            </q-tabs>
 
-            <!-- Table View -->
-            <div v-if="vistaActual === 'tabla'">
-              <q-table
-                bordered
-                :rows="usuariosFiltrados"
-                :columns="columns"
-                :filter="filter"
-                class="modern-table"
-                separator="horizontal"
-                :pagination="{ rowsPerPage: 15 }"
-              >
-                <template v-slot:body-cell-index="props">
-                  <q-td :props="props" class="text-center">
-                    <q-chip
-                      color="primary"
-                      text-color="white"
-                      :label="props.pageIndex + 1"
-                      size="sm"
-                    />
-                  </q-td>
-                </template>
+            <q-separator />
+            <q-tab-panels v-model="tab" animated>
+              <!-- 🔸 TAB 1: Usuarios de mi Área -->
+              <q-tab-panel name="usuariosArea">
+                <!-- Table View -->
+                <div v-if="vistaActual === 'tabla'">
+                  <q-table
+                    bordered
+                    :rows="usuariosFiltrados"
+                    :columns="columns"
+                    :filter="filter"
+                    class="modern-table"
+                    separator="horizontal"
+                    :pagination="{ rowsPerPage: 15 }"
+                  >
+                    <template v-slot:body-cell-index="props">
+                      <q-td :props="props" class="text-center">
+                        <q-chip
+                          color="primary"
+                          text-color="white"
+                          :label="props.pageIndex + 1"
+                          size="sm"
+                        />
+                      </q-td>
+                    </template>
 
-                <template v-slot:body-cell-usuario="props">
-                  <q-td :props="props">
-                    <div class="user-info">
-                      <div class="row items-center">
-                        <div class="col-auto">
-                          <q-avatar
+                    <template v-slot:body-cell-usuario="props">
+                      <q-td :props="props">
+                        <div class="user-info">
+                          <div class="row items-center">
+                            <div class="col-auto">
+                              <q-avatar
+                                color="primary"
+                                text-color="white"
+                                size="40px"
+                              >
+                                {{
+                                  getInitials(
+                                    props.row.nombre,
+                                    props.row.apellido
+                                  )
+                                }}
+                              </q-avatar>
+                            </div>
+                            <div class="col q-ml-md">
+                              <div class="text-weight-medium">
+                                {{ props.row.nombre }} {{ props.row.apellido }}
+                              </div>
+                              <div class="text-caption text-grey-6">
+                                {{ props.row.email }}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </q-td>
+                    </template>
+
+                    <template v-slot:body-cell-enabledopt="props">
+                      <q-td :props="props" class="text-center">
+                        <q-badge
+                          :color="props.row.estado ? 'green' : 'red'"
+                          :label="props.row.estado ? 'Activo' : 'Inactivo'"
+                          class="estado-badge"
+                        />
+                      </q-td>
+                    </template>
+
+                    <template v-slot:body-cell-actions="props">
+                      <q-td :props="props">
+                        <div class="actions-container">
+                          <q-btn
                             color="primary"
-                            text-color="white"
-                            size="40px"
+                            icon="visibility"
+                            size="sm"
+                            round
+                            flat
+                            @click="verUsuario(props.row)"
                           >
-                            {{
-                              getInitials(props.row.nombre, props.row.apellido)
-                            }}
-                          </q-avatar>
+                            <q-tooltip>Ver perfil</q-tooltip>
+                          </q-btn>
+                          <q-btn
+                            color="secondary"
+                            icon="edit"
+                            size="sm"
+                            round
+                            flat
+                            @click="editarUsuario(props.row)"
+                          >
+                            <q-tooltip>Editar</q-tooltip>
+                          </q-btn>
+                          <q-btn
+                            :color="props.row.estado ? 'orange' : 'green'"
+                            :icon="props.row.estado ? 'lock' : 'lock_open'"
+                            size="sm"
+                            round
+                            flat
+                            @click="toggleEstadoUsuario(props.row)"
+                          >
+                            <q-tooltip>{{
+                              props.row.estado ? "Desactivar" : "Activar"
+                            }}</q-tooltip>
+                          </q-btn>
+                          <q-btn
+                            color="negative"
+                            icon="delete"
+                            size="sm"
+                            round
+                            flat
+                            @click="eliminarUsuario(props.row)"
+                          >
+                            <q-tooltip>Eliminar</q-tooltip>
+                          </q-btn>
                         </div>
-                        <div class="col q-ml-md">
-                          <div class="text-weight-medium">
-                            {{ props.row.nombre }} {{ props.row.apellido }}
-                          </div>
-                          <div class="text-caption text-grey-6">
-                            {{ props.row.email }}
+                      </q-td>
+                    </template>
+                    <template v-slot:body-cell-area="props">
+                      <q-td :props="props">
+                        <div class="actions-container">
+                          <q-btn
+                            color="primary"
+                            icon="label_off"
+                            size="sm"
+                            round
+                            flat
+                            @click="eliminarArea(props.row)"
+                          >
+                            <q-tooltip>Eliminar del Area</q-tooltip>
+                          </q-btn>
+                        </div>
+                      </q-td>
+                    </template>
+                  </q-table>
+                </div>
+              </q-tab-panel>
+              <q-tab-panel name="usuariosNoArea">
+                <!-- Table View -->
+                <div v-if="vistaActual === 'tabla'">
+                  <q-table
+                    bordered
+                    :rows="usuariosFiltrados"
+                    :columns="columns"
+                    :filter="filter"
+                    class="modern-table"
+                    separator="horizontal"
+                    :pagination="{ rowsPerPage: 15 }"
+                  >
+                    <template v-slot:body-cell-index="props">
+                      <q-td :props="props" class="text-center">
+                        <q-chip
+                          color="primary"
+                          text-color="white"
+                          :label="props.pageIndex + 1"
+                          size="sm"
+                        />
+                      </q-td>
+                    </template>
+
+                    <template v-slot:body-cell-usuario="props">
+                      <q-td :props="props">
+                        <div class="user-info">
+                          <div class="row items-center">
+                            <div class="col-auto">
+                              <q-avatar
+                                color="primary"
+                                text-color="white"
+                                size="40px"
+                              >
+                                {{
+                                  getInitials(
+                                    props.row.nombre,
+                                    props.row.apellido
+                                  )
+                                }}
+                              </q-avatar>
+                            </div>
+                            <div class="col q-ml-md">
+                              <div class="text-weight-medium">
+                                {{ props.row.nombre }} {{ props.row.apellido }}
+                              </div>
+                              <div class="text-caption text-grey-6">
+                                {{ props.row.email }}
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                  </q-td>
-                </template>
+                      </q-td>
+                    </template>
 
-                <template v-slot:body-cell-enabledopt="props">
-                  <q-td :props="props" class="text-center">
-                    <q-badge
-                      :color="props.row.estado ? 'green' : 'red'"
-                      :label="props.row.estado ? 'Activo' : 'Inactivo'"
-                      class="estado-badge"
-                    />
-                  </q-td>
-                </template>
+                    <template v-slot:body-cell-enabledopt="props">
+                      <q-td :props="props" class="text-center">
+                        <q-badge
+                          :color="props.row.estado ? 'green' : 'red'"
+                          :label="props.row.estado ? 'Activo' : 'Inactivo'"
+                          class="estado-badge"
+                        />
+                      </q-td>
+                    </template>
 
-                <template v-slot:body-cell-actions="props">
-                  <q-td :props="props">
-                    <div class="actions-container">
-                      <q-btn
-                        color="primary"
-                        icon="visibility"
-                        size="sm"
-                        round
-                        flat
-                        @click="verUsuario(props.row)"
-                      >
-                        <q-tooltip>Ver perfil</q-tooltip>
-                      </q-btn>
-                      <q-btn
-                        color="secondary"
-                        icon="edit"
-                        size="sm"
-                        round
-                        flat
-                        @click="editarUsuario(props.row)"
-                      >
-                        <q-tooltip>Editar</q-tooltip>
-                      </q-btn>
-                      <q-btn
-                        :color="props.row.estado ? 'orange' : 'green'"
-                        :icon="props.row.estado ? 'lock' : 'lock_open'"
-                        size="sm"
-                        round
-                        flat
-                        @click="toggleEstadoUsuario(props.row)"
-                      >
-                        <q-tooltip>{{
-                          props.row.estado ? "Desactivar" : "Activar"
-                        }}</q-tooltip>
-                      </q-btn>
-                      <q-btn
-                        color="negative"
-                        icon="delete"
-                        size="sm"
-                        round
-                        flat
-                        @click="eliminarUsuario(props.row)"
-                      >
-                        <q-tooltip>Eliminar</q-tooltip>
-                      </q-btn>
-                    </div>
-                  </q-td>
-                </template>
-              </q-table>
-            </div>
+                    <template v-slot:body-cell-actions="props">
+                      <q-td :props="props">
+                        <div class="actions-container">
+                          <q-btn
+                            color="primary"
+                            icon="visibility"
+                            size="sm"
+                            round
+                            flat
+                            @click="verUsuario(props.row)"
+                          >
+                            <q-tooltip>Ver perfil</q-tooltip>
+                          </q-btn>
+                        </div>
+                      </q-td>
+                    </template>
+                    <template v-slot:body-cell-area="props">
+                      <q-td :props="props">
+                        <div class="actions-container">
+                          <q-btn
+                            color="primary"
+                            icon="new_label"
+                            size="sm"
+                            round
+                            flat
+                            @click="abrirDialogArea(props.row)"
+                          >
+                            <q-tooltip>Agregar al Area</q-tooltip>
+                          </q-btn>
+                        </div>
+                      </q-td>
+                    </template>
+                  </q-table>
+                </div>
+              </q-tab-panel>
+            </q-tab-panels>
 
             <!-- Card View -->
-            <div v-else-if="vistaActual === 'cards'" class="cards-view">
+            <!-- <div v-else-if="vistaActual === 'cards'" class="cards-view">
               <div class="row q-col-gutter-md">
                 <div
                   class="col-12 col-md-6 col-xl-4"
@@ -370,7 +513,7 @@
                   </q-card>
                 </div>
               </div>
-            </div>
+            </div> -->
           </q-card-section>
         </q-card>
       </div>
@@ -467,6 +610,30 @@
                 :options="centros"
                 label="Centro"
                 outlined
+                map-options
+                emit-value
+              />
+            </div>
+
+            <div class="col-12 col-md-6">
+              <q-select
+                dense
+                v-model="area"
+                :options="areas"
+                label="Area"
+                map-options
+                emit-value
+                readonly=""
+              />
+            </div>
+            <div class="col-12 col-md-6">
+              <q-select
+                dense
+                v-model="perfil"
+                :options="perfiles"
+                option-label="nombre"
+                option-value="id"
+                label="Perfil"
                 map-options
                 emit-value
               />
@@ -622,6 +789,70 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <!-- Dialog Agregar Perfil y Area -->
+    <q-dialog v-model="dialogArea" persistent class="user-dialog">
+      <q-card class="dialog-card" style="width: 900px; max-width: 95vw">
+        <q-card-section class="dialog-header bg-accent text-white">
+          <div class="row items-center">
+            <q-avatar
+              square
+              icon="person_add"
+              color="white"
+              text-color="accent"
+            />
+            <span class="q-ml-sm text-h6">Agregar Nuevo Usuario al Area</span>
+          </div>
+        </q-card-section>
+
+        <q-card-section class="q-pa-lg">
+          <div class="row q-col-gutter-md">
+            <div class="col-12 col-md-6">
+              <q-select
+                dense
+                v-model="area"
+                :options="areas"
+                label="Area"
+                map-options
+                emit-value
+                readonly=""
+              />
+            </div>
+
+            <div class="col-12 col-md-6">
+              <q-select
+                dense
+                v-model="perfil"
+                :options="perfiles"
+                option-label="nombre"
+                option-value="id"
+                label="Perfil"
+                map-options
+                emit-value
+              />
+            </div>
+          </div>
+        </q-card-section>
+
+        <q-card-actions align="right" class="q-pa-lg">
+          <q-btn
+            flat
+            label="Cancelar"
+            color="grey-7"
+            v-close-popup
+            @click="dialogArea = false"
+            :disable="cargandoIcon"
+          />
+          <q-btn
+            label="Agregar Usuario"
+            color="accent"
+            icon="person_add"
+            @click="agregarUsuarioArea()"
+            :loading="cargandoIcon"
+            class="glossy"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -638,6 +869,11 @@ const dialogUsuario = ref(false);
 const dialogUsuarioEdit = ref(false);
 const cargandoIcon = ref(false);
 const vistaActual = ref("tabla");
+const dialogArea = ref(false);
+const tab = ref("usuariosArea");
+const perfiles = ref([]);
+const perfil = ref(null);
+const usuarioSeleccionado = ref(null);
 
 // Filtros
 const estadoFilter = ref(null);
@@ -645,12 +881,13 @@ const estadoFilter = ref(null);
 const usuarios = ref([]);
 const cuentas = ref([]);
 const centros = ref([]);
+const areas = ref([]);
+const area = ref(null);
 
 const usuarioStore = useUsuariostore();
 const cuentaId = ref(usuarioStore.cuentaId);
 
 const usuario = reactive({
-  id: null,
   nombre: null,
   apellido: null,
   email: null,
@@ -658,6 +895,9 @@ const usuario = reactive({
   centroId: null,
   cuentaId: null,
   estado: true,
+  areaIds: [],
+  empresaId: null,
+  perfilesPorArea: [],
 });
 
 // ----- COMPUTED -----
@@ -749,13 +989,19 @@ const columns = [
     align: "center",
     headerClasses: "bg-primary text-white",
   },
+  {
+    name: "area",
+    label: "Area",
+    field: "area",
+    align: "center",
+    headerClasses: "bg-primary text-white",
+  },
 ];
 
 // ----- WATCHERS -----
 watch(dialogUsuario, async (val) => {
   if (val) {
     Object.assign(usuario, {
-      id: null,
       nombre: null,
       apellido: null,
       email: null,
@@ -779,6 +1025,15 @@ watch(
   }
 );
 
+watch(tab, async (valor) => {
+  if (valor === "usuariosArea") {
+    await obtenerUsuarios(); // llama a la función directamente
+  } else if (valor === "usuariosNoArea") {
+    await obtenerUsuariosNoArea(); // también directamente
+  }
+  // console.log(valor, "el valor");
+});
+
 // ----- METHODS -----
 const obtenerCuentas = async () => {
   try {
@@ -794,8 +1049,21 @@ const obtenerCuentas = async () => {
 
 const obtenerUsuarios = async () => {
   try {
-    const response = await api.get("/usuario");
+    const response = await api.get(`/usuario/area/${usuarioStore.area}`);
     usuarios.value = response.data;
+    console.log(usuarios.value, "los usuarios");
+  } catch (error) {
+    console.error("Error al obtener usuarios:", error);
+  }
+};
+
+const obtenerUsuariosNoArea = async () => {
+  try {
+    const response = await api.get(
+      `/usuario/no-in-area/${usuarioStore.area}/empresa/${usuarioStore.empresa}`
+    );
+    usuarios.value = response.data;
+    console.log(usuarios.value, "los usuarios sin mi area");
   } catch (error) {
     console.error("Error al obtener usuarios:", error);
   }
@@ -803,6 +1071,13 @@ const obtenerUsuarios = async () => {
 
 const crearUsuario = async () => {
   cargandoIcon.value = true;
+  usuario.areaIds.push(area.value);
+  usuario.empresaId = usuarioStore.empresa;
+  usuario.perfilesPorArea.push({
+    perfilId: perfil.value,
+    areaIds: [area.value],
+  });
+  console.log(usuario, "el usuario");
   try {
     await api.post("/usuario", usuario);
     Notify.create({
@@ -916,6 +1191,17 @@ const obtenerCuentaUser = async () => {
   }
 };
 
+const obtenerArea = async () => {
+  try {
+    const response = await api.get(`/area/${usuarioStore.area}`);
+    areas.value = [{ label: response.data.nombre, value: response.data.id }];
+    area.value = usuarioStore.area;
+    console.log(areas.value, "el area", usuarioStore.area);
+  } catch (error) {
+    console.error("error al obtener el area: ", error);
+  }
+};
+
 const eliminarUsuario = (row) => {
   Notify.create({
     timeout: 0,
@@ -944,6 +1230,83 @@ const eliminarUsuario = (row) => {
       { label: "Cancelar", handler: () => {} },
     ],
   });
+};
+
+const obtenerPerfiles = async () => {
+  try {
+    const response = await api.get(`/perfil/colaborador`);
+    perfiles.value = response.data;
+    // console.log(usuarios, "los usuarios");
+    console.log(perfiles.value, "los perfiles");
+  } catch (error) {
+    console.error("Error al obtener los perfiles:", error);
+  }
+};
+
+const eliminarArea = async (row) => {
+  try {
+    const response = await api.delete(`/usuario/${row.id}/areas`, {
+      data: {
+        areaIds: [String(usuarioStore.area)], // 👈 array de strings
+      },
+    });
+    if (response.status === 200) {
+      const resp = await api.delete(
+        `/usuario/${row.id}/perfil-area/${usuarioStore.area}`
+      );
+      if (response.status == 200) {
+        obtenerUsuarios();
+        dialogArea.value = false;
+      }
+    } else {
+      obtenerUsuarios();
+    }
+  } catch (error) {
+    console.error("error al elminar el area del usuario", error);
+  }
+};
+
+const agregarUsuarioArea = async () => {
+  try {
+    const data = {
+      areaIds: [String(usuarioStore.area)], // array de strings
+    };
+
+    const body = {
+      perfilId: perfil.value,
+      areaId: usuarioStore.area,
+    };
+
+    // Primero agrega el área al usuario
+    const response = await api.post(
+      `/usuario/${usuarioSeleccionado.value.id}/areas`,
+      data
+    );
+    console.log(response, "la respuesta");
+    if (response.status === 201) {
+      // Luego asigna el perfil en esa área
+      const resp = await api.post(
+        `/usuario/${usuarioSeleccionado.value.id}/perfil-area`,
+        body // ✅ sin { body }
+      );
+
+      if (resp.estado === "OK") {
+        obtenerUsuariosNoArea();
+        dialogArea.value = false;
+      } else {
+        obtenerUsuariosNoArea();
+        dialogArea.value = false;
+      }
+    }
+  } catch (error) {
+    console.error("Error al agregar el área del usuario", error);
+  }
+};
+
+const abrirDialogArea = (usuario) => {
+  usuarioSeleccionado.value = usuario; // guardamos el usuario
+  perfil.value = usuario.perfilId; // si quieres cargar su perfil actual
+  dialogArea.value = true; // abrimos el diálogo
 };
 
 const recuperarPassword = () => {
@@ -994,6 +1357,8 @@ onMounted(async () => {
     await obtenerCuentaUser();
   }
   await obtenerUsuarios();
+  await obtenerPerfiles();
+  await obtenerArea();
 });
 </script>
 
