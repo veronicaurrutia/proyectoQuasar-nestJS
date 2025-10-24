@@ -1073,6 +1073,7 @@ const crearUsuario = async () => {
   cargandoIcon.value = true;
   usuario.areaIds.push(area.value);
   usuario.empresaId = usuarioStore.empresa;
+  usuario.cuentaId = usuarioStore.cuentaId;
   usuario.perfilesPorArea.push({
     perfilId: perfil.value,
     areaIds: [area.value],
