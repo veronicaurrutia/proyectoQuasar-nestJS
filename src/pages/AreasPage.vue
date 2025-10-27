@@ -73,7 +73,7 @@
               rows-per-page-label="Filas por página:"
             >
               <template v-slot:body-cell-index="props">
-                <q-td :props="props" class="text-center">
+                <q-td :props="props" class="text-center index-column">
                   <q-chip
                     color="primary"
                     text-color="white"
@@ -85,7 +85,7 @@
               </template>
 
               <template v-slot:body-cell-nombre="props">
-                <q-td :props="props">
+                <q-td :props="props" class="nombre-column">
                   <div class="area-info">
                     <div class="area-name text-weight-medium text-primary">
                       {{ props.row.nombre }}
@@ -110,7 +110,7 @@
               </template>
 
               <template v-slot:body-cell-Empresa="props">
-                <q-td :props="props" class="text-center">
+                <q-td :props="props" class="text-center empresa-column">
                   <q-chip
                     color="accent"
                     text-color="white"
@@ -126,7 +126,7 @@
               </template>
 
               <template v-slot:body-cell-enabledopt="props">
-                <q-td :props="props" class="text-center">
+                <q-td :props="props" class="text-center estado-column">
                   <q-badge
                     :color="props.row.estado ? 'positive' : 'negative'"
                     :label="props.row.estado ? 'Activa' : 'Inactiva'"
@@ -137,7 +137,7 @@
               </template>
 
               <template v-slot:body-cell-actions="props">
-                <q-td :props="props">
+                <q-td :props="props" class="actions-column">
                   <div class="actions-container">
                     <q-btn
                       color="warning"
@@ -971,15 +971,16 @@ onMounted(() => {
 }
 
 .modern-table {
-  border-radius: 15px;
+  border-radius: 8px;
   overflow: hidden;
+  background: white;
 
   :deep(.q-table__top) {
     padding: 0;
   }
 
   :deep(.q-table thead th) {
-    background: linear-gradient(45deg, var(--q-primary), var(--q-secondary));
+    background: #1976d2;
     color: white;
     font-weight: 600;
     text-transform: uppercase;
@@ -987,20 +988,68 @@ onMounted(() => {
     font-size: 0.85rem;
     border: none;
     padding: 16px 12px;
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    
+    &:last-child {
+      border-right: none;
+    }
   }
 
   :deep(.q-table tbody tr) {
-    transition: all 0.2s ease;
-
+    border-bottom: 1px solid #e0e0e0;
+    
     &:hover {
-      background: rgba(var(--q-primary-rgb), 0.05);
-      transform: scale(1.01);
+      background: #f5f5f5;
+    }
+    
+    &:last-child {
+      border-bottom: none;
     }
   }
 
   :deep(.q-table tbody td) {
-    border-bottom: 1px solid rgba(var(--q-primary-rgb), 0.1);
+    border: none;
+    border-right: 1px solid #e0e0e0;
     padding: 16px 12px;
+    vertical-align: top;
+    
+    &:last-child {
+      border-right: none;
+    }
+  }
+
+  // Estilos específicos para cada columna
+  :deep(.index-column) {
+    width: 80px;
+    min-width: 80px;
+    max-width: 80px;
+    font-weight: 600;
+    color: #666;
+    background: rgba(25, 118, 210, 0.02);
+    border-right: 2px solid #e0e0e0 !important;
+  }
+
+  :deep(.nombre-column) {
+    min-width: 280px;
+    border-right: 2px solid #e0e0e0 !important;
+  }
+
+  :deep(.empresa-column) {
+    min-width: 200px;
+    font-weight: 500;
+    border-right: 2px solid #e0e0e0 !important;
+  }
+
+  :deep(.estado-column) {
+    min-width: 120px;
+    font-weight: 500;
+    border-right: 2px solid #e0e0e0 !important;
+  }
+
+  :deep(.actions-column) {
+    width: 180px;
+    min-width: 180px;
+    max-width: 180px;
   }
 }
 
@@ -1011,14 +1060,21 @@ onMounted(() => {
 
 .area-name {
   font-size: 1rem;
-  color: var(--q-primary);
   font-weight: 600;
   margin-bottom: 4px;
+  color: #333;
 }
 
 .area-description {
-  margin-top: 4px;
+  font-size: 0.875rem;
+  color: #666;
+  margin-bottom: 4px;
   line-height: 1.4;
+}
+
+.area-prefix {
+  font-size: 0.75rem;
+  color: #888;
   font-style: italic;
 }
 
