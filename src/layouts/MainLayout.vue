@@ -1,43 +1,65 @@
 <template>
   <q-layout view="lHh Lpr lFf" class="custom-background">
-    <q-header class="transparent-background" elevated>
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
-        <q-toolbar-title> Central de requerimientos </q-toolbar-title>
-        <q-select
-          class="q-mr-md"
-          dark
-          dense
-          outlined
-          v-model="area"
-          :options="areaOptions"
-          label="Area"
-          map-options
-          emit-value
-          readonly
-        />
-        <q-btn
-          class="q-mr-md"
-          dark
-          dense
-          outlined
-          label="Cambiar Area"
-          color="primary"
-          @click="cambioArea"
-        />
+    <q-header class="modern-header" elevated>
+      <q-toolbar class="header-toolbar">
+        <!-- Logo y botón menú -->
+        <div class="header-left">
+          <q-btn
+            flat
+            dense
+            round
+            icon="menu"
+            aria-label="Menu"
+            @click="toggleLeftDrawer"
+            class="menu-btn"
+          />
+          <div class="header-logo">
+            <img
+              src="src/assets/loginsa.png"
+              alt="Logo"
+              class="header-logo-img"
+            />
+            <span class="header-title">Central de Requerimientos</span>
+          </div>
+        </div>
 
-        <div v-if="false">Quasar v{{ $q.version }}</div>
-
-        <q-item v-if="false" clickable v-ripple>
-          <q-avatar letter color="primary" text-color="white" icon="face" />
-        </q-item>
+        <!-- Controles centrales -->
+        <div class="header-center">
+          <q-select
+            class="area-selector"
+            dark
+            dense
+            outlined
+            v-model="area"
+            :options="areaOptions"
+            label="Área Actual"
+            option-label="label"
+            option-value="value"
+            map-options
+            emit-value
+            readonly
+            :display-value="areaDisplayText"
+          >
+            <template v-slot:prepend>
+              <q-icon name="business" />
+            </template>
+            <template v-slot:selected>
+              <span class="current-area-text">
+                {{ areaDisplayText }}
+              </span>
+            </template>
+          </q-select>
+          <q-btn
+            class="change-area-btn"
+            unelevated
+            dense
+            label="Cambiar Área"
+            color="white"
+            text-color="primary"
+            @click="cambioArea"
+            icon="swap_horiz"
+          />
+        </div>
       </q-toolbar>
     </q-header>
 
@@ -48,138 +70,165 @@
       @mouseover="miniState = false"
       @mouseout="miniState = true"
       bordered
+      class="modern-drawer"
+      :width="280"
+      :mini-width="70"
     >
-      <q-scroll-area class="fit" :horizontal-thumb-style="{ opacity: 0 }">
-        <q-list dark bordered padding class="text-primary">
-          <q-item v-ripple>
-            <q-item-section avatar>
-              <q-avatar letter color="" text-color="" icon="face" />
-            </q-item-section>
-            <q-item-section>
-              <div class="text-h6 q-mt-md">
-                {{ user.nombre || "Sin nombre"
-                }}<span v-if="user.apellido"> {{ user.apellido }}</span>
+      <div class="drawer-content">
+        <!-- Header del drawer -->
+        <div class="drawer-header">
+          <div class="company-info">
+            <img src="src/assets/loginsa.png" alt="Logo" class="drawer-logo" />
+            <div class="company-details" v-if="!miniState">
+              <div class="company-name">Loginsa</div>
+              <div class="department-name">Tecnologías de la Información</div>
+            </div>
+          </div>
+        </div>
+
+        <q-separator class="drawer-separator" />
+
+        <!-- Información del usuario -->
+        <div class="user-section" v-if="!miniState">
+          <div class="user-card">
+            <q-avatar size="48px" class="user-main-avatar">
+              <img v-if="user.avatar" :src="user.avatar" alt="Avatar" />
+              <q-icon v-else name="person" color="white" size="24px" />
+            </q-avatar>
+            <div class="user-main-info">
+              <div class="user-main-name">
+                {{ user.nombre || "Sin nombre" }}
+                <span v-if="user.apellido"> {{ user.apellido }}</span>
               </div>
-              <div class="text-subtitle2 text-grey">
+              <div class="user-main-email">
                 {{ user.email || "Sin correo" }}
               </div>
-            </q-item-section>
-          </q-item>
-          <q-item v-ripple>
-            <q-item-section>
-              <q-item-label lines="2">
-                Tecnologias de la información.
-              </q-item-label>
-              <q-item-label lines="2"> Loginsa. </q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-separator spaced />
+              <div class="user-status">
+                <q-chip
+                  size="sm"
+                  color="positive"
+                  text-color="white"
+                  icon="circle"
+                >
+                  En línea
+                </q-chip>
+              </div>
+            </div>
+          </div>
+        </div>
 
-          <template v-for="menu in menu" :key="menu">
-            <div v-if="menu.nivel2">
-              <q-expansion-item
-                expand-icon-class="text-primary"
-                expand-separator
-                :icon="menu.icono"
-                :label="menu.nombre"
+        <q-separator class="drawer-separator" v-if="!miniState" />
+
+        <!-- Menú de navegación -->
+        <q-scroll-area
+          class="menu-scroll-area"
+          :horizontal-thumb-style="{ opacity: 0 }"
+        >
+          <div class="menu-container">
+            <template
+              v-for="menuItem in menu"
+              :key="menuItem.id || menuItem.nombre"
+            >
+              <!-- Menús con submenús -->
+              <div
+                v-if="menuItem.nivel2 && menuItem.nivel2.length > 0"
+                class="menu-group"
               >
-                <q-separator />
-                <q-card v-if="menu.nivel2">
-                  <q-card-section v-for="submenu in menu.nivel2" :key="submenu">
+                <q-expansion-item
+                  expand-icon-class="text-primary expansion-icon"
+                  expand-separator
+                  :icon="menuItem.icono"
+                  :label="menuItem.nombre"
+                  class="main-menu-item"
+                  header-class="menu-header"
+                >
+                  <div class="submenu-container">
                     <q-item
+                      v-for="submenu in menuItem.nivel2"
+                      :key="submenu.id || submenu.nombre"
                       dense
                       @click="router.push(submenu.ruta)"
                       clickable
                       v-ripple
-                      active-class="my-menu-url"
+                      active-class="submenu-active"
+                      class="submenu-item"
                     >
                       <q-item-section avatar>
-                        <q-icon :name="submenu.icon" />
+                        <q-icon :name="submenu.icon" size="18px" />
                       </q-item-section>
                       <q-item-section>
-                        <div class="">{{ submenu.nombre }}</div>
-
-                        <div class="text-caption text-grey">
+                        <q-item-label class="submenu-label">{{
+                          submenu.nombre
+                        }}</q-item-label>
+                        <q-item-label caption class="submenu-caption">
                           {{ submenu.caption }}
-                        </div>
+                        </q-item-label>
                       </q-item-section>
                     </q-item>
-                  </q-card-section>
-                </q-card>
-                <q-separator />
-              </q-expansion-item>
-            </div>
-            <div v-else-if="menu.active">
-              <q-item clickable v-ripple active-class="my-menu-url">
-                <q-item-section avatar>
-                  <q-icon :name="menu.icon" />
-                </q-item-section>
-                <q-item-section>{{ menu.nombre }} </q-item-section>
-              </q-item>
-            </div>
-          </template>
+                  </div>
+                </q-expansion-item>
+              </div>
 
-          <!--
+              <!-- Menús simples -->
+              <div v-else-if="menuItem.active" class="menu-group">
+                <q-item
+                  clickable
+                  v-ripple
+                  active-class="menu-active"
+                  class="main-menu-item simple-menu"
+                  @click="navigateToMenu(menuItem)"
+                >
+                  <q-item-section avatar>
+                    <q-icon
+                      :name="menuItem.icon || menuItem.icono"
+                      size="20px"
+                    />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label class="menu-label">{{
+                      menuItem.nombre
+                    }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </div>
+            </template>
+          </div>
+        </q-scroll-area>
 
-          <q-item :active="url === menu.url" @click="url = menu.url" v-for="menu in menu" :key="menu" clickable v-ripple
-            active-class="my-menu-url">
-            <q-item-section avatar>
-              <q-icon :name="menu.icon" />
-            </q-item-section>
-
-
-            <q-item-section>{{ menu.menu }} </q-item-section>
-          </q-item>
-
--->
-          <q-separator spaced />
-          <q-item
-            v-if="false"
-            clickable
-            @click="router.push('/')"
-            v-ripple
-            active-class="my-menu-url"
-          >
-            <q-item-section avatar>
-              <q-icon name="" />
-            </q-item-section>
-            <q-item-section> </q-item-section>
-          </q-item>
+        <!-- Footer del drawer -->
+        <div class="drawer-footer">
+          <q-separator class="drawer-separator" />
 
           <q-item
             clickable
             @click="router.push('/perfil')"
             v-ripple
-            active-class="my-menu-url"
+            active-class="footer-active"
+            class="footer-item"
           >
             <q-item-section avatar>
-              <q-icon name="person" />
+              <q-icon name="person" size="20px" />
             </q-item-section>
-            <q-item-section>Perfil </q-item-section>
-          </q-item>
-
-          <q-item v-if="false" clickable v-ripple active-class="my-menu-url">
-            <q-item-section avatar>
-              <q-icon name="settings" />
+            <q-item-section v-if="!miniState">
+              <q-item-label>Mi Perfil</q-item-label>
             </q-item-section>
-
-            <q-item-section>Configuración </q-item-section>
           </q-item>
 
           <q-item
             clickable
             @click="logout()"
             v-ripple
-            active-class="my-menu-url"
+            class="footer-item logout-item"
           >
             <q-item-section avatar>
-              <q-icon name="logout" />
+              <q-icon name="logout" color="negative" size="20px" />
             </q-item-section>
-
-            <q-item-section> Salir </q-item-section>
+            <q-item-section v-if="!miniState">
+              <q-item-label class="logout-label">Cerrar Sesión</q-item-label>
+            </q-item-section>
           </q-item>
-        </q-list>
-      </q-scroll-area>
+        </div>
+      </div>
     </q-drawer>
 
     <q-page-container>
@@ -189,7 +238,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import { Notify } from "quasar";
 import { useUsuariostore } from "src/stores/usuario.store";
@@ -200,10 +249,8 @@ const usuarioStore = useUsuariostore();
 const router = useRouter();
 
 // Estado reactivo
-
 const usuario = ref(null);
 const perfilArea = ref(null);
-
 const area = ref(null);
 const empresa = ref(usuarioStore.empresa);
 const url = ref("");
@@ -219,7 +266,33 @@ const user = ref({
   apellido: "",
   avatar: null,
   area: "",
+  email: "",
 });
+
+// Computed properties
+const currentAreaName = computed(() => {
+  if (!area.value || !areaOptions.value.length) {
+    return "Seleccionar Área";
+  }
+
+  const currentArea = areaOptions.value.find((a) => a.value === area.value);
+  return currentArea ? currentArea.label : "Área no encontrada";
+});
+
+const areaDisplayText = computed(() => {
+  return currentAreaName.value === "Seleccionar Área"
+    ? "Seleccionar Área"
+    : `📍 ${currentAreaName.value}`;
+});
+
+// Funciones mejoradas
+function navigateToMenu(menuItem) {
+  if (menuItem.ruta) {
+    router.push(menuItem.ruta);
+  } else if (menuItem.url) {
+    router.push(menuItem.url);
+  }
+}
 async function usuarioVista(id) {
   // Chequeo y log del id recibido
   let userId = id;
@@ -377,6 +450,44 @@ async function usuarioVista(id) {
 // ]);
 
 // Watchers
+watch(
+  () => usuarioStore.area,
+  (newArea, oldArea) => {
+    console.log("👀 Area cambió en store:", { old: oldArea, new: newArea });
+    if (newArea && areaOptions.value.length > 0) {
+      const existe = areaOptions.value.find((a) => a.value === newArea);
+      if (existe && area.value !== newArea) {
+        area.value = newArea;
+        console.log("✅ Área sincronizada desde store:", existe.label);
+      }
+    }
+  },
+  { immediate: true }
+);
+
+watch(area, (newValue, oldValue) => {
+  console.log("👀 Area cambió en componente:", {
+    old: oldValue,
+    new: newValue,
+  });
+  if (newValue && newValue !== usuarioStore.area) {
+    usuarioStore.setArea(newValue);
+    obtenerPerfilAreaUsuario();
+    console.log("✅ Store actualizado con nueva área");
+  }
+});
+
+watch(
+  areaOptions,
+  (newOptions) => {
+    console.log("👀 Opciones de área actualizadas:", newOptions);
+    if (newOptions.length > 0 && !area.value) {
+      actualizarAreaActual();
+    }
+  },
+  { deep: true }
+);
+
 // watch(empresa, (newValue) => {
 //   usuarioStore.setEmpresa(newValue);
 // });
@@ -409,21 +520,47 @@ function obtenerEmpresas() {
 }
 async function obtenerAreasUsuario() {
   try {
+    console.log("Obteniendo áreas para usuario:", usuarioStore.usuario);
     const response = await api.get(`/area/usuario/${usuarioStore.usuario}`);
     areaOptions.value = response.data.map((a) => ({
       label: a.nombre,
       value: a.id,
     }));
+
+    console.log("Áreas obtenidas:", areaOptions.value);
+    console.log("Área actual en store:", usuarioStore.area);
+
+    // Priorizar el área del store si existe
     if (usuarioStore.area) {
       const existe = areaOptions.value.find(
         (a) => a.value === usuarioStore.area
       );
-      if (existe) area.value = usuarioStore.area;
-    } else if (areaOptions.value.length > 0) {
-      area.value = areaOptions.value[0].value; // fallback
+      if (existe) {
+        area.value = usuarioStore.area;
+        console.log("✅ Área cargada desde store:", existe.label);
+        return;
+      } else {
+        console.log("⚠️ Área del store no encontrada en opciones disponibles");
+      }
+    }
+
+    // Si no hay área en el store pero hay opciones, usar la primera
+    if (areaOptions.value.length > 0) {
+      area.value = areaOptions.value[0].value;
+      usuarioStore.setArea(area.value);
+      console.log(
+        "✅ Área predeterminada asignada:",
+        areaOptions.value[0].label
+      );
+    } else {
+      console.log("❌ No hay áreas disponibles para el usuario");
     }
   } catch (error) {
-    console.error("error al obtener las Areas", error);
+    console.error("❌ Error al obtener las Areas:", error);
+    Notify.create({
+      type: "negative",
+      message: "Error al cargar las áreas del usuario",
+    });
   }
 }
 
@@ -470,13 +607,501 @@ async function obtenerMenuPerfil() {
 const cambioArea = () => {
   router.push("/select-area");
 };
+
+// Función para forzar actualización del área
+function actualizarAreaActual() {
+  if (usuarioStore.area && areaOptions.value.length > 0) {
+    const existe = areaOptions.value.find((a) => a.value === usuarioStore.area);
+    if (existe) {
+      area.value = usuarioStore.area;
+      console.log("🔄 Área actualizada:", existe.label);
+    }
+  }
+}
+
 // Funciones que quieres ejecutar al cargar la página
-onMounted(() => {
-  // obtenerPerfilAreaUsuario();
-  obtenerAreasUsuario();
-  // obtenerEmpresas();
+onMounted(async () => {
+  console.log("🚀 Montando MainLayout...");
+  await obtenerAreasUsuario();
   obtenerPerfiles();
-  usuarioVista();
+  await usuarioVista();
   obtenerMenuPerfil();
+
+  // Actualizar área después de cargar todo
+  setTimeout(() => {
+    actualizarAreaActual();
+  }, 500);
 });
 </script>
+
+<style lang="scss" scoped>
+// ==============================================
+// LAYOUT MODERNO - HEADER
+// ==============================================
+
+.modern-header {
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+}
+
+.header-toolbar {
+  padding: 0 16px;
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.menu-btn {
+  color: white;
+  margin-right: 8px;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-logo-img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+.header-title {
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.header-center {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.area-selector {
+  min-width: 200px;
+
+  :deep(.q-field__control) {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  :deep(.q-field__native) {
+    color: white;
+  }
+
+  :deep(.q-field__label) {
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  :deep(.q-field__append) {
+    color: rgba(255, 255, 255, 0.8);
+  }
+}
+
+.current-area-text {
+  color: white;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.change-area-btn {
+  font-weight: 500;
+  border-radius: 6px;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.9);
+  }
+}
+
+.modern-drawer {
+  background: #f8f9fa;
+  border-right: 1px solid #e9ecef;
+}
+
+.drawer-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.drawer-header {
+  padding: 16px;
+  background: white;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.company-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.drawer-logo {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.company-details {
+  flex: 1;
+}
+
+.company-name {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #1976d2;
+  line-height: 1.2;
+}
+
+.department-name {
+  font-size: 0.85rem;
+  color: #666;
+  line-height: 1.2;
+}
+
+.drawer-separator {
+  margin: 0;
+  background: #e9ecef;
+}
+
+.user-section {
+  padding: 16px;
+  background: white;
+}
+
+.user-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  border: 1px solid #dee2e6;
+}
+
+.user-main-avatar {
+  border: 2px solid #1976d2;
+  background: #1976d2;
+}
+
+.user-main-info {
+  flex: 1;
+}
+
+.user-main-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #2c3e50;
+  line-height: 1.2;
+  margin-bottom: 2px;
+}
+
+.user-main-email {
+  font-size: 0.8rem;
+  color: #6c757d;
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+
+.user-status {
+  display: flex;
+  align-items: center;
+}
+
+.menu-scroll-area {
+  flex: 1;
+}
+
+.menu-container {
+  padding: 8px 0;
+}
+
+.menu-group {
+  margin-bottom: 4px;
+}
+
+.main-menu-item {
+  margin: 0 8px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(25, 118, 210, 0.1);
+  }
+
+  &.simple-menu {
+    color: #2c3e50;
+  }
+
+  :deep(.q-item__section--avatar) {
+    color: #1976d2;
+    min-width: 40px;
+  }
+}
+
+.menu-header {
+  color: #2c3e50;
+  font-weight: 600;
+
+  &:hover {
+    background: rgba(25, 118, 210, 0.05);
+  }
+}
+
+.menu-label {
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.menu-active {
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+  color: white;
+
+  :deep(.q-item__section--avatar) {
+    color: white;
+  }
+
+  .menu-label {
+    color: white;
+  }
+}
+
+.expansion-icon {
+  color: #1976d2;
+}
+
+.submenu-container {
+  background: #f8f9fa;
+  border-radius: 0 0 8px 8px;
+}
+
+.submenu-item {
+  margin: 0 16px 0 32px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(25, 118, 210, 0.08);
+  }
+
+  :deep(.q-item__section--avatar) {
+    color: #6c757d;
+    min-width: 32px;
+  }
+}
+
+.submenu-label {
+  font-size: 0.9rem;
+  color: #495057;
+  font-weight: 500;
+}
+
+.submenu-caption {
+  font-size: 0.75rem;
+  color: #6c757d;
+}
+
+.submenu-active {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border-left: 3px solid #1976d2;
+
+  .submenu-label {
+    color: #1976d2;
+    font-weight: 600;
+  }
+
+  :deep(.q-item__section--avatar) {
+    color: #1976d2;
+  }
+}
+
+.drawer-footer {
+  margin-top: auto;
+  padding: 8px;
+  background: white;
+}
+
+.footer-item {
+  margin: 0 8px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(25, 118, 210, 0.1);
+  }
+
+  :deep(.q-item__section--avatar) {
+    color: #6c757d;
+    min-width: 40px;
+  }
+}
+
+.footer-active {
+  background: rgba(25, 118, 210, 0.1);
+  color: #1976d2;
+
+  :deep(.q-item__section--avatar) {
+    color: #1976d2;
+  }
+}
+
+.logout-item {
+  &:hover {
+    background: rgba(244, 67, 54, 0.1);
+  }
+
+  :deep(.q-item__section--avatar) {
+    color: #f44336;
+  }
+}
+
+.logout-label {
+  color: #f44336;
+  font-weight: 500;
+}
+
+// ==============================================
+// RESPONSIVE DESIGN
+// ==============================================
+
+@media (max-width: 1023px) {
+  .header-center {
+    display: none;
+  }
+
+  .header-title {
+    display: none;
+  }
+
+  .company-details {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-toolbar {
+    padding: 0 8px;
+  }
+
+  .header-left {
+    gap: 8px;
+  }
+
+  .header-logo-img {
+    width: 32px;
+    height: 32px;
+  }
+
+  .drawer-header {
+    padding: 12px;
+  }
+
+  .user-section {
+    padding: 12px;
+  }
+
+  .modern-drawer {
+    :deep(.q-drawer) {
+      width: 260px !important;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .modern-drawer {
+    :deep(.q-drawer) {
+      width: 260px !important;
+    }
+  }
+}
+
+// ==============================================
+// ANIMACIONES Y TRANSICIONES
+// ==============================================
+
+.modern-drawer {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.menu-container {
+  :deep(.q-expansion-item) {
+    transition: all 0.2s ease;
+  }
+
+  :deep(.q-expansion-item__content) {
+    transition: all 0.3s ease;
+  }
+}
+
+// Animación de entrada para elementos del menú
+.main-menu-item,
+.submenu-item,
+.footer-item {
+  animation: slideInLeft 0.3s ease-out;
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// ==============================================
+// TEMA PERSONALIZADO
+// ==============================================
+
+:deep(.q-list) {
+  padding: 0;
+}
+
+:deep(.q-item) {
+  min-height: 44px;
+}
+
+:deep(.q-expansion-item__header) {
+  min-height: 48px;
+  padding: 8px 16px;
+}
+
+:deep(.q-btn-dropdown .q-btn-dropdown__arrow) {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+// Estados de hover globales
+.header-toolbar :deep(.q-btn:hover) {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+// Scrollbar personalizado
+:deep(.q-scrollarea__thumb) {
+  background: rgba(25, 118, 210, 0.3);
+  border-radius: 4px;
+
+  &:hover {
+    background: rgba(25, 118, 210, 0.5);
+  }
+}
+</style>

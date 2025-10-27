@@ -1,5 +1,10 @@
 <template>
   <q-page class="welcome-page">
+    <!-- Burbujas flotantes lentas -->
+    <div class="bubbles-container">
+      <div class="bubble" v-for="n in 8" :key="n"></div>
+    </div>
+    
     <!-- Hero Section -->
     <div class="hero-section q-pa-lg">
       <div class="container">
@@ -39,13 +44,13 @@
             <div class="hero-visual">
               <q-card class="welcome-card glossy shadow-10">
                 <q-card-section class="text-center">
-                  <q-avatar size="120px" class="hero-avatar q-mb-md">
-                    <q-icon
-                      name="business_center"
-                      size="60px"
-                      color="primary"
+                  <div class="hero-avatar-container q-mb-md">
+                    <img 
+                      src="src/assets/loginsa.png" 
+                      alt="Logo empresa" 
+                      class="hero-company-logo"
                     />
-                  </q-avatar>
+                  </div>
                   <h3 class="text-primary q-mb-sm">¡Bienvenido!</h3>
                   <p class="text-grey-7">Tu espacio de trabajo está listo</p>
                 </q-card-section>
@@ -328,6 +333,7 @@ const navigateTo = (route) => {
 <style lang="scss" scoped>
 .welcome-page {
   min-height: 100vh;
+  position: relative;
 }
 
 .hero-section {
@@ -335,6 +341,8 @@ const navigateTo = (route) => {
   min-height: 60vh;
   display: flex;
   align-items: center;
+  position: relative;
+  z-index: 1;
 }
 
 .hero-title {
@@ -358,13 +366,36 @@ const navigateTo = (route) => {
   border: 3px solid rgba(255, 255, 255, 0.2);
 }
 
-.hero-avatar {
+.hero-avatar-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto;
   background: rgba(255, 255, 255, 0.1);
   border: 3px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  padding: 20px;
+}
+
+.hero-company-logo {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.hero-company-logo:hover {
+  transform: scale(1.1);
 }
 
 .features-section {
   padding: 80px 0;
+  position: relative;
+  z-index: 1;
 }
 
 .section-title {
@@ -405,6 +436,8 @@ const navigateTo = (route) => {
 
 .stats-section {
   padding: 60px 0;
+  position: relative;
+  z-index: 1;
 }
 
 .stat-card {
@@ -427,6 +460,8 @@ const navigateTo = (route) => {
 
 .activity-section {
   padding: 60px 0;
+  position: relative;
+  z-index: 1;
 }
 
 .activity-card,
@@ -439,6 +474,112 @@ const navigateTo = (route) => {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
+}
+
+/* Contenedor de burbujas lentas */
+.bubbles-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Estilos de las burbujas lentas */
+.bubble {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  animation: float-slow linear infinite;
+}
+
+/* Solo 8 burbujas con movimiento MUY lento */
+.bubble:nth-child(1) {
+  width: 100px;
+  height: 100px;
+  left: 8%;
+  animation-duration: 25s;
+  animation-delay: 0s;
+}
+
+.bubble:nth-child(2) {
+  width: 140px;
+  height: 140px;
+  left: 18%;
+  animation-duration: 30s;
+  animation-delay: 5s;
+}
+
+.bubble:nth-child(3) {
+  width: 80px;
+  height: 80px;
+  left: 35%;
+  animation-duration: 22s;
+  animation-delay: 8s;
+}
+
+.bubble:nth-child(4) {
+  width: 120px;
+  height: 120px;
+  left: 50%;
+  animation-duration: 28s;
+  animation-delay: 3s;
+}
+
+.bubble:nth-child(5) {
+  width: 160px;
+  height: 160px;
+  left: 65%;
+  animation-duration: 35s;
+  animation-delay: 12s;
+}
+
+.bubble:nth-child(6) {
+  width: 90px;
+  height: 90px;
+  left: 78%;
+  animation-duration: 24s;
+  animation-delay: 7s;
+}
+
+.bubble:nth-child(7) {
+  width: 110px;
+  height: 110px;
+  left: 88%;
+  animation-duration: 26s;
+  animation-delay: 15s;
+}
+
+.bubble:nth-child(8) {
+  width: 130px;
+  height: 130px;
+  left: 25%;
+  animation-duration: 32s;
+  animation-delay: 10s;
+}
+
+/* Animación muy lenta de flotación */
+@keyframes float-slow {
+  0% {
+    bottom: -150px;
+    opacity: 0;
+    transform: translateX(0px) rotate(0deg);
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    bottom: 100vh;
+    opacity: 0;
+    transform: translateX(-30px) rotate(180deg);
+  }
 }
 
 @media (max-width: 768px) {
@@ -455,6 +596,18 @@ const navigateTo = (route) => {
 
   .section-title {
     font-size: 2rem;
+  }
+  
+  /* Burbujas más pequeñas en móviles */
+  .bubble:nth-child(1) { width: 60px; height: 60px; }
+  .bubble:nth-child(2) { width: 80px; height: 80px; }
+  .bubble:nth-child(3) { width: 50px; height: 50px; }
+  .bubble:nth-child(4) { width: 70px; height: 70px; }
+  .bubble:nth-child(5) { width: 90px; height: 90px; }
+  
+  /* Solo 5 burbujas en móviles */
+  .bubble:nth-child(n+6) {
+    display: none;
   }
 }
 </style>
