@@ -957,6 +957,7 @@ const obtenerCuentas = async () => {
 };
 
 const obtenerUsuarios = async () => {
+  usuarios.value = [];
   try {
     const response = await api.get(`/usuario/area/${usuarioStore.area}`);
     usuarios.value = response.data;
@@ -967,6 +968,7 @@ const obtenerUsuarios = async () => {
 };
 
 const obtenerUsuariosNoArea = async () => {
+  usuarios.value = [];
   try {
     const response = await api.get(
       `/usuario/no-in-area/${usuarioStore.area}/empresa/${usuarioStore.empresa}`

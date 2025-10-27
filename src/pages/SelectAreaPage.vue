@@ -9,17 +9,28 @@
       <q-card bordered class="area-selection-card q-pa-lg">
         <q-card-section class="text-center">
           <!-- Logo de la empresa -->
-          <div class="q-mb-lg">
-            <img 
-              src="src/assets/loginsa.png" 
-              alt="Logo empresa" 
+
+          <div v-if="empresa" class="q-mb-lg">
+            <img
+              :src="empresa.imagenEmpresa"
+              alt="Logo empresa"
+              class="company-logo"
+            />
+          </div>
+          <div v-else class="q-mb-lg">
+            <img
+              src="src/assets/quasar-logo-vertical.svg"
+              alt="Logo empresa"
               class="company-logo"
             />
           </div>
 
           <!-- Nombre empresa -->
           <h5 class="text-primary q-mt-none q-mb-sm company-name">
-            EL NOMBRE DE LA EMPRESA
+            <div v-if="empresa">
+              {{ empresa.nombre }}
+            </div>
+            <div v-else>Cargando empresa...</div>
           </h5>
 
           <!-- Subtítulo -->
@@ -88,6 +99,7 @@ const areas = ref([]);
 const cargando = ref(false);
 const areaSeleccionada = ref(null);
 const perfil = ref(null);
+const empresa = ref(null);
 
 const cargarAreas = async () => {
   try {
@@ -133,8 +145,19 @@ async function obtenerPerfilAreaUsuario() {
   }
 }
 
+async function obtenerEmpresa() {
+  try {
+    const response = await api.get(`/empresa/${usuarioStore.empresa}`);
+    empresa.value = response.data; // o response.data.data si tu backend lo envuelve
+    console.log(empresa.value);
+  } catch (error) {
+    console.error("error al obtener los datos de la empresa: ", error);
+  }
+}
+
 onMounted(() => {
   cargarAreas();
+  obtenerEmpresa();
 });
 </script>
 
