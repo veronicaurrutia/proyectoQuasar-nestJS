@@ -89,8 +89,8 @@
         <q-separator class="drawer-separator" />
 
         <!-- Información del usuario -->
-        <div 
-          class="user-section" 
+        <div
+          class="user-section"
           v-if="!miniState"
           @mouseenter="handleUserSectionMouseEnter"
           @mouseleave="handleUserSectionMouseLeave"
@@ -108,16 +108,7 @@
               <div class="user-main-email">
                 {{ user.email || "Sin correo" }}
               </div>
-              <div class="user-status">
-                <q-chip
-                  size="sm"
-                  color="positive"
-                  text-color="white"
-                  icon="circle"
-                >
-                  En línea
-                </q-chip>
-              </div>
+              <div class="user-status"></div>
             </div>
           </div>
         </div>
