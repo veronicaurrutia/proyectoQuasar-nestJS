@@ -67,8 +67,8 @@
       v-model="leftDrawerOpen"
       show-if-above
       :mini="miniState"
-      @mouseover="miniState = false"
-      @mouseout="miniState = true"
+      @mouseover="handleDrawerMouseOver"
+      @mouseout="handleDrawerMouseOut"
       bordered
       class="modern-drawer"
       :width="280"
@@ -89,7 +89,12 @@
         <q-separator class="drawer-separator" />
 
         <!-- Información del usuario -->
-        <div class="user-section" v-if="!miniState">
+        <div 
+          class="user-section" 
+          v-if="!miniState"
+          @mouseenter="handleUserSectionMouseEnter"
+          @mouseleave="handleUserSectionMouseLeave"
+        >
           <div class="user-card">
             <q-avatar size="48px" class="user-main-avatar">
               <img v-if="user.avatar" :src="user.avatar" alt="Avatar" />
@@ -238,7 +243,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, computed } from "vue";
+import { ref, watch, onMounted, onUnmounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import { Notify } from "quasar";
 import { useUsuariostore } from "src/stores/usuario.store";
@@ -499,9 +504,53 @@ watch(
 //   usuarioStore.setPerfil(newValue);
 // });
 
+// Variables para control del drawer
+const isUserInteracting = ref(false);
+const drawerTimeout = ref(null);
+
 // Métodos
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
+}
+
+function handleDrawerMouseOver() {
+  // Cancelar cualquier timeout pendiente
+  if (drawerTimeout.value) {
+    clearTimeout(drawerTimeout.value);
+    drawerTimeout.value = null;
+  }
+  miniState.value = false;
+}
+
+function handleDrawerMouseOut(event) {
+  // Solo minimizar si no estamos interactuando con la sección de usuario
+  if (!isUserInteracting.value) {
+    // Agregar un pequeño delay para evitar parpadeos
+    drawerTimeout.value = setTimeout(() => {
+      if (!isUserInteracting.value) {
+        miniState.value = true;
+      }
+    }, 100);
+  }
+}
+
+function handleUserSectionMouseEnter() {
+  isUserInteracting.value = true;
+  // Cancelar cualquier timeout de cierre
+  if (drawerTimeout.value) {
+    clearTimeout(drawerTimeout.value);
+    drawerTimeout.value = null;
+  }
+}
+
+function handleUserSectionMouseLeave() {
+  isUserInteracting.value = false;
+  // Iniciar el timeout para cerrar después de un breve delay
+  drawerTimeout.value = setTimeout(() => {
+    if (!isUserInteracting.value) {
+      miniState.value = true;
+    }
+  }, 300); // 300ms de delay
 }
 
 function logout() {
@@ -631,6 +680,13 @@ onMounted(async () => {
   setTimeout(() => {
     actualizarAreaActual();
   }, 500);
+});
+
+// Limpiar timeouts al desmontar el componente
+onUnmounted(() => {
+  if (drawerTimeout.value) {
+    clearTimeout(drawerTimeout.value);
+  }
 });
 </script>
 
