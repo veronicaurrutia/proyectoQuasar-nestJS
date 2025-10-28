@@ -47,79 +47,79 @@
           </q-card-section>
 
           <q-separator class="q-mx-md" />
-      <q-card-section>
-        <q-table
-          flat
-          bordered
-          :rows="estados"
-          :columns="columns"
-          :filter="filter"
-          row-key="id"
-          :pagination="pagination"
-          class="estados-table"
-        >
-          <template v-slot:top-right>
-            <q-input
-              dense
-              debounce="300"
-              v-model="filter"
-              placeholder="Buscar estado..."
-              outlined
-              class="search-input"
+          <q-card-section>
+            <q-table
+              flat
+              bordered
+              :rows="estados"
+              :columns="columns"
+              :filter="filter"
+              row-key="id"
+              :pagination="pagination"
+              class="estados-table"
             >
-              <template v-slot:prepend>
-                <q-icon name="search" />
-              </template>
-              <template v-slot:append>
-                <q-icon
-                  v-if="filter !== ''"
-                  name="clear"
-                  class="cursor-pointer"
-                  @click="filter = ''"
-                />
-              </template>
-            </q-input>
-          </template>
-
-          <template v-slot:body-cell-enabledopt="props">
-            <q-td :props="props" class="text-center">
-              <q-badge
-                :color="props.row.estado ? 'positive' : 'negative'"
-                :label="props.row.estado ? 'Activo' : 'Inactivo'"
-                class="q-px-sm"
-              />
-            </q-td>
-          </template>
-
-          <template v-slot:body-cell-actions="props">
-            <q-td :props="props" class="text-center">
-              <div class="q-gutter-xs">
-                <q-btn
-                  size="sm"
-                  color="primary"
-                  icon="edit"
-                  round
-                  flat
-                  @click="editarEstado(props.row)"
+              <template v-slot:top-right>
+                <q-input
+                  dense
+                  debounce="300"
+                  v-model="filter"
+                  placeholder="Buscar estado..."
+                  outlined
+                  class="search-input"
                 >
-                  <q-tooltip>Editar estado</q-tooltip>
-                </q-btn>
-                <q-btn
-                  size="sm"
-                  color="negative"
-                  icon="delete"
-                  round
-                  flat
-                  @click="eliminarEstado(props.row)"
-                >
-                  <q-tooltip>Eliminar estado</q-tooltip>
-                </q-btn>
-              </div>
-            </q-td>
-          </template>
-        </q-table>
-      </q-card-section>
-    </q-card>
+                  <template v-slot:prepend>
+                    <q-icon name="search" />
+                  </template>
+                  <template v-slot:append>
+                    <q-icon
+                      v-if="filter !== ''"
+                      name="clear"
+                      class="cursor-pointer"
+                      @click="filter = ''"
+                    />
+                  </template>
+                </q-input>
+              </template>
+
+              <template v-slot:body-cell-enabledopt="props">
+                <q-td :props="props" class="text-center">
+                  <q-badge
+                    :color="props.row.estado ? 'positive' : 'negative'"
+                    :label="props.row.estado ? 'Activo' : 'Inactivo'"
+                    class="q-px-sm"
+                  />
+                </q-td>
+              </template>
+
+              <template v-slot:body-cell-actions="props">
+                <q-td :props="props" class="text-center">
+                  <div class="q-gutter-xs">
+                    <q-btn
+                      size="sm"
+                      color="primary"
+                      icon="edit"
+                      round
+                      flat
+                      @click="editarEstado(props.row)"
+                    >
+                      <q-tooltip>Editar estado</q-tooltip>
+                    </q-btn>
+                    <q-btn
+                      size="sm"
+                      color="negative"
+                      icon="delete"
+                      round
+                      flat
+                      @click="eliminarEstado(props.row)"
+                    >
+                      <q-tooltip>Eliminar estado</q-tooltip>
+                    </q-btn>
+                  </div>
+                </q-td>
+              </template>
+            </q-table>
+          </q-card-section>
+        </q-card>
       </div>
     </div>
     <!-- DIALOGO CREAR ESTADO -->
@@ -362,6 +362,8 @@ import { ref, reactive, onMounted, watch } from "vue";
 import { api } from "src/boot/axios";
 import { Notify } from "quasar";
 import { useUsuariostore } from "src/stores/usuario.store";
+//css
+import "src/css/pages/estadosPage.scss";
 
 // ✅ store
 const usuarioStore = useUsuariostore();
@@ -695,116 +697,3 @@ watch(
   }
 );
 </script>
-
-<style lang="scss" scoped>
-.estados-table {
-  .q-table__top {
-    padding: 16px;
-  }
-
-  .q-table thead th {
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 0.75rem;
-    letter-spacing: 0.5px;
-  }
-
-  .q-table tbody td {
-    padding: 12px 8px;
-  }
-}
-
-.search-input {
-  min-width: 300px;
-
-  .q-field__control {
-    border-radius: 8px;
-  }
-}
-
-.scope-selector {
-  .q-radio {
-    padding: 8px 16px;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    margin-right: 12px;
-    transition: all 0.2s ease;
-
-    &:hover {
-      background-color: rgba(25, 118, 210, 0.1);
-    }
-
-    &.q-radio--checked {
-      background-color: rgba(25, 118, 210, 0.1);
-      border-color: var(--q-primary);
-    }
-  }
-}
-
-.q-card {
-  border-radius: 12px;
-
-  &.bg-primary {
-    background: linear-gradient(
-      135deg,
-      var(--q-primary) 0%,
-      rgba(25, 118, 210, 0.9) 100%
-    );
-  }
-}
-
-.q-btn {
-  border-radius: 8px;
-  font-weight: 500;
-
-  &.q-btn--unelevated {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-
-    &:hover {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-  }
-}
-
-.q-input,
-.q-select {
-  .q-field__control {
-    border-radius: 8px;
-  }
-}
-
-.q-badge {
-  border-radius: 6px;
-  font-weight: 500;
-  padding: 4px 8px;
-}
-
-// Estados de hover mejorados
-.cursor-pointer {
-  cursor: pointer;
-  transition: color 0.2s ease;
-
-  &:hover {
-    color: var(--q-primary) !important;
-  }
-}
-
-// Separadores visuales
-.q-separator {
-  margin: 16px 0;
-}
-
-// Mejoras responsivas
-@media (max-width: $breakpoint-sm-max) {
-  .search-input {
-    min-width: 250px;
-  }
-
-  .scope-selector {
-    .q-radio {
-      margin-right: 8px;
-      margin-bottom: 8px;
-    }
-  }
-}
-</style>

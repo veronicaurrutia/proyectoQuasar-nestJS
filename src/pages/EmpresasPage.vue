@@ -45,88 +45,88 @@
               </div>
             </div>
           </q-card-section>
-      <q-separator class="q-mx-md" />
-      <q-card-section>
-        <q-table
-          flat
-          bordered
-          :rows="empresas"
-          :columns="columns"
-          :filter="filter"
-          row-key="id"
-          :pagination="pagination"
-          class="empresa-table"
-        >
-          <template v-slot:top-right>
-            <q-input
-              dense
-              debounce="300"
-              v-model="filter"
-              placeholder="Buscar empresa..."
-              outlined
-              class="search-input"
+          <q-separator class="q-mx-md" />
+          <q-card-section>
+            <q-table
+              flat
+              bordered
+              :rows="empresas"
+              :columns="columns"
+              :filter="filter"
+              row-key="id"
+              :pagination="pagination"
+              class="empresa-table"
             >
-              <template v-slot:prepend>
-                <q-icon name="search" />
-              </template>
-              <template v-slot:append>
-                <q-icon
-                  v-if="filter !== ''"
-                  name="clear"
-                  class="cursor-pointer"
-                  @click="filter = ''"
-                />
-              </template>
-            </q-input>
-          </template>
-
-          <template v-slot:body-cell-index="props">
-            <q-td :props="props" class="text-center">
-              <q-chip size="sm" color="grey-3" text-color="grey-8">
-                {{ props.pageIndex + 1 }}
-              </q-chip>
-            </q-td>
-          </template>
-
-          <template v-slot:body-cell-enabledopt="props">
-            <q-td :props="props" class="text-center">
-              <q-badge
-                :color="props.row.estado ? 'positive' : 'negative'"
-                :label="props.row.estado ? 'Activa' : 'Inactiva'"
-                class="q-px-sm"
-              />
-            </q-td>
-          </template>
-
-          <template v-slot:body-cell-actions="props">
-            <q-td :props="props" class="text-center">
-              <div class="q-gutter-xs">
-                <q-btn
-                  size="sm"
-                  color="primary"
-                  icon="edit"
-                  round
-                  flat
-                  @click="editarEmpresa(props.row)"
+              <template v-slot:top-right>
+                <q-input
+                  dense
+                  debounce="300"
+                  v-model="filter"
+                  placeholder="Buscar empresa..."
+                  outlined
+                  class="search-input"
                 >
-                  <q-tooltip>Editar empresa</q-tooltip>
-                </q-btn>
-                <q-btn
-                  size="sm"
-                  color="negative"
-                  icon="delete"
-                  round
-                  flat
-                  @click="eliminarEmpresa(props.row)"
-                >
-                  <q-tooltip>Eliminar empresa</q-tooltip>
-                </q-btn>
-              </div>
-            </q-td>
-          </template>
-        </q-table>
-      </q-card-section>
-    </q-card>
+                  <template v-slot:prepend>
+                    <q-icon name="search" />
+                  </template>
+                  <template v-slot:append>
+                    <q-icon
+                      v-if="filter !== ''"
+                      name="clear"
+                      class="cursor-pointer"
+                      @click="filter = ''"
+                    />
+                  </template>
+                </q-input>
+              </template>
+
+              <template v-slot:body-cell-index="props">
+                <q-td :props="props" class="text-center">
+                  <q-chip size="sm" color="grey-3" text-color="grey-8">
+                    {{ props.pageIndex + 1 }}
+                  </q-chip>
+                </q-td>
+              </template>
+
+              <template v-slot:body-cell-enabledopt="props">
+                <q-td :props="props" class="text-center">
+                  <q-badge
+                    :color="props.row.estado ? 'positive' : 'negative'"
+                    :label="props.row.estado ? 'Activa' : 'Inactiva'"
+                    class="q-px-sm"
+                  />
+                </q-td>
+              </template>
+
+              <template v-slot:body-cell-actions="props">
+                <q-td :props="props" class="text-center">
+                  <div class="q-gutter-xs">
+                    <q-btn
+                      size="sm"
+                      color="primary"
+                      icon="edit"
+                      round
+                      flat
+                      @click="editarEmpresa(props.row)"
+                    >
+                      <q-tooltip>Editar empresa</q-tooltip>
+                    </q-btn>
+                    <q-btn
+                      size="sm"
+                      color="negative"
+                      icon="delete"
+                      round
+                      flat
+                      @click="eliminarEmpresa(props.row)"
+                    >
+                      <q-tooltip>Eliminar empresa</q-tooltip>
+                    </q-btn>
+                  </div>
+                </q-td>
+              </template>
+            </q-table>
+          </q-card-section>
+        </q-card>
       </div>
     </div>
     <!-- DIALOGO CREAR EMPRESA -->
@@ -412,6 +412,8 @@ import { ref, reactive, onMounted, watch } from "vue";
 import { api } from "src/boot/axios";
 import { Notify } from "quasar";
 import { useUsuariostore } from "src/stores/usuario.store";
+//css
+import "src/css/pages/empresasPage.scss";
 
 // ✅ store
 const usuarioStore = useUsuariostore();
@@ -681,72 +683,3 @@ watch(dialogEmpresaEdit, (val) => {
   }
 });
 </script>
-
-<style lang="scss" scoped>
-.empresa-table {
-  .q-table__top {
-    padding: 16px;
-  }
-
-  .q-table thead th {
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 0.75rem;
-    letter-spacing: 0.5px;
-  }
-
-  .q-table tbody td {
-    padding: 12px 8px;
-  }
-}
-
-.search-input {
-  min-width: 300px;
-
-  .q-field__control {
-    border-radius: 8px;
-  }
-}
-
-.q-card {
-  border-radius: 12px;
-
-  &.bg-primary {
-    background: linear-gradient(
-      135deg,
-      var(--q-primary) 0%,
-      rgba(25, 118, 210, 0.9) 100%
-    );
-  }
-}
-
-.q-btn {
-  border-radius: 8px;
-  font-weight: 500;
-
-  &.q-btn--unelevated {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-
-    &:hover {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-  }
-}
-
-.q-input,
-.q-select {
-  .q-field__control {
-    border-radius: 8px;
-  }
-}
-
-.q-badge {
-  border-radius: 6px;
-  font-weight: 500;
-  padding: 4px 8px;
-}
-
-.q-chip {
-  border-radius: 6px;
-}
-</style>

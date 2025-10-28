@@ -191,11 +191,16 @@
 
     <!-- Dialog Crear Área -->
     <q-dialog v-model="dialogArea" persistent class="area-dialog">
-      <q-card class="dialog-card" style="width: 900px; max-width: 95vw">
-        <q-card-section class="bg-primary text-white">
+      <q-card class="dialog-card responsive-dialog">
+        <q-card-section class="dialog-header bg-primary text-white">
           <div class="row items-center no-wrap">
-            <q-icon name="add_business" size="28px" class="q-mr-md" />
-            <div>
+            <q-avatar
+              square
+              icon="add_business"
+              color="white"
+              text-color="primary"
+            />
+            <div class="q-ml-sm">
               <div class="text-h6 q-mb-xs">Nueva Área</div>
               <div class="text-caption opacity-80">
                 Crear nueva área organizacional
@@ -204,13 +209,13 @@
           </div>
         </q-card-section>
 
-        <q-card-section class="q-pa-lg">
+        <q-card-section class="dialog-content">
           <q-form @submit="crearArea" class="q-gutter-md">
             <div class="row q-col-gutter-md">
               <div class="col-12">
                 <q-input
                   v-model="area.nombre"
-                  label="Nombre del Área"
+                  label="Nombre del Área *"
                   outlined
                   dense
                   :rules="[(val) => !!val || 'El nombre es requerido']"
@@ -228,7 +233,7 @@
                   v-model="area.descripcion"
                   label="Descripción"
                   type="textarea"
-                  rows="3"
+                  :rows="$q.screen.xs ? 2 : 3"
                   outlined
                   dense
                   hint="Descripción detallada del área y sus funciones"
@@ -239,10 +244,10 @@
                 </q-input>
               </div>
 
-              <div class="col-12 col-md-6">
+              <div class="col-12 col-sm-6">
                 <q-input
                   v-model="area.prefijo"
-                  label="Prefijo"
+                  label="Prefijo *"
                   outlined
                   dense
                   :rules="[(val) => !!val || 'El prefijo es requerido']"
@@ -257,11 +262,11 @@
                 </q-input>
               </div>
 
-              <div class="col-12 col-md-6">
+              <div class="col-12 col-sm-6">
                 <q-select
                   v-model="area.empresaId"
                   :options="empresas"
-                  label="Empresa"
+                  label="Empresa *"
                   outlined
                   dense
                   map-options
@@ -276,7 +281,11 @@
               </div>
 
               <div class="col-12">
-                <q-item tag="label" v-ripple class="rounded-borders q-pa-md">
+                <q-item
+                  tag="label"
+                  v-ripple
+                  class="rounded-borders q-pa-md status-toggle"
+                >
                   <q-item-section avatar>
                     <q-toggle
                       v-model="area.estado"
@@ -298,57 +307,41 @@
           </q-form>
         </q-card-section>
 
-        <q-separator />
-
-        <q-card-actions
-          align="right"
-          class="q-pa-md bg-grey-1"
-          style="padding-top: 12px; padding-bottom: 16px"
-        >
-          <q-btn
-            flat
-            label="Cancelar"
-            color="grey-7"
-            icon="close"
-            @click="dialogArea = false"
-            :disable="cargandoIcon"
-            class="q-mr-sm"
-            size="md"
-            style="
-              border-radius: 8px;
-              min-width: 110px;
-              height: 36px;
-              font-weight: 500;
-            "
-          />
-          <q-btn
-            label="Crear Área"
-            color="primary"
-            icon="add_business"
-            @click="crearArea"
-            :loading="cargandoIcon"
-            unelevated
-            class="glossy"
-            size="md"
-            style="
-              border-radius: 8px;
-              min-width: 130px;
-              height: 36px;
-              font-weight: 600;
-              box-shadow: 0 3px 8px rgba(25, 118, 210, 0.25);
-            "
-          />
+        <q-card-actions class="dialog-actions">
+          <div class="full-width">
+            <div class="row q-gutter-sm justify-end">
+              <q-btn
+                flat
+                label="Cancelar"
+                color="grey-7"
+                icon="close"
+                @click="dialogArea = false"
+                :disable="cargandoIcon"
+                class="action-btn"
+                :class="{ 'col-12 col-sm-auto': $q.screen.xs }"
+              />
+              <q-btn
+                label="Crear Área"
+                color="primary"
+                icon="add_business"
+                @click="crearArea"
+                :loading="cargandoIcon"
+                class="glossy action-btn"
+                :class="{ 'col-12 col-sm-auto': $q.screen.xs }"
+              />
+            </div>
+          </div>
         </q-card-actions>
       </q-card>
     </q-dialog>
 
     <!-- Dialog Editar Área -->
     <q-dialog v-model="dialogAreaEdit" persistent class="area-dialog">
-      <q-card class="dialog-card" style="width: 900px; max-width: 95vw">
-        <q-card-section class="bg-primary text-white">
+      <q-card class="dialog-card responsive-dialog">
+        <q-card-section class="dialog-header bg-secondary text-white">
           <div class="row items-center no-wrap">
-            <q-icon name="edit" size="28px" class="q-mr-md" />
-            <div>
+            <q-avatar square icon="edit" color="white" text-color="secondary" />
+            <div class="q-ml-sm">
               <div class="text-h6 q-mb-xs">Editar Área</div>
               <div class="text-caption opacity-80">
                 Modificar información del área
@@ -357,13 +350,13 @@
           </div>
         </q-card-section>
 
-        <q-card-section class="q-pa-lg">
+        <q-card-section class="dialog-content">
           <q-form @submit="actualizarArea" class="q-gutter-md">
             <div class="row q-col-gutter-md">
               <div class="col-12">
                 <q-input
                   v-model="area.nombre"
-                  label="Nombre del Área"
+                  label="Nombre del Área *"
                   outlined
                   dense
                   :rules="[(val) => !!val || 'El nombre es requerido']"
@@ -381,7 +374,7 @@
                   v-model="area.descripcion"
                   label="Descripción"
                   type="textarea"
-                  rows="3"
+                  :rows="$q.screen.xs ? 2 : 3"
                   outlined
                   dense
                   hint="Descripción detallada del área y sus funciones"
@@ -392,10 +385,10 @@
                 </q-input>
               </div>
 
-              <div class="col-12 col-md-6">
+              <div class="col-12 col-sm-6">
                 <q-input
                   v-model="area.prefijo"
-                  label="Prefijo"
+                  label="Prefijo *"
                   outlined
                   dense
                   :rules="[(val) => !!val || 'El prefijo es requerido']"
@@ -410,11 +403,11 @@
                 </q-input>
               </div>
 
-              <div class="col-12 col-md-6">
+              <div class="col-12 col-sm-6">
                 <q-select
                   v-model="area.empresaId"
                   :options="empresas"
-                  label="Empresa"
+                  label="Empresa *"
                   outlined
                   dense
                   map-options
@@ -429,7 +422,11 @@
               </div>
 
               <div class="col-12">
-                <q-item tag="label" v-ripple class="rounded-borders q-pa-md">
+                <q-item
+                  tag="label"
+                  v-ripple
+                  class="rounded-borders q-pa-md status-toggle"
+                >
                   <q-item-section avatar>
                     <q-toggle
                       v-model="area.estado"
@@ -451,46 +448,30 @@
           </q-form>
         </q-card-section>
 
-        <q-separator />
-
-        <q-card-actions
-          align="right"
-          class="q-pa-md bg-grey-1"
-          style="padding-top: 12px; padding-bottom: 16px"
-        >
-          <q-btn
-            flat
-            label="Cancelar"
-            color="grey-7"
-            icon="close"
-            @click="dialogAreaEdit = false"
-            :disable="cargandoIcon"
-            class="q-mr-sm"
-            size="md"
-            style="
-              border-radius: 8px;
-              min-width: 110px;
-              height: 36px;
-              font-weight: 500;
-            "
-          />
-          <q-btn
-            label="Actualizar"
-            color="primary"
-            icon="save"
-            @click="actualizarArea"
-            :loading="cargandoIcon"
-            unelevated
-            class="glossy"
-            size="md"
-            style="
-              border-radius: 8px;
-              min-width: 130px;
-              height: 36px;
-              font-weight: 600;
-              box-shadow: 0 3px 8px rgba(25, 118, 210, 0.25);
-            "
-          />
+        <q-card-actions class="dialog-actions">
+          <div class="full-width">
+            <div class="row q-gutter-sm justify-end">
+              <q-btn
+                flat
+                label="Cancelar"
+                color="grey-7"
+                icon="close"
+                @click="dialogAreaEdit = false"
+                :disable="cargandoIcon"
+                class="action-btn"
+                :class="{ 'col-12 col-sm-auto': $q.screen.xs }"
+              />
+              <q-btn
+                label="Actualizar"
+                color="secondary"
+                icon="save"
+                @click="actualizarArea"
+                :loading="cargandoIcon"
+                class="glossy action-btn"
+                :class="{ 'col-12 col-sm-auto': $q.screen.xs }"
+              />
+            </div>
+          </div>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -502,6 +483,8 @@ import { ref, watch, onMounted, computed } from "vue";
 import { api } from "src/boot/axios";
 import { Notify } from "quasar";
 import { useUsuariostore } from "src/stores/usuario.store";
+//css
+import "src/css/pages/areasPage.scss";
 
 // --------------------
 // Estado reactivo
@@ -886,333 +869,3 @@ onMounted(() => {
   obtenerAreas();
 });
 </script>
-
-<style lang="scss" scoped>
-.areas-page {
-  min-height: 100vh;
-}
-
-// Header Section
-.page-header {
-  background: linear-gradient(
-    135deg,
-    var(--q-primary) 0%,
-    rgba(var(--q-primary-rgb), 0.8) 100%
-  );
-  border-radius: 0 0 30px 30px;
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='7' cy='7' r='5'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")
-      repeat;
-    opacity: 0.3;
-  }
-
-  .container {
-    position: relative;
-    z-index: 1;
-  }
-}
-
-.page-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-  display: flex;
-  align-items: center;
-
-  @media (max-width: 768px) {
-    font-size: 2rem;
-    flex-direction: column;
-    text-align: center;
-
-    .q-icon {
-      margin-right: 0 !important;
-      margin-bottom: 0.5rem;
-    }
-  }
-}
-
-.page-subtitle {
-  font-size: 1.1rem;
-  line-height: 1.5;
-  opacity: 0.95;
-}
-
-// Table Section
-.table-section {
-  position: relative;
-  z-index: 1;
-}
-
-.table-card {
-  border-radius: 20px;
-  border: 1px solid rgba(var(--q-primary-rgb), 0.1);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.95);
-  overflow: hidden;
-}
-
-.table-title {
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: var(--q-primary);
-  margin: 0;
-  display: flex;
-  align-items: center;
-}
-
-.modern-table {
-  border-radius: 8px;
-  overflow: hidden;
-  background: white;
-
-  :deep(.q-table__top) {
-    padding: 0;
-  }
-
-  :deep(.q-table thead th) {
-    background: #1976d2;
-    color: white;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-size: 0.85rem;
-    border: none;
-    padding: 16px 12px;
-    border-right: 1px solid rgba(255, 255, 255, 0.2);
-    
-    &:last-child {
-      border-right: none;
-    }
-  }
-
-  :deep(.q-table tbody tr) {
-    border-bottom: 1px solid #e0e0e0;
-    
-    &:hover {
-      background: #f5f5f5;
-    }
-    
-    &:last-child {
-      border-bottom: none;
-    }
-  }
-
-  :deep(.q-table tbody td) {
-    border: none;
-    border-right: 1px solid #e0e0e0;
-    padding: 16px 12px;
-    vertical-align: top;
-    
-    &:last-child {
-      border-right: none;
-    }
-  }
-
-  // Estilos específicos para cada columna
-  :deep(.index-column) {
-    width: 80px;
-    min-width: 80px;
-    max-width: 80px;
-    font-weight: 600;
-    color: #666;
-    background: rgba(25, 118, 210, 0.02);
-    border-right: 2px solid #e0e0e0 !important;
-  }
-
-  :deep(.nombre-column) {
-    min-width: 280px;
-    border-right: 2px solid #e0e0e0 !important;
-  }
-
-  :deep(.empresa-column) {
-    min-width: 200px;
-    font-weight: 500;
-    border-right: 2px solid #e0e0e0 !important;
-  }
-
-  :deep(.estado-column) {
-    min-width: 120px;
-    font-weight: 500;
-    border-right: 2px solid #e0e0e0 !important;
-  }
-
-  :deep(.actions-column) {
-    width: 180px;
-    min-width: 180px;
-    max-width: 180px;
-  }
-}
-
-// Area Info
-.area-info {
-  min-width: 200px;
-}
-
-.area-name {
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 4px;
-  color: #333;
-}
-
-.area-description {
-  font-size: 0.875rem;
-  color: #666;
-  margin-bottom: 4px;
-  line-height: 1.4;
-}
-
-.area-prefix {
-  font-size: 0.75rem;
-  color: #888;
-  font-style: italic;
-}
-
-// Actions
-.actions-container {
-  display: flex;
-  gap: 6px;
-  justify-content: center;
-
-  .q-btn {
-    transition: all 0.2s ease;
-
-    &:hover {
-      transform: scale(1.1);
-    }
-  }
-}
-
-// Dialog Styles
-.dialog-card {
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-}
-
-.dialog-header {
-  position: relative;
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M20 20c0-5.5-4.5-10-10-10s-10 4.5-10 10 4.5 10 10 10 10-4.5 10-10zm10 0c0-5.5-4.5-10-10-10s-10 4.5-10 10 4.5 10 10 10 10-4.5 10-10z'/%3E%3C/g%3E%3C/svg%3E")
-      repeat;
-  }
-
-  > div {
-    position: relative;
-    z-index: 1;
-  }
-}
-
-// Form Elements
-:deep(.q-field--outlined .q-field__control) {
-  border-radius: 12px;
-  transition: all 0.3s ease;
-
-  &:hover {
-    box-shadow: 0 4px 12px rgba(var(--q-primary-rgb), 0.15);
-  }
-}
-
-:deep(.q-field--focused .q-field__control) {
-  box-shadow: 0 4px 20px rgba(var(--q-primary-rgb), 0.2);
-}
-
-:deep(.q-btn.glossy) {
-  border-radius: 12px;
-  text-transform: none;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  padding: 8px 24px;
-}
-
-// Badges
-.estado-badge {
-  font-weight: 600;
-  border-radius: 20px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-size: 0.75rem;
-}
-
-// Responsive Design
-.container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-// Utilities
-.hover-lift {
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
-}
-
-// Mobile Optimizations
-@media (max-width: 768px) {
-  .page-header {
-    text-align: center;
-    border-radius: 0 0 20px 20px;
-
-    .row {
-      flex-direction: column;
-      gap: 1rem;
-    }
-  }
-
-  .table-card {
-    border-radius: 15px;
-    margin: 0 -8px;
-  }
-
-  .actions-container {
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .dialog-card {
-    margin: 16px;
-    border-radius: 15px;
-  }
-
-  :deep(.q-table--dense .q-table tbody td) {
-    padding: 8px 4px;
-  }
-}
-
-@media (max-width: 480px) {
-  .page-title {
-    font-size: 1.8rem;
-  }
-
-  .modern-table {
-    font-size: 0.875rem;
-  }
-}
-
-// Custom scrollbar
-:deep(.q-scrollarea__thumb--v) {
-  background: var(--q-primary);
-  border-radius: 6px;
-  opacity: 0.7;
-
-  &:hover {
-    opacity: 1;
-  }
-}
-</style>

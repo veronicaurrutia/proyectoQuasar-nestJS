@@ -18,7 +18,7 @@
               color="white"
               text-color="accent"
               icon="person_add"
-              label="Nuevo Usuario"
+              :label="$q.screen.xs ? '' : 'Nuevo Usuario'"
               size="lg"
               class="glossy shadow-5"
               @click="dialogUsuario = true"
@@ -60,19 +60,21 @@
                 />
               </div>
               <div class="col-12 col-md-6">
-                <div class="row q-gutter-sm">
+                <div class="row q-gutter-sm justify-start">
                   <q-btn
                     color="primary"
                     icon="filter_list"
-                    label="Aplicar"
+                    :label="$q.screen.xs ? '' : 'Aplicar'"
                     @click="aplicarFiltros"
+                    :size="$q.screen.xs ? 'sm' : 'md'"
                   />
                   <q-btn
                     color="grey-7"
                     icon="clear"
-                    label="Limpiar"
+                    :label="$q.screen.xs ? '' : 'Limpiar'"
                     outline
                     @click="limpiarFiltros"
+                    :size="$q.screen.xs ? 'sm' : 'md'"
                   />
                 </div>
               </div>
@@ -101,18 +103,20 @@
               v-model="tab"
               dense
               class="text-primary"
-              align="justify"
+              :align="$q.screen.xs ? 'left' : 'justify'"
               active-color="primary"
               indicator-color="primary"
+              :mobile-arrows="$q.screen.xs"
+              :outside-arrows="$q.screen.xs"
             >
               <q-tab
                 name="usuariosArea"
-                label="Usuarios de mi Área"
+                :label="$q.screen.xs ? 'Mi Área' : 'Usuarios de mi Área'"
                 icon="group"
               />
               <q-tab
                 name="usuariosNoArea"
-                label="Usuarios sin Área"
+                :label="$q.screen.xs ? 'Sin Área' : 'Usuarios sin Área'"
                 icon="person_off"
               />
             </q-tabs>
@@ -131,6 +135,8 @@
                     class="modern-table"
                     separator="horizontal"
                     :pagination="{ rowsPerPage: 15 }"
+                    :grid="$q.screen.xs"
+                    :columns-mobile="columnsMobile"
                   >
                     <template v-slot:body-cell-index="props">
                       <q-td :props="props" class="text-center">
@@ -262,6 +268,8 @@
                     class="modern-table"
                     separator="horizontal"
                     :pagination="{ rowsPerPage: 15 }"
+                    :grid="$q.screen.xs"
+                    :columns-mobile="columnsMobile"
                   >
                     <template v-slot:body-cell-index="props">
                       <q-td :props="props" class="text-center">
@@ -446,7 +454,10 @@
 
     <!-- Dialog Crear Usuario -->
     <q-dialog v-model="dialogUsuario" persistent class="user-dialog">
-      <q-card class="dialog-card" style="width: 900px; max-width: 95vw">
+      <q-card
+        class="dialog-card"
+        style="width: 100%; max-width: 900px; max-height: 90vh"
+      >
         <q-card-section class="dialog-header bg-accent text-white">
           <div class="row items-center">
             <q-avatar
@@ -572,33 +583,40 @@
                 size="lg"
               />
             </div>
+
+            <div class="col-12 col-md-6">
+              <div class="row q-gutter-sm justify-end items-center">
+                <q-btn
+                  flat
+                  label="Cancelar"
+                  color="grey-7"
+                  v-close-popup
+                  @click="dialogUsuario = false"
+                  :disable="cargandoIcon"
+                  size="md"
+                />
+                <q-btn
+                  label="Crear Usuario"
+                  color="accent"
+                  icon="person_add"
+                  @click="crearUsuario"
+                  :loading="cargandoIcon"
+                  class="glossy"
+                  size="md"
+                />
+              </div>
+            </div>
           </div>
         </q-card-section>
-
-        <q-card-actions align="right" class="q-pa-lg">
-          <q-btn
-            flat
-            label="Cancelar"
-            color="grey-7"
-            v-close-popup
-            @click="dialogUsuario = false"
-            :disable="cargandoIcon"
-          />
-          <q-btn
-            label="Crear Usuario"
-            color="accent"
-            icon="person_add"
-            @click="crearUsuario"
-            :loading="cargandoIcon"
-            class="glossy"
-          />
-        </q-card-actions>
       </q-card>
     </q-dialog>
 
     <!-- Dialog Editar Usuario -->
     <q-dialog v-model="dialogUsuarioEdit" persistent class="user-dialog">
-      <q-card class="dialog-card" style="width: 900px; max-width: 95vw">
+      <q-card
+        class="dialog-card"
+        style="width: 100%; max-width: 900px; max-height: 90vh"
+      >
         <q-card-section class="dialog-header bg-secondary text-white">
           <div class="row items-center">
             <q-avatar square icon="edit" color="white" text-color="secondary" />
@@ -702,6 +720,7 @@
             v-close-popup
             @click="dialogUsuarioEdit = false"
             :disable="cargandoIcon"
+            size="sm"
           />
           <q-btn
             label="Actualizar"
@@ -710,13 +729,17 @@
             @click="actualizarUsuario"
             :loading="cargandoIcon"
             class="glossy"
+            size="sm"
           />
         </q-card-actions>
       </q-card>
     </q-dialog>
     <!-- Dialog Agregar Perfil y Area -->
     <q-dialog v-model="dialogArea" persistent class="user-dialog">
-      <q-card class="dialog-card" style="width: 900px; max-width: 95vw">
+      <q-card
+        class="dialog-card area-dialog-card"
+        style="width: 100%; max-width: 900px; max-height: 90vh"
+      >
         <q-card-section class="dialog-header bg-accent text-white">
           <div class="row items-center">
             <q-avatar
@@ -727,10 +750,7 @@
             />
             <span class="q-ml-sm text-h6">Agregar Nuevo Usuario al Area</span>
           </div>
-        </q-card-section>
-
-        <q-card-section class="q-pa-lg">
-          <div class="row q-col-gutter-md">
+          <div class="row q-col-gutter-sm">
             <div class="col-12 col-md-6">
               <q-select
                 dense
@@ -757,8 +777,9 @@
             </div>
           </div>
         </q-card-section>
+        <q-separator />
 
-        <q-card-actions align="right" class="q-pa-lg">
+        <q-card-actions align="right" class="q-pa-md dialog-actions">
           <q-btn
             flat
             label="Cancelar"
@@ -766,6 +787,8 @@
             v-close-popup
             @click="dialogArea = false"
             :disable="cargandoIcon"
+            class="cancel-btn"
+            size="sm"
           />
           <q-btn
             label="Agregar Usuario"
@@ -773,7 +796,8 @@
             icon="person_add"
             @click="agregarUsuarioArea()"
             :loading="cargandoIcon"
-            class="glossy"
+            class="glossy action-btn"
+            size="sm"
           />
         </q-card-actions>
       </q-card>
@@ -786,6 +810,8 @@ import { ref, reactive, watch, onMounted, computed } from "vue";
 import { Notify } from "quasar";
 import { api } from "src/boot/axios";
 import { useUsuariostore } from "src/stores/usuario.store";
+//css
+import "src/css/pages/usuariosPage.css";
 
 // ----- STATE -----
 const showPassword = ref(false);
@@ -904,6 +930,28 @@ const columns = [
     field: "area",
     align: "center",
     headerClasses: "bg-primary text-white",
+  },
+];
+
+// Columnas para vista móvil
+const columnsMobile = [
+  {
+    name: "usuario",
+    label: "Usuario",
+    align: "left",
+    field: "usuario",
+  },
+  {
+    name: "enabledopt",
+    label: "Estado",
+    field: "enabledopt",
+    align: "center",
+  },
+  {
+    name: "actions",
+    label: "Acciones",
+    field: "actions",
+    align: "center",
   },
 ];
 
@@ -1273,94 +1321,3 @@ onMounted(async () => {
   await obtenerArea();
 });
 </script>
-
-<style lang="scss" scoped>
-.usuarios-page {
-  min-height: 100vh;
-}
-
-.bg-gradient-accent {
-  background: #1976d2;
-}
-
-.page-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-
-  @media (max-width: 768px) {
-    font-size: 2rem;
-  }
-}
-
-.page-subtitle {
-  font-size: 1.1rem;
-  line-height: 1.5;
-}
-
-.filters-section {
-  position: relative;
-  z-index: 1;
-}
-
-.filters-card,
-.table-card {
-  border-radius: 15px;
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-}
-
-.table-title {
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: #2c3e50;
-  margin: 0;
-}
-
-.modern-table {
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.hover-lift {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.actions-container {
-  display: flex;
-  gap: 4px;
-}
-
-.dialog-card {
-  border-radius: 15px;
-  overflow: hidden;
-}
-
-.dialog-header {
-  padding: 20px 24px;
-}
-
-.estado-badge {
-  font-weight: 600;
-}
-
-.user-info {
-  min-width: 200px;
-}
-
-.container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-@media (max-width: 768px) {
-  .page-header {
-    text-align: center;
-  }
-
-  .actions-container {
-    justify-content: center;
-  }
-}
-</style>

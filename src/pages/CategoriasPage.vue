@@ -59,76 +59,76 @@
               :pagination="pagination"
               class="categoria-table"
             >
-          <template v-slot:top-right>
-            <q-input
-              dense
-              debounce="300"
-              v-model="filter"
-              placeholder="Buscar categoría..."
-              outlined
-              class="search-input"
-            >
-              <template v-slot:prepend>
-                <q-icon name="search" />
-              </template>
-              <template v-slot:append>
-                <q-icon
-                  v-if="filter !== ''"
-                  name="clear"
-                  class="cursor-pointer"
-                  @click="filter = ''"
-                />
-              </template>
-            </q-input>
-          </template>
-
-          <template v-slot:body-cell-index="props">
-            <q-td :props="props" class="text-center">
-              <q-chip size="sm" color="grey-3" text-color="grey-8">
-                {{ props.pageIndex + 1 }}
-              </q-chip>
-            </q-td>
-          </template>
-
-          <template v-slot:body-cell-enabledopt="props">
-            <q-td :props="props" class="text-center">
-              <q-badge
-                :color="props.row.estado ? 'positive' : 'negative'"
-                :label="props.row.estado ? 'Activa' : 'Inactiva'"
-                class="q-px-sm"
-              />
-            </q-td>
-          </template>
-
-          <template v-slot:body-cell-actions="props">
-            <q-td :props="props" class="text-center">
-              <div class="q-gutter-xs">
-                <q-btn
-                  size="sm"
-                  color="primary"
-                  icon="edit"
-                  round
-                  flat
-                  @click="editarArea(props.row)"
+              <template v-slot:top-right>
+                <q-input
+                  dense
+                  debounce="300"
+                  v-model="filter"
+                  placeholder="Buscar categoría..."
+                  outlined
+                  class="search-input"
                 >
-                  <q-tooltip>Editar categoría</q-tooltip>
-                </q-btn>
-                <q-btn
-                  size="sm"
-                  color="negative"
-                  icon="delete"
-                  round
-                  flat
-                  @click="eliminarCategoria(props.row)"
-                >
-                  <q-tooltip>Eliminar categoría</q-tooltip>
-                </q-btn>
-              </div>
-            </q-td>
-          </template>
-        </q-table>
-      </q-card-section>
-    </q-card>
+                  <template v-slot:prepend>
+                    <q-icon name="search" />
+                  </template>
+                  <template v-slot:append>
+                    <q-icon
+                      v-if="filter !== ''"
+                      name="clear"
+                      class="cursor-pointer"
+                      @click="filter = ''"
+                    />
+                  </template>
+                </q-input>
+              </template>
+
+              <template v-slot:body-cell-index="props">
+                <q-td :props="props" class="text-center">
+                  <q-chip size="sm" color="grey-3" text-color="grey-8">
+                    {{ props.pageIndex + 1 }}
+                  </q-chip>
+                </q-td>
+              </template>
+
+              <template v-slot:body-cell-enabledopt="props">
+                <q-td :props="props" class="text-center">
+                  <q-badge
+                    :color="props.row.estado ? 'positive' : 'negative'"
+                    :label="props.row.estado ? 'Activa' : 'Inactiva'"
+                    class="q-px-sm"
+                  />
+                </q-td>
+              </template>
+
+              <template v-slot:body-cell-actions="props">
+                <q-td :props="props" class="text-center">
+                  <div class="q-gutter-xs">
+                    <q-btn
+                      size="sm"
+                      color="primary"
+                      icon="edit"
+                      round
+                      flat
+                      @click="editarArea(props.row)"
+                    >
+                      <q-tooltip>Editar categoría</q-tooltip>
+                    </q-btn>
+                    <q-btn
+                      size="sm"
+                      color="negative"
+                      icon="delete"
+                      round
+                      flat
+                      @click="eliminarCategoria(props.row)"
+                    >
+                      <q-tooltip>Eliminar categoría</q-tooltip>
+                    </q-btn>
+                  </div>
+                </q-td>
+              </template>
+            </q-table>
+          </q-card-section>
+        </q-card>
       </div>
     </div>
     <!-- DIALOGO CREAR CATEGORIA -->
@@ -325,6 +325,8 @@ import { ref, watch, onMounted } from "vue";
 import { api } from "src/boot/axios";
 import { Notify } from "quasar";
 import { useUsuariostore } from "src/stores/usuario.store";
+//css
+import "src/css/pages/categoriasPage.scss";
 
 // --------------------
 // Estado reactivo
@@ -634,105 +636,3 @@ onMounted(() => {
   obtenerCategorias();
 });
 </script>
-
-<style lang="scss" scoped>
-// Aprovecha los estilos globales definidos en app.scss
-.table-card {
-  border-radius: 20px;
-  border: 1px solid rgba(var(--q-primary-rgb), 0.1);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.95);
-  overflow: hidden;
-}
-
-.container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-.categoria-table {
-  .q-table__top {
-    padding: 16px;
-  }
-
-  .q-table thead th {
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 0.75rem;
-    letter-spacing: 0.5px;
-  }
-
-  .q-table tbody td {
-    padding: 12px 8px;
-  }
-}
-
-.search-input {
-  min-width: 300px;
-
-  .q-field__control {
-    border-radius: 8px;
-  }
-}
-
-.q-card {
-  border-radius: 12px;
-
-  &.bg-primary {
-    background: linear-gradient(
-      135deg,
-      var(--q-primary) 0%,
-      rgba(25, 118, 210, 0.9) 100%
-    );
-  }
-}
-
-.q-btn {
-  border-radius: 8px;
-  font-weight: 500;
-
-  &.q-btn--unelevated {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-
-    &:hover {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-  }
-}
-
-.q-input,
-.q-select {
-  .q-field__control {
-    border-radius: 8px;
-  }
-}
-
-.q-badge {
-  border-radius: 6px;
-  font-weight: 500;
-  padding: 4px 8px;
-}
-
-.q-chip {
-  border-radius: 6px;
-}
-
-// Estados de hover mejorados
-.cursor-pointer {
-  cursor: pointer;
-  transition: color 0.2s ease;
-
-  &:hover {
-    color: var(--q-primary) !important;
-  }
-}
-
-// Mejoras responsivas
-@media (max-width: $breakpoint-sm-max) {
-  .search-input {
-    min-width: 250px;
-  }
-}
-</style>

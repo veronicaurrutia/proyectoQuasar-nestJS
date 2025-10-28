@@ -37,242 +37,236 @@
               <q-icon name="list_alt" class="q-mr-sm" />
               Lista de Centros
             </h3>
-          <q-table
-            bordered
-            title="Centros"
-            :rows="centros"
-            :columns="columns"
-            :rows-per-page-options="[10]"
-            :filter="filter"
-          >
-            <template v-slot:body-cell-index="props">
-              <q-td :props="props" align="center">
-                {{ props.pageIndex + 1 }}
-              </q-td>
-            </template>
-            <template v-slot:body-cell-enabledopt="props">
-              <q-td :props="props" align="center">
-                <q-icon
-                  :name="props.row.estado ? 'check_circle' : 'cancel'"
-                  :color="props.row.estado ? 'green' : 'red'"
-                />
-              </q-td>
-            </template>
-            <template v-slot:body-cell-actions="props">
-              <q-td :props="props">
-                <q-btn
-                  color="primary"
-                  icon="edit"
-                  @click="editarCentro(props.row)"
-                  flat
-                />
-                <q-btn
-                  color="red"
-                  icon="delete"
-                  @click="eliminarCentro(props.row)"
-                  flat
-                />
-              </q-td>
-            </template>
-            <template v-slot:top-right>
-              <q-input
-                borderless
-                dense
-                debounce="300"
-                v-model="filter"
-                placeholder="Search"
-                style="
-                  border: 1px solid #bbb;
-                  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.28);
-                  border-radius: 6px;
-                "
-              >
-                <template v-slot:append>
-                  <q-icon name="search" />
-                </template>
-              </q-input>
-            </template>
-          </q-table>
-        </q-card-section>
-      </q-card>
+            <q-table
+              bordered
+              title="Centros"
+              :rows="centros"
+              :columns="columns"
+              :rows-per-page-options="[10]"
+              :filter="filter"
+            >
+              <template v-slot:body-cell-index="props">
+                <q-td :props="props" align="center">
+                  {{ props.pageIndex + 1 }}
+                </q-td>
+              </template>
+              <template v-slot:body-cell-enabledopt="props">
+                <q-td :props="props" align="center">
+                  <q-icon
+                    :name="props.row.estado ? 'check_circle' : 'cancel'"
+                    :color="props.row.estado ? 'green' : 'red'"
+                  />
+                </q-td>
+              </template>
+              <template v-slot:body-cell-actions="props">
+                <q-td :props="props">
+                  <q-btn
+                    color="primary"
+                    icon="edit"
+                    @click="editarCentro(props.row)"
+                    flat
+                  />
+                  <q-btn
+                    color="red"
+                    icon="delete"
+                    @click="eliminarCentro(props.row)"
+                    flat
+                  />
+                </q-td>
+              </template>
+              <template v-slot:top-right>
+                <q-input
+                  borderless
+                  dense
+                  debounce="300"
+                  v-model="filter"
+                  placeholder="Search"
+                  style="
+                    border: 1px solid #bbb;
+                    box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.28);
+                    border-radius: 6px;
+                  "
+                >
+                  <template v-slot:append>
+                    <q-icon name="search" />
+                  </template>
+                </q-input>
+              </template>
+            </q-table>
+          </q-card-section>
+        </q-card>
       </div>
     </div>
-      <!-- DIALOGO CREAR EMPRESA -->
-      <q-dialog v-model="dialogCentro" persistent>
-        <q-card
-          class="q-gutter-sm my-card"
-          style="width: 700px; max-width: 80vw"
-        >
-          <q-card-section class="row items-center">
-            <q-avatar square icon="domain" color="primary" text-color="white" />
-            <span class="q-ml-sm">Agregar Nueva Centro</span>
-          </q-card-section>
-          <q-card-section>
-            <q-input
-              v-model="centro.nombre"
-              label="Nombre"
-              lazy-rules
-              stack-label
-              dense
+    <!-- DIALOGO CREAR EMPRESA -->
+    <q-dialog v-model="dialogCentro" persistent>
+      <q-card class="q-gutter-sm my-card" style="width: 700px; max-width: 80vw">
+        <q-card-section class="row items-center">
+          <q-avatar square icon="domain" color="primary" text-color="white" />
+          <span class="q-ml-sm">Agregar Nueva Centro</span>
+        </q-card-section>
+        <q-card-section>
+          <q-input
+            v-model="centro.nombre"
+            label="Nombre"
+            lazy-rules
+            stack-label
+            dense
+            color="primary"
+          />
+          <q-input
+            v-model="centro.email"
+            label="Correo"
+            stack-label
+            dense
+            lazy-rules
+            color="primary"
+          />
+          <q-input
+            v-model="centro.telefono"
+            label="Telefono"
+            stack-label
+            dense
+            lazy-rules
+            color="primary"
+          />
+          <q-input
+            v-model="centro.direccion"
+            label="Dirección"
+            stack-label
+            dense
+            lazy-rules
+            color="primary"
+          />
+          <q-select
+            dense
+            v-model="centro.estado"
+            :options="estados"
+            label="Estado"
+            map-options
+            emit-value
+          />
+          <q-select
+            dense
+            v-model="centro.paisId"
+            :options="paises"
+            label="País"
+            map-options
+            emit-value
+          />
+          <q-select
+            dense
+            v-model="centro.cuentaEmpresaId"
+            :options="empresas"
+            label="Empresa"
+            map-options
+            emit-value
+          />
+        </q-card-section>
+        <q-card-actions align="right">
+          <template v-if="!cargandoIcon">
+            <q-btn
+              flat
+              label="Cancelar"
               color="primary"
+              v-close-popup
+              @click="dialogCentro = false"
             />
-            <q-input
-              v-model="centro.email"
-              label="Correo"
-              stack-label
-              dense
-              lazy-rules
+            <q-btn label="Confirmar" color="primary" @click="crearCentro()" />
+          </template>
+          <template v-if="cargandoIcon">
+            <span color="primary">Registrando...</span>
+            <q-spinner-hourglass color="primary" size="2em" />
+          </template>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <!-- DIALOGO EDITAR EMPRESA -->
+    <q-dialog v-model="dialogCentroEdit" persistent>
+      <q-card class="q-gutter-sm my-card" style="width: 700px; max-width: 80vw">
+        <q-card-section class="row items-center">
+          <q-avatar square icon="domain" color="primary" text-color="white" />
+          <span class="q-ml-sm">Modificar la Centro</span>
+        </q-card-section>
+        <q-card-section>
+          <q-input
+            v-model="centro.nombre"
+            label="Nombre"
+            lazy-rules
+            stack-label
+            dense
+            color="primary"
+          />
+          <q-input
+            v-model="centro.email"
+            label="Correo"
+            stack-label
+            dense
+            lazy-rules
+            color="primary"
+          />
+          <q-input
+            v-model="centro.telefono"
+            label="Telefono"
+            stack-label
+            dense
+            lazy-rules
+            color="primary"
+          />
+          <q-input
+            v-model="centro.direccion"
+            label="Dirección"
+            stack-label
+            dense
+            lazy-rules
+            color="primary"
+          />
+          <q-select
+            dense
+            v-model="centro.estado"
+            :options="estados"
+            label="Estado"
+            map-options
+            emit-value
+          />
+          <q-select
+            dense
+            v-model="centro.paisId"
+            :options="paises"
+            label="País"
+            map-options
+            emit-value
+          />
+          <q-select
+            dense
+            v-model="centro.cuentaEmpresaId"
+            :options="empresas"
+            label="Empresa"
+            map-options
+            emit-value
+          />
+        </q-card-section>
+        <q-card-actions align="right">
+          <template v-if="!cargandoIcon">
+            <q-btn
+              flat
+              label="Cancelar"
               color="primary"
+              v-close-popup
+              @click="dialogCentroEdit = false"
             />
-            <q-input
-              v-model="centro.telefono"
-              label="Telefono"
-              stack-label
-              dense
-              lazy-rules
+            <q-btn
+              label="Confirmar"
               color="primary"
+              @click="actualizarCentro()"
             />
-            <q-input
-              v-model="centro.direccion"
-              label="Dirección"
-              stack-label
-              dense
-              lazy-rules
-              color="primary"
-            />
-            <q-select
-              dense
-              v-model="centro.estado"
-              :options="estados"
-              label="Estado"
-              map-options
-              emit-value
-            />
-            <q-select
-              dense
-              v-model="centro.paisId"
-              :options="paises"
-              label="País"
-              map-options
-              emit-value
-            />
-            <q-select
-              dense
-              v-model="centro.cuentaEmpresaId"
-              :options="empresas"
-              label="Empresa"
-              map-options
-              emit-value
-            />
-          </q-card-section>
-          <q-card-actions align="right">
-            <template v-if="!cargandoIcon">
-              <q-btn
-                flat
-                label="Cancelar"
-                color="primary"
-                v-close-popup
-                @click="dialogCentro = false"
-              />
-              <q-btn label="Confirmar" color="primary" @click="crearCentro()" />
-            </template>
-            <template v-if="cargandoIcon">
-              <span color="primary">Registrando...</span>
-              <q-spinner-hourglass color="primary" size="2em" />
-            </template>
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
-      <!-- DIALOGO EDITAR EMPRESA -->
-      <q-dialog v-model="dialogCentroEdit" persistent>
-        <q-card
-          class="q-gutter-sm my-card"
-          style="width: 700px; max-width: 80vw"
-        >
-          <q-card-section class="row items-center">
-            <q-avatar square icon="domain" color="primary" text-color="white" />
-            <span class="q-ml-sm">Modificar la Centro</span>
-          </q-card-section>
-          <q-card-section>
-            <q-input
-              v-model="centro.nombre"
-              label="Nombre"
-              lazy-rules
-              stack-label
-              dense
-              color="primary"
-            />
-            <q-input
-              v-model="centro.email"
-              label="Correo"
-              stack-label
-              dense
-              lazy-rules
-              color="primary"
-            />
-            <q-input
-              v-model="centro.telefono"
-              label="Telefono"
-              stack-label
-              dense
-              lazy-rules
-              color="primary"
-            />
-            <q-input
-              v-model="centro.direccion"
-              label="Dirección"
-              stack-label
-              dense
-              lazy-rules
-              color="primary"
-            />
-            <q-select
-              dense
-              v-model="centro.estado"
-              :options="estados"
-              label="Estado"
-              map-options
-              emit-value
-            />
-            <q-select
-              dense
-              v-model="centro.paisId"
-              :options="paises"
-              label="País"
-              map-options
-              emit-value
-            />
-            <q-select
-              dense
-              v-model="centro.cuentaEmpresaId"
-              :options="empresas"
-              label="Empresa"
-              map-options
-              emit-value
-            />
-          </q-card-section>
-          <q-card-actions align="right">
-            <template v-if="!cargandoIcon">
-              <q-btn
-                flat
-                label="Cancelar"
-                color="primary"
-                v-close-popup
-                @click="dialogCentroEdit = false"
-              />
-              <q-btn
-                label="Confirmar"
-                color="primary"
-                @click="actualizarCentro()"
-              />
-            </template>
-            <template v-if="cargandoIcon">
-              <span color="primary">Registrando...</span>
-              <q-spinner-hourglass color="primary" size="2em" />
-            </template>
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
+          </template>
+          <template v-if="cargandoIcon">
+            <span color="primary">Registrando...</span>
+            <q-spinner-hourglass color="primary" size="2em" />
+          </template>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -281,6 +275,8 @@ import { api } from "src/boot/axios";
 import { Notify } from "quasar";
 import { useUsuariostore } from "src/stores/usuario.store";
 import { ref, reactive, onMounted, watch } from "vue";
+//css
+import "src/css/pages/centrosPage.scss";
 
 const filter = ref("");
 const dialogCentro = ref(false);
@@ -489,21 +485,3 @@ function eliminarCentro(row) {
   });
 }
 </script>
-
-<style lang="scss" scoped>
-// Aprovecha los estilos globales definidos en app.scss
-.table-card {
-  border-radius: 20px;
-  border: 1px solid rgba(var(--q-primary-rgb), 0.1);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.95);
-  overflow: hidden;
-}
-
-.container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-</style>

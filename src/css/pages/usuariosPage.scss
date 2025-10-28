@@ -1,0 +1,230 @@
+.usuarios-page {
+  min-height: 100vh;
+}
+
+.bg-gradient-accent {
+  background: #1976d2;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
+}
+
+.page-subtitle {
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+
+.filters-section {
+  position: relative;
+  z-index: 1;
+}
+
+.filters-card,
+.table-card {
+  border-radius: 15px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.table-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.modern-table {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.actions-container {
+  display: flex;
+  gap: 4px;
+}
+
+.dialog-card {
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.dialog-header {
+  padding: 20px 24px;
+}
+
+.dialog-actions {
+  background: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+  min-height: 50px;
+  display: flex !important;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 12px 16px !important;
+}
+
+.cancel-btn {
+  min-width: 100px;
+  height: 40px;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.action-btn {
+  min-width: 140px;
+  height: 40px;
+  border-radius: 8px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
+}
+
+.area-dialog-card {
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+
+  .dialog-actions {
+    margin-top: auto;
+    flex-shrink: 0;
+  }
+}
+
+// Asegura que el diálogo sea visible
+.user-dialog {
+  .q-dialog__inner {
+    padding: 16px;
+
+    .dialog-card {
+      max-height: calc(100vh - 32px);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+  }
+}
+
+.dialog-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 16px !important;
+  min-height: 80px;
+}
+
+// Fuerza la visibilidad de los botones
+.dialog-actions {
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  z-index: 1000 !important;
+}
+
+.estado-badge {
+  font-weight: 600;
+}
+
+.user-info {
+  min-width: 200px;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    text-align: center;
+
+    .col-12.col-md-4 {
+      text-align: center !important;
+      margin-top: 16px;
+    }
+  }
+
+  .actions-container {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .filters-section {
+    .q-card-section {
+      padding: 12px;
+    }
+  }
+
+  .table-section {
+    padding: 8px;
+  }
+
+  .dialog-header {
+    padding: 16px !important;
+
+    .text-h6 {
+      font-size: 1.1rem;
+    }
+  }
+
+  .dialog-actions {
+    padding: 8px 12px !important;
+    gap: 8px;
+    flex-direction: column;
+
+    .q-btn {
+      min-width: 120px !important;
+      width: 100%;
+      margin-bottom: 8px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  // Para pantallas muy pequeñas, usar layout horizontal pero más compacto
+  @media (min-width: 400px) {
+    .dialog-actions {
+      flex-direction: row;
+
+      .q-btn {
+        width: auto;
+        flex: 1;
+        margin-bottom: 0;
+        max-width: 150px;
+      }
+    }
+  }
+
+  // Ocultar columnas en móvil que no son esenciales
+  .modern-table {
+    .q-table__grid-content {
+      padding: 8px;
+    }
+  }
+
+  // Hacer los cards más pequeños en móvil
+  .user-card {
+    margin-bottom: 12px;
+  }
+
+  .user-info {
+    min-width: auto;
+  }
+
+  // Ajustar spacing de inputs en formularios
+  .q-field {
+    margin-bottom: 16px;
+  }
+}

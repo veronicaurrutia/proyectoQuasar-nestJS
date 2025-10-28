@@ -31,22 +31,22 @@
             </div>
           </q-card-section>
 
-      <q-separator class="q-mx-md" />
+          <q-separator class="q-mx-md" />
 
-      <q-card-section>
-        <q-select
-          v-model="perfilSeleccionado"
-          :options="perfiles"
-          option-label="nombre"
-          option-value="id"
-          label="Seleccionar Perfil"
-          outlined
-          dense
-          class="q-mb-sm"
-          @update:model-value="cargarPermisos"
-        />
-        </q-card-section>
-      </q-card>
+          <q-card-section>
+            <q-select
+              v-model="perfilSeleccionado"
+              :options="perfiles"
+              option-label="nombre"
+              option-value="id"
+              label="Seleccionar Perfil"
+              outlined
+              dense
+              class="q-mb-sm"
+              @update:model-value="cargarPermisos"
+            />
+          </q-card-section>
+        </q-card>
       </div>
     </div>
 
@@ -262,6 +262,8 @@
 import { ref, onMounted, computed } from "vue";
 import { api } from "src/boot/axios";
 import { useQuasar } from "quasar";
+//css
+import "/src/css/pages/permisosPage.scss";
 
 const $q = useQuasar();
 
@@ -405,171 +407,3 @@ onMounted(() => {
   cargarPerfiles();
 });
 </script>
-
-<style lang="scss" scoped>
-.modules-panel {
-  max-height: 70vh;
-  display: flex;
-  flex-direction: column;
-  
-  .q-card__section:last-child {
-    flex: 1;
-    overflow: hidden;
-  }
-}
-
-.modules-list {
-  max-height: 60vh;
-  overflow-y: auto;
-  
-  /* Estilos para la barra de scroll */
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-  
-  &::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 3px;
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
-    border-radius: 3px;
-    
-    &:hover {
-      background: #a8a8a8;
-    }
-  }
-  
-  /* Para Firefox */
-  scrollbar-width: thin;
-  scrollbar-color: #c1c1c1 #f1f1f1;
-}
-
-.menu-item {
-  transition: all 0.3s ease;
-  border-radius: 0;
-
-  &:hover {
-    background-color: rgba(25, 118, 210, 0.1);
-  }
-
-  &.bg-primary {
-    border-radius: 0;
-  }
-}
-
-.menu-item-transition {
-  transition: all 0.2s ease-in-out;
-}
-
-.submenu-card {
-  transition: all 0.3s ease;
-  border-radius: 8px;
-
-  &:hover {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
-  }
-
-  &.submenu-disabled {
-    opacity: 0.6;
-
-    &:hover {
-      transform: none;
-      box-shadow: none;
-    }
-  }
-}
-
-.q-card {
-  border-radius: 12px;
-
-  &.bg-primary {
-    background: linear-gradient(
-      135deg,
-      var(--q-primary) 0%,
-      rgba(25, 118, 210, 0.9) 100%
-    );
-  }
-}
-
-.q-btn {
-  border-radius: 8px;
-  font-weight: 500;
-
-  &.q-btn--unelevated {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-
-    &:hover {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-  }
-}
-
-.q-input,
-.q-select {
-  .q-field__control {
-    border-radius: 8px;
-  }
-}
-
-.q-badge {
-  border-radius: 6px;
-  font-weight: 500;
-  padding: 4px 8px;
-}
-
-.q-list .q-item {
-  border-radius: 0;
-
-  &:first-child {
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-  }
-
-  &:last-child {
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-  }
-}
-
-// Mejoras responsivas
-@media (max-width: $breakpoint-sm-max) {
-  .row.q-col-gutter-lg > .col-12:first-child {
-    margin-bottom: 16px;
-  }
-
-  .submenu-card {
-    margin-bottom: 12px;
-  }
-}
-
-// Estados de hover mejorados
-.q-toggle {
-  transition: all 0.2s ease;
-
-  &:hover {
-    transform: scale(1.05);
-  }
-}
-
-// Estilo para iconos
-.q-icon {
-  transition: all 0.2s ease;
-}
-
-// Loading states
-.loading-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(255, 255, 255, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-</style>

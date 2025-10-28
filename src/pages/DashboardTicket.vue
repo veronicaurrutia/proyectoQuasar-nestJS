@@ -234,6 +234,8 @@ import { api } from "src/boot/axios";
 import { Notify } from "quasar";
 import { useUsuariostore } from "src/stores/usuario.store";
 import graficoCategorias from "src/dashboard/GraficoCategoria.vue";
+//css
+import "/src/css/pages/dashboardTicket.scss";
 
 export default {
   components: {
@@ -474,115 +476,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.dashboard-page {
-  background-color: #f5f7fa;
-  min-height: 100vh;
-}
-
-.bg-gradient-primary {
-  background: linear-gradient(135deg, #667eea 0%, #8f95ed 100%);
-}
-
-.dashboard-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-
-  @media (max-width: 768px) {
-    font-size: 2rem;
-  }
-}
-
-.dashboard-subtitle {
-  font-size: 1.1rem;
-  line-height: 1.5;
-}
-
-.kpi-section {
-  margin-top: -40px;
-  position: relative;
-  z-index: 1;
-}
-
-.kpi-card {
-  border-radius: 15px;
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-  }
-}
-
-.kpi-value {
-  background: linear-gradient(45deg, #667eea, #0a0de3);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.pulse-animation {
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-.chart-card,
-.priority-card,
-.actions-card,
-.activity-card {
-  border-radius: 15px;
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-}
-
-.chart-title,
-.priority-title,
-.actions-title,
-.activity-title {
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: #2c3e50;
-  margin: 0;
-}
-
-.chart-container {
-  min-height: 300px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.hover-lift {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-@media (max-width: 768px) {
-  .kpi-section {
-    margin-top: -20px;
-  }
-
-  .dashboard-header {
-    text-align: center;
-  }
-}
-</style>

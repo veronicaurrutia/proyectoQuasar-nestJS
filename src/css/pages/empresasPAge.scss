@@ -1,0 +1,66 @@
+.empresa-table {
+  .q-table__top {
+    padding: 16px;
+  }
+
+  .q-table thead th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+  }
+
+  .q-table tbody td {
+    padding: 12px 8px;
+  }
+}
+
+.search-input {
+  min-width: 300px;
+
+  .q-field__control {
+    border-radius: 8px;
+  }
+}
+
+.q-card {
+  border-radius: 12px;
+
+  &.bg-primary {
+    background: linear-gradient(
+      135deg,
+      var(--q-primary) 0%,
+      rgba(25, 118, 210, 0.9) 100%
+    );
+  }
+}
+
+.q-btn {
+  border-radius: 8px;
+  font-weight: 500;
+
+  &.q-btn--unelevated {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+  }
+}
+
+.q-input,
+.q-select {
+  .q-field__control {
+    border-radius: 8px;
+  }
+}
+
+.q-badge {
+  border-radius: 6px;
+  font-weight: 500;
+  padding: 4px 8px;
+}
+
+.q-chip {
+  border-radius: 6px;
+}

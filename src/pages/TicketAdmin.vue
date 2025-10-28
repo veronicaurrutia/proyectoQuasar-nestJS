@@ -37,277 +37,274 @@
               <q-icon name="list_alt" class="q-mr-sm" />
               Lista de Tickets
             </h3>
-          <q-table
-            bordered
-            title="Tickets"
-            :rows="tickets"
-            :columns="columns"
-            :rows-per-page-options="[10]"
-            :filter="filter"
-          >
-            <template v-slot:body-cell-index="props">
-              <q-td :props="props" align="center">
-                {{ props.pageIndex + 1 }}
-              </q-td>
-            </template>
-            <template v-slot:body-cell-Estado="props">
-              <q-td :props="props">
-                <div>
-                  <q-btn-dropdown
-                    dense
-                    no-caps
-                    class="q-ma-none q-pa-none"
-                    :label="props.row.estado.nombre"
-                  >
-                    <q-list>
-                      <template
-                        v-for="(item, index) in estadosTicket"
-                        :key="index"
-                      >
-                        <q-item
-                          clickable
-                          :style="item.color"
-                          v-close-popup
-                          @click="cambiarEstado(item, props.row)"
+            <q-table
+              bordered
+              title="Tickets"
+              :rows="tickets"
+              :columns="columns"
+              :rows-per-page-options="[10]"
+              :filter="filter"
+            >
+              <template v-slot:body-cell-index="props">
+                <q-td :props="props" align="center">
+                  {{ props.pageIndex + 1 }}
+                </q-td>
+              </template>
+              <template v-slot:body-cell-Estado="props">
+                <q-td :props="props">
+                  <div>
+                    <q-btn-dropdown
+                      dense
+                      no-caps
+                      class="q-ma-none q-pa-none"
+                      :label="props.row.estado.nombre"
+                    >
+                      <q-list>
+                        <template
+                          v-for="(item, index) in estadosTicket"
+                          :key="index"
                         >
-                          <q-item-section>
-                            <q-item-label class="text-center">
-                              {{ item.nombre }}
-                            </q-item-label>
-                          </q-item-section>
-                        </q-item>
-                      </template>
-                    </q-list>
-                  </q-btn-dropdown>
-                </div>
-              </q-td>
-            </template>
-            <template v-slot:body-cell-Gestor="props">
-              <q-td :props="props">
-                <div>
-                  <q-btn-dropdown
-                    dense
-                    no-caps
-                    class="q-ma-none q-pa-none"
-                    :label="
-                      props.row.usuariosGestion
-                        ? props.row.usuariosGestion.email
-                        : 'Sin gestor'
-                    "
-                  >
-                    <q-list>
-                      <template v-for="(item, index) in gestores" :key="index">
-                        <q-item
-                          clickable
-                          :style="item.color"
-                          v-close-popup
-                          @click="cambiarGestor(item, props.row)"
+                          <q-item
+                            clickable
+                            :style="item.color"
+                            v-close-popup
+                            @click="cambiarEstado(item, props.row)"
+                          >
+                            <q-item-section>
+                              <q-item-label class="text-center">
+                                {{ item.nombre }}
+                              </q-item-label>
+                            </q-item-section>
+                          </q-item>
+                        </template>
+                      </q-list>
+                    </q-btn-dropdown>
+                  </div>
+                </q-td>
+              </template>
+              <template v-slot:body-cell-Gestor="props">
+                <q-td :props="props">
+                  <div>
+                    <q-btn-dropdown
+                      dense
+                      no-caps
+                      class="q-ma-none q-pa-none"
+                      :label="
+                        props.row.usuariosGestion
+                          ? props.row.usuariosGestion.email
+                          : 'Sin gestor'
+                      "
+                    >
+                      <q-list>
+                        <template
+                          v-for="(item, index) in gestores"
+                          :key="index"
                         >
-                          <q-item-section>
-                            <q-item-label class="text-center">
-                              {{ item.email }}
-                            </q-item-label>
-                          </q-item-section>
-                        </q-item>
-                      </template>
-                    </q-list>
-                  </q-btn-dropdown>
-                </div>
-              </q-td>
-            </template>
-            <template v-slot:top-right>
-              <q-input
-                borderless
-                dense
-                debounce="300"
-                v-model="filter"
-                placeholder="Search"
-                style="
-                  border: 1px solid #bbb;
-                  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.28);
-                  border-radius: 6px;
-                "
-              >
-                <template v-slot:append>
-                  <q-icon name="search" />
-                </template>
-              </q-input>
-            </template>
-            <template v-slot:body-cell-fechaCreacion="props">
-              <q-td :props="props">
-                {{ formatDate(props.row.fechaCreacion) }}
-              </q-td>
-            </template>
-            <template v-slot:body-cell-fechaActualizacion="props">
-              <q-td :props="props">
-                {{ formatDate(props.row.fechaActualizacion) }}
-              </q-td>
-            </template>
-          </q-table>
-        </q-card-section>
-      </q-card>
+                          <q-item
+                            clickable
+                            :style="item.color"
+                            v-close-popup
+                            @click="cambiarGestor(item, props.row)"
+                          >
+                            <q-item-section>
+                              <q-item-label class="text-center">
+                                {{ item.email }}
+                              </q-item-label>
+                            </q-item-section>
+                          </q-item>
+                        </template>
+                      </q-list>
+                    </q-btn-dropdown>
+                  </div>
+                </q-td>
+              </template>
+              <template v-slot:top-right>
+                <q-input
+                  borderless
+                  dense
+                  debounce="300"
+                  v-model="filter"
+                  placeholder="Search"
+                  style="
+                    border: 1px solid #bbb;
+                    box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.28);
+                    border-radius: 6px;
+                  "
+                >
+                  <template v-slot:append>
+                    <q-icon name="search" />
+                  </template>
+                </q-input>
+              </template>
+              <template v-slot:body-cell-fechaCreacion="props">
+                <q-td :props="props">
+                  {{ formatDate(props.row.fechaCreacion) }}
+                </q-td>
+              </template>
+              <template v-slot:body-cell-fechaActualizacion="props">
+                <q-td :props="props">
+                  {{ formatDate(props.row.fechaActualizacion) }}
+                </q-td>
+              </template>
+            </q-table>
+          </q-card-section>
+        </q-card>
       </div>
     </div>
-      <!-- DIALOGO CREAR EMPRESA -->
-      <q-dialog v-model="dialogTicket" persistent>
-        <q-card
-          class="q-gutter-sm my-card"
-          style="width: 700px; max-width: 80vw"
-        >
-          <q-card-section class="row items-center">
-            <q-avatar square icon="domain" color="primary" text-color="white" />
-            <span class="q-ml-sm">Nuevo Ticket</span>
-          </q-card-section>
-          <q-card-section>
-            <q-input
-              v-model="ticket.titulo"
-              label="titulo"
-              lazy-rules
-              stack-label
-              dense
+    <!-- DIALOGO CREAR EMPRESA -->
+    <q-dialog v-model="dialogTicket" persistent>
+      <q-card class="q-gutter-sm my-card" style="width: 700px; max-width: 80vw">
+        <q-card-section class="row items-center">
+          <q-avatar square icon="domain" color="primary" text-color="white" />
+          <span class="q-ml-sm">Nuevo Ticket</span>
+        </q-card-section>
+        <q-card-section>
+          <q-input
+            v-model="ticket.titulo"
+            label="titulo"
+            lazy-rules
+            stack-label
+            dense
+            color="primary"
+          />
+          <q-input
+            v-model="ticket.descripcion"
+            label="Descripcion"
+            stack-label
+            dense
+            lazy-rules
+            color="primary"
+          />
+          <q-select
+            dense
+            v-model="ticket.areaId"
+            :options="areas"
+            label="Area"
+            map-options
+            emit-value
+          />
+          <q-select
+            dense
+            v-model="ticket.categoriaId"
+            :options="categorias"
+            label="Categoria"
+            map-options
+            emit-value
+          />
+          <q-select
+            dense
+            v-model="ticket.centroId"
+            :options="centros"
+            label="Centro"
+            map-options
+            emit-value
+          />
+        </q-card-section>
+        <q-card-actions align="right">
+          <template v-if="!cargandoIcon">
+            <q-btn
+              flat
+              label="Cancelar"
               color="primary"
+              v-close-popup
+              @click="dialogTicket = false"
             />
-            <q-input
-              v-model="ticket.descripcion"
-              label="Descripcion"
-              stack-label
-              dense
-              lazy-rules
+            <q-btn label="Confirmar" color="primary" @click="crearTicket()" />
+          </template>
+          <template v-if="cargandoIcon">
+            <span color="primary">Registrando...</span>
+            <q-spinner-hourglass color="primary" size="2em" />
+          </template>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <!-- DIALOGO EDITAR EMPRESA -->
+    <q-dialog v-model="dialogTicketEdit" persistent>
+      <q-card class="q-gutter-sm my-card" style="width: 700px; max-width: 80vw">
+        <q-card-section class="row items-center">
+          <q-avatar square icon="domain" color="primary" text-color="white" />
+          <span class="q-ml-sm">Modificar el Ticket</span>
+        </q-card-section>
+        <q-card-section>
+          <q-input
+            v-model="ticket.nombre"
+            label="Nombre"
+            lazy-rules
+            stack-label
+            dense
+            color="primary"
+          />
+          <q-input
+            v-model="ticket.email"
+            label="Correo"
+            stack-label
+            dense
+            lazy-rules
+            color="primary"
+          />
+          <q-input
+            v-model="ticket.telefono"
+            label="Telefono"
+            stack-label
+            dense
+            lazy-rules
+            color="primary"
+          />
+          <q-input
+            v-model="ticket.direccion"
+            label="Dirección"
+            stack-label
+            dense
+            lazy-rules
+            color="primary"
+          />
+          <q-select
+            dense
+            v-model="ticket.estado"
+            :options="estados"
+            label="Estado"
+            map-options
+            emit-value
+          />
+          <q-select
+            dense
+            v-model="ticket.paisId"
+            :options="paises"
+            label="País"
+            map-options
+            emit-value
+          />
+          <q-select
+            dense
+            v-model="ticket.cuentaEmpresaId"
+            :options="empresas"
+            label="Empresa"
+            map-options
+            emit-value
+          />
+        </q-card-section>
+        <q-card-actions align="right">
+          <template v-if="!cargandoIcon">
+            <q-btn
+              flat
+              label="Cancelar"
               color="primary"
+              v-close-popup
+              @click="dialogTicketEdit = false"
             />
-            <q-select
-              dense
-              v-model="ticket.areaId"
-              :options="areas"
-              label="Area"
-              map-options
-              emit-value
-            />
-            <q-select
-              dense
-              v-model="ticket.categoriaId"
-              :options="categorias"
-              label="Categoria"
-              map-options
-              emit-value
-            />
-            <q-select
-              dense
-              v-model="ticket.centroId"
-              :options="centros"
-              label="Centro"
-              map-options
-              emit-value
-            />
-          </q-card-section>
-          <q-card-actions align="right">
-            <template v-if="!cargandoIcon">
-              <q-btn
-                flat
-                label="Cancelar"
-                color="primary"
-                v-close-popup
-                @click="dialogTicket = false"
-              />
-              <q-btn label="Confirmar" color="primary" @click="crearTicket()" />
-            </template>
-            <template v-if="cargandoIcon">
-              <span color="primary">Registrando...</span>
-              <q-spinner-hourglass color="primary" size="2em" />
-            </template>
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
-      <!-- DIALOGO EDITAR EMPRESA -->
-      <q-dialog v-model="dialogTicketEdit" persistent>
-        <q-card
-          class="q-gutter-sm my-card"
-          style="width: 700px; max-width: 80vw"
-        >
-          <q-card-section class="row items-center">
-            <q-avatar square icon="domain" color="primary" text-color="white" />
-            <span class="q-ml-sm">Modificar el Ticket</span>
-          </q-card-section>
-          <q-card-section>
-            <q-input
-              v-model="ticket.nombre"
-              label="Nombre"
-              lazy-rules
-              stack-label
-              dense
+            <q-btn
+              label="Confirmar"
               color="primary"
+              @click="actualizarTicket()"
             />
-            <q-input
-              v-model="ticket.email"
-              label="Correo"
-              stack-label
-              dense
-              lazy-rules
-              color="primary"
-            />
-            <q-input
-              v-model="ticket.telefono"
-              label="Telefono"
-              stack-label
-              dense
-              lazy-rules
-              color="primary"
-            />
-            <q-input
-              v-model="ticket.direccion"
-              label="Dirección"
-              stack-label
-              dense
-              lazy-rules
-              color="primary"
-            />
-            <q-select
-              dense
-              v-model="ticket.estado"
-              :options="estados"
-              label="Estado"
-              map-options
-              emit-value
-            />
-            <q-select
-              dense
-              v-model="ticket.paisId"
-              :options="paises"
-              label="País"
-              map-options
-              emit-value
-            />
-            <q-select
-              dense
-              v-model="ticket.cuentaEmpresaId"
-              :options="empresas"
-              label="Empresa"
-              map-options
-              emit-value
-            />
-          </q-card-section>
-          <q-card-actions align="right">
-            <template v-if="!cargandoIcon">
-              <q-btn
-                flat
-                label="Cancelar"
-                color="primary"
-                v-close-popup
-                @click="dialogTicketEdit = false"
-              />
-              <q-btn
-                label="Confirmar"
-                color="primary"
-                @click="actualizarTicket()"
-              />
-            </template>
-            <template v-if="cargandoIcon">
-              <span color="primary">Registrando...</span>
-              <q-spinner-hourglass color="primary" size="2em" />
-            </template>
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
+          </template>
+          <template v-if="cargandoIcon">
+            <span color="primary">Registrando...</span>
+            <q-spinner-hourglass color="primary" size="2em" />
+          </template>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -316,6 +313,8 @@ import { ref, reactive, onMounted, watch } from "vue";
 import { api } from "src/boot/axios";
 import { Notify } from "quasar";
 import { useUsuariostore } from "src/stores/usuario.store";
+//css
+import "/src/css/pages/ticketAdmin.scss";
 
 // Store
 const usuarioStore = useUsuariostore();
@@ -579,21 +578,3 @@ onMounted(() => {
   obtenerAreas();
 });
 </script>
-
-<style lang="scss" scoped>
-// Aprovecha los estilos globales definidos en app.scss
-.table-card {
-  border-radius: 20px;
-  border: 1px solid rgba(var(--q-primary-rgb), 0.1);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.95);
-  overflow: hidden;
-}
-
-.container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-</style>
