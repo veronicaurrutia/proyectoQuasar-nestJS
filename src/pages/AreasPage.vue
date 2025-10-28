@@ -192,7 +192,7 @@
     <!-- Dialog Crear Área -->
     <q-dialog v-model="dialogArea" persistent class="area-dialog">
       <q-card class="dialog-card responsive-dialog">
-        <q-card-section class="dialog-header bg-primary text-white">
+        <q-card-section class="bg-primary text-white">
           <div class="row items-center no-wrap">
             <q-avatar
               square

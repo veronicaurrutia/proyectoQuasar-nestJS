@@ -811,7 +811,7 @@ import { Notify } from "quasar";
 import { api } from "src/boot/axios";
 import { useUsuariostore } from "src/stores/usuario.store";
 //css
-import "src/css/pages/usuariosPage.css";
+import "src/css/pages/usuariosPage.scss";
 
 // ----- STATE -----
 const showPassword = ref(false);
