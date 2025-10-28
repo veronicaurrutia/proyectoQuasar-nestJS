@@ -2,67 +2,67 @@ const routes = [
   {
     path: "/",
     meta: { requiresAuth: true },
-    component: () => import("layouts/MainLayout.vue"),
+    component: () => import("../layouts/MainLayout.vue"),
     children: [
       {
         path: "",
-        component: () => import("pages/IndexPage.vue"),
+        component: () => import("../pages/IndexPage.vue"),
       },
       {
         path: "perfil",
-        component: () => import("layouts/PerfilPage.vue"),
+        component: () => import("../layouts/PerfilPage.vue"),
       },
       {
         path: "edit-perfil",
-        component: () => import("layouts/EditPerfil.vue"),
+        component: () => import("../layouts/EditPerfil.vue"),
       },
       {
         path: "cuentas",
-        component: () => import("pages/CuentasPage.vue"),
+        component: () => import("../pages/CuentasPage.vue"),
       },
       {
         path: "empresas",
-        component: () => import("pages/EmpresasPage.vue"),
+        component: () => import("../pages/EmpresasPage.vue"),
       },
       {
         path: "areas",
-        component: () => import("pages/AreasPage.vue"),
+        component: () => import("../pages/AreasPage.vue"),
       },
       {
         path: "usuarios",
-        component: () => import("pages/UsuariosPage.vue"),
+        component: () => import("../pages/UsuariosPage.vue"),
       },
       {
         path: "centros",
-        component: () => import("pages/CentrosPage.vue"),
+        component: () => import("../pages/CentrosPage.vue"),
       },
       {
         path: "estados",
-        component: () => import("pages/EstadosPage.vue"),
+        component: () => import("../pages/EstadosPage.vue"),
       },
       {
         path: "categorias",
-        component: () => import("pages/CategoriasPage.vue"),
+        component: () => import("../pages/CategoriasPage.vue"),
       },
       {
         path: "tickets",
-        component: () => import("pages/TicketsPage.vue"),
+        component: () => import("../pages/TicketsPage.vue"),
       },
       {
         path: "reporte",
-        component: () => import("pages/DashboardTicket.vue"),
+        component: () => import("../pages/DashboardTicket.vue"),
       },
       {
         path: "admintickets",
-        component: () => import("pages/TicketAdmin.vue"),
+        component: () => import("../pages/TicketAdmin.vue"),
       },
       {
         path: "permisos",
-        component: () => import("pages/PermisosPage.vue"),
+        component: () => import("../pages/PermisosPage.vue"),
       },
       {
         path: "menus",
-        component: () => import("pages/MenusPage.vue"),
+        component: () => import("../pages/MenusPage.vue"),
       },
     ],
   },
@@ -72,7 +72,7 @@ const routes = [
     path: "/select-area",
     name: "select-area",
     meta: { requiresAuth: true },
-    component: () => import("pages/SelectAreaPage.vue"),
+    component: () => import("../pages/SelectAreaPage.vue"),
   },
 
   // 🔹 LOGIN (ya fuera del MainLayout)
@@ -81,13 +81,13 @@ const routes = [
     name: "login",
     path: "/login",
     meta: { requiresAuth: false },
-    component: () => import("layouts/LoginLayout.vue"),
+    component: () => import("../layouts/LoginLayout.vue"),
   },
 
   // 🔹 ERROR 404
   {
     path: "/:catchAll(.*)*",
-    component: () => import("pages/ErrorNotFound.vue"),
+    component: () => import("../pages/ErrorNotFound.vue"),
   },
 ];
 

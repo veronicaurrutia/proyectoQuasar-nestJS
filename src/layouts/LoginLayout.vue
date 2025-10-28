@@ -12,7 +12,7 @@
             <!-- Logo/Imagen arriba de Bienvenido -->
             <div class="text-center q-mb-md">
               <img
-                src="src/assets/loginsa.png"
+                src="/src/assets/loginsa.png"
                 alt="Logo"
                 class="login-image"
               />
@@ -114,7 +114,7 @@ import { useQuasar } from "quasar";
 import { api } from "src/boot/axios";
 import { useUsuariostore } from "src/stores/usuario.store";
 //css
-import "src/css/login.scss";
+import "src/css/layouts/login.scss";
 
 const email = ref("");
 const password = ref("");

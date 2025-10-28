@@ -15,7 +15,7 @@
           />
           <div class="header-logo">
             <img
-              src="src/assets/loginsa.png"
+              src="/src/assets/loginsa.png"
               alt="Logo"
               class="header-logo-img"
             />
@@ -78,7 +78,7 @@
         <!-- Header del drawer -->
         <div class="drawer-header">
           <div class="company-info">
-            <img src="src/assets/loginsa.png" alt="Logo" class="drawer-logo" />
+            <img src="/src/assets/loginsa.png" alt="Logo" class="drawer-logo" />
             <div class="company-details" v-if="!miniState">
               <div class="company-name">Loginsa</div>
               <div class="department-name">Tecnologías de la Información</div>
