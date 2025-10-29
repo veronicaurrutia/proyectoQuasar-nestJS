@@ -63,17 +63,18 @@ module.exports = configure(function (/* ctx */) {
       // extendViteConf (viteConf) {},
       // viteVuePluginOptions: {},
 
-      vitePlugins: [
-        [
-          "vite-plugin-checker",
-          {
-            eslint: {
-              lintCommand: 'eslint "./**/*.{js,mjs,cjs,vue}"',
-            },
-          },
-          { server: false },
-        ],
-      ],
+      // Temporarily disable ESLint to avoid AJV compatibility issues
+      // vitePlugins: [
+      //   [
+      //     "vite-plugin-checker",
+      //     {
+      //       eslint: {
+      //         lintCommand: 'eslint "./**/*.{js,mjs,cjs,vue}"',
+      //       },
+      //     },
+      //     { server: false },
+      //   ],
+      // ],
     },
 
     // // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
