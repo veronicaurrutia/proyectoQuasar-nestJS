@@ -13,7 +13,7 @@
             @click="toggleLeftDrawer"
             class="menu-btn"
           />
-          <div class="header-logo">
+          <div class="header-logo" @click="irAInicio" style="cursor: pointer;">
             <img
               src="/src/assets/loginsa.png"
               alt="Logo"
@@ -504,6 +504,10 @@ const drawerTimeout = ref(null);
 // Métodos
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
+}
+
+function irAInicio() {
+  router.push('/');
 }
 
 function handleDrawerMouseOver() {

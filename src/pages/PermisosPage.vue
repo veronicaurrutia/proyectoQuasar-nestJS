@@ -263,7 +263,7 @@ import { ref, onMounted, computed } from "vue";
 import { api } from "src/boot/axios";
 import { useQuasar } from "quasar";
 //css
-import "/src/css/pages/permisosPage.scss";
+import "/src/css/layouts/permisosPage.scss";
 
 const $q = useQuasar();
 
