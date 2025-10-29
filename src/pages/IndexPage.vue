@@ -163,7 +163,8 @@
                 <div class="row items-center q-mb-md">
                   <div class="col">
                     <h3>
-                      <q-icon name="history" class="q-mr-sm" />Actividad del Usuario
+                      <q-icon name="history" class="q-mr-sm" />Actividad del
+                      Usuario
                     </h3>
                     <p class="text-grey-6 text-caption">
                       Historial de navegación y acciones recientes
@@ -180,21 +181,14 @@
                       class="q-mr-sm"
                       title="Actualizar historial de navegación"
                     />
-                    <q-btn
-                      color="primary"
-                      flat
-                      label="Ver todo"
-                      icon-right="arrow_forward"
-                      @click="$router.push('/perfil')"
-                    />
                   </div>
                 </div>
-                
+
                 <div v-if="cargandoActividad" class="text-center q-pa-md">
                   <q-spinner-dots size="40px" color="primary" />
                   <div class="text-grey-6 q-mt-sm">Cargando actividad...</div>
                 </div>
-                
+
                 <q-list v-else separator>
                   <q-item
                     v-for="activity in recentActivity"
@@ -210,9 +204,15 @@
                       </q-avatar>
                     </q-item-section>
                     <q-item-section>
-                      <q-item-label class="text-weight-medium">{{ activity.title }}</q-item-label>
-                      <q-item-label caption class="text-grey-6">{{ activity.descripcion }}</q-item-label>
-                      <q-item-label caption class="text-grey-5">{{ activity.time }}</q-item-label>
+                      <q-item-label class="text-weight-medium">{{
+                        activity.title
+                      }}</q-item-label>
+                      <q-item-label caption class="text-grey-6">{{
+                        activity.descripcion
+                      }}</q-item-label>
+                      <q-item-label caption class="text-grey-5">{{
+                        activity.time
+                      }}</q-item-label>
                     </q-item-section>
                     <q-item-section side>
                       <div class="column items-end">
@@ -221,21 +221,28 @@
                           :label="activity.status"
                           class="q-mb-xs"
                         />
-                        <q-icon 
-                          v-if="activity.route" 
-                          name="open_in_new" 
-                          size="16px" 
+                        <q-icon
+                          v-if="activity.route"
+                          name="open_in_new"
+                          size="16px"
                           color="grey-5"
                         />
                       </div>
                     </q-item-section>
                   </q-item>
                 </q-list>
-                
-                <div v-if="!cargandoActividad && recentActivity.length === 0" class="text-center q-pa-lg">
+
+                <div
+                  v-if="!cargandoActividad && recentActivity.length === 0"
+                  class="text-center q-pa-lg"
+                >
                   <q-icon name="timeline" size="60px" color="grey-4" />
-                  <div class="text-h6 text-grey-6 q-mt-md">Sin actividad registrada</div>
-                  <div class="text-grey-5">Comienza a navegar para ver tu actividad</div>
+                  <div class="text-h6 text-grey-6 q-mt-md">
+                    Sin actividad registrada
+                  </div>
+                  <div class="text-grey-5">
+                    Comienza a navegar para ver tu actividad
+                  </div>
                 </div>
               </q-card-section>
             </q-card>
@@ -412,7 +419,7 @@ const cargarEstadisticas = async () => {
           enProceso: Math.floor(Math.random() * 10) + 3,
           resueltos: Math.floor(Math.random() * 25) + 8,
         };
-        
+
         // Actualizar los stats con datos simulados
         stats.value.forEach((stat) => {
           switch (stat.key) {
@@ -491,10 +498,10 @@ const cargarEstadisticas = async () => {
 const cargarActividadReciente = async () => {
   try {
     cargandoActividad.value = true;
-    
+
     // Obtener historial de navegación desde localStorage
     const historialNavegacion = obtenerHistorialNavegacion();
-    
+
     // Si hay historial de navegación, usarlo como actividad principal
     if (historialNavegacion.length > 0) {
       recentActivity.value = historialNavegacion;
@@ -510,7 +517,7 @@ const cargarActividadReciente = async () => {
           status: 'Actual',
           badgeColor: 'primary',
           route: '/',
-          descripcion: 'Navegó a la página principal del sistema'
+          descripcion: 'Navegó a la página principal del sistema',
         },
         {
           id: 2,
@@ -521,7 +528,7 @@ const cargarActividadReciente = async () => {
           status: 'Bienvenida',
           badgeColor: 'secondary',
           route: null,
-          descripcion: 'Primera vez accediendo al sistema'
+          descripcion: 'Primera vez accediendo al sistema',
         },
         {
           id: 3,
@@ -532,19 +539,21 @@ const cargarActividadReciente = async () => {
           status: 'Sugerencia',
           badgeColor: 'accent',
           route: '/tickets',
-          descripcion: 'Comienza creando tu primer ticket'
-        }
+          descripcion: 'Comienza creando tu primer ticket',
+        },
       ];
     }
-    
+
     // Opcional: Intentar agregar información de tickets si existe
     try {
       const usuarioId = usuarioStore.id || usuarioStore.usuario;
       const areaId = usuarioStore.area;
-      
+
       if (areaId && usuarioId) {
-        const response = await api.get(`/ticket/usuario/${usuarioId}/recientes?limit=3`);
-        
+        const response = await api.get(
+          `/ticket/usuario/${usuarioId}/recientes?limit=3`,
+        );
+
         if (response.data && response.data.length > 0) {
           // Agregar los tickets más recientes al final de la actividad de navegación
           const ticketsActivity = response.data.map((ticket, index) => ({
@@ -556,24 +565,27 @@ const cargarActividadReciente = async () => {
             status: ticket.estado?.nombre || 'Sin estado',
             badgeColor: obtenerColorPorEstado(ticket.estado?.nombre || 'Nuevo'),
             route: `/tickets/${ticket.id}`,
-            descripcion: `${ticket.categoria?.nombre || 'Sin categoría'} - ${ticket.estado?.nombre || 'Sin estado'}`
+            descripcion: `${ticket.categoria?.nombre || 'Sin categoría'} - ${
+              ticket.estado?.nombre || 'Sin estado'
+            }`,
           }));
-          
+
           // Combinar navegación y tickets, priorizando navegación
           recentActivity.value = [
             ...historialNavegacion.slice(0, 4), // Primeras 4 navegaciones
-            ...ticketsActivity.slice(0, 2)      // Últimos 2 tickets
+            ...ticketsActivity.slice(0, 2), // Últimos 2 tickets
           ].slice(0, 6); // Limitar a 6 items total
         }
       }
     } catch (ticketError) {
       // Si falla obtener tickets, mantener solo el historial de navegación
-      console.log('No se pudieron cargar tickets recientes, mostrando solo navegación');
+      console.log(
+        'No se pudieron cargar tickets recientes, mostrando solo navegación',
+      );
     }
-    
   } catch (error) {
     console.error('Error al cargar actividad reciente:', error);
-    
+
     // En caso de error total, mostrar datos básicos de navegación
     recentActivity.value = [
       {
@@ -585,7 +597,7 @@ const cargarActividadReciente = async () => {
         status: 'Visitado',
         badgeColor: 'primary',
         route: '/',
-        descripcion: 'Está navegando en la página principal'
+        descripcion: 'Está navegando en la página principal',
       },
       {
         id: 2,
@@ -596,8 +608,8 @@ const cargarActividadReciente = async () => {
         status: 'Activo',
         badgeColor: 'positive',
         route: null,
-        descripcion: 'El sistema está funcionando correctamente'
-      }
+        descripcion: 'El sistema está funcionando correctamente',
+      },
     ];
   } finally {
     cargandoActividad.value = false;
@@ -607,20 +619,24 @@ const cargarActividadReciente = async () => {
 // Función para formatear diferentes tipos de actividad
 const formatearActividad = (actividad) => {
   const tipoActividad = actividad.tipo || actividad.accion || 'navegacion';
-  
+
   switch (tipoActividad.toLowerCase()) {
     case 'navegacion':
     case 'visita':
       return {
-        title: `Visitó ${obtenerNombrePagina(actividad.ruta || actividad.pagina)}`,
+        title: `Visitó ${obtenerNombrePagina(
+          actividad.ruta || actividad.pagina,
+        )}`,
         icon: obtenerIconoPagina(actividad.ruta || actividad.pagina),
         color: 'blue',
         status: 'Visitado',
         badgeColor: 'blue',
         route: actividad.ruta || actividad.pagina,
-        descripcion: `Navegó a ${obtenerNombrePagina(actividad.ruta || actividad.pagina)}`
+        descripcion: `Navegó a ${obtenerNombrePagina(
+          actividad.ruta || actividad.pagina,
+        )}`,
       };
-      
+
     case 'ticket_creado':
       return {
         title: 'Creó un ticket',
@@ -629,9 +645,9 @@ const formatearActividad = (actividad) => {
         status: 'Creado',
         badgeColor: 'green',
         route: `/tickets/${actividad.ticket_id}`,
-        descripcion: `Creó el ticket: ${actividad.titulo || 'Sin título'}`
+        descripcion: `Creó el ticket: ${actividad.titulo || 'Sin título'}`,
       };
-      
+
     case 'ticket_actualizado':
       return {
         title: 'Actualizó un ticket',
@@ -640,9 +656,9 @@ const formatearActividad = (actividad) => {
         status: 'Actualizado',
         badgeColor: 'orange',
         route: `/tickets/${actividad.ticket_id}`,
-        descripcion: `Actualizó el ticket: ${actividad.titulo || 'Sin título'}`
+        descripcion: `Actualizó el ticket: ${actividad.titulo || 'Sin título'}`,
       };
-      
+
     case 'login':
       return {
         title: 'Inició sesión',
@@ -651,9 +667,9 @@ const formatearActividad = (actividad) => {
         status: 'Conectado',
         badgeColor: 'positive',
         route: null,
-        descripcion: 'Se conectó al sistema'
+        descripcion: 'Se conectó al sistema',
       };
-      
+
     case 'logout':
       return {
         title: 'Cerró sesión',
@@ -662,9 +678,9 @@ const formatearActividad = (actividad) => {
         status: 'Desconectado',
         badgeColor: 'grey',
         route: null,
-        descripcion: 'Se desconectó del sistema'
+        descripcion: 'Se desconectó del sistema',
       };
-      
+
     default:
       return {
         title: actividad.descripcion || 'Actividad del usuario',
@@ -673,7 +689,8 @@ const formatearActividad = (actividad) => {
         status: 'Actividad',
         badgeColor: 'primary',
         route: null,
-        descripcion: actividad.descripcion || 'Realizó una acción en el sistema'
+        descripcion:
+          actividad.descripcion || 'Realizó una acción en el sistema',
       };
   }
 };
@@ -681,7 +698,9 @@ const formatearActividad = (actividad) => {
 // Función para obtener historial de navegación desde localStorage
 const obtenerHistorialNavegacion = () => {
   try {
-    const historial = JSON.parse(localStorage.getItem('userNavigationHistory') || '[]');
+    const historial = JSON.parse(
+      localStorage.getItem('userNavigationHistory') || '[]',
+    );
     return historial.slice(0, 8).map((item, index) => ({
       id: `nav-${index}`,
       title: `Visitó ${obtenerNombrePagina(item.route)}`,
@@ -691,7 +710,9 @@ const obtenerHistorialNavegacion = () => {
       status: index === 0 ? 'Actual' : 'Visitado',
       badgeColor: index === 0 ? 'primary' : 'blue',
       route: item.route,
-      descripcion: `Navegó a ${obtenerNombrePagina(item.route)}${index === 0 ? ' (página actual)' : ''}`
+      descripcion: `Navegó a ${obtenerNombrePagina(item.route)}${
+        index === 0 ? ' (página actual)' : ''
+      }`,
     }));
   } catch (error) {
     console.error('Error al obtener historial de navegación:', error);
@@ -702,20 +723,25 @@ const obtenerHistorialNavegacion = () => {
 // Función para guardar navegación en localStorage
 const guardarNavegacion = (route) => {
   try {
-    const historial = JSON.parse(localStorage.getItem('userNavigationHistory') || '[]');
+    const historial = JSON.parse(
+      localStorage.getItem('userNavigationHistory') || '[]',
+    );
     const nuevaEntrada = {
       route: route,
       timestamp: new Date().toISOString(),
-      usuario: usuarioStore.nombre || usuarioStore.id || 'Usuario'
+      usuario: usuarioStore.nombre || usuarioStore.id || 'Usuario',
     };
-    
+
     // Evitar duplicados consecutivos
     if (historial.length === 0 || historial[0].route !== route) {
       historial.unshift(nuevaEntrada);
       // Mantener solo los últimos 20 registros
       const historialLimitado = historial.slice(0, 20);
-      localStorage.setItem('userNavigationHistory', JSON.stringify(historialLimitado));
-      
+      localStorage.setItem(
+        'userNavigationHistory',
+        JSON.stringify(historialLimitado),
+      );
+
       console.log(`📍 Navegación guardada: ${obtenerNombrePagina(route)}`);
     }
   } catch (error) {
@@ -759,22 +785,24 @@ const obtenerNombrePagina = (ruta) => {
     '/cuentas': 'Cuentas',
     '/menus': 'Menús',
     '/permisos': 'Permisos',
-    '/perfil': 'Mi Perfil'
+    '/perfil': 'Mi Perfil',
   };
-  
+
   // Buscar coincidencia exacta primero
   if (rutas[ruta]) {
     return rutas[ruta];
   }
-  
+
   // Buscar coincidencias parciales
   for (const [rutaBase, nombre] of Object.entries(rutas)) {
     if (ruta && ruta.startsWith(rutaBase) && rutaBase !== '/') {
       return nombre;
     }
   }
-  
-  return ruta ? ruta.replace('/', '').replace('-', ' ').toUpperCase() : 'Página desconocida';
+
+  return ruta
+    ? ruta.replace('/', '').replace('-', ' ').toUpperCase()
+    : 'Página desconocida';
 };
 
 // Función para obtener icono de la página
@@ -792,21 +820,21 @@ const obtenerIconoPagina = (ruta) => {
     '/cuentas': 'account_balance',
     '/menus': 'menu',
     '/permisos': 'security',
-    '/perfil': 'person'
+    '/perfil': 'person',
   };
-  
+
   // Buscar coincidencia exacta primero
   if (iconos[ruta]) {
     return iconos[ruta];
   }
-  
+
   // Buscar coincidencias parciales
   for (const [rutaBase, icono] of Object.entries(iconos)) {
     if (ruta && ruta.startsWith(rutaBase) && rutaBase !== '/') {
       return icono;
     }
   }
-  
+
   return 'pageview';
 };
 
@@ -871,11 +899,11 @@ const irAActividad = (activity) => {
 onMounted(() => {
   // Guardar visita a la página actual
   guardarNavegacion('/');
-  
+
   // Cargar estadísticas y actividad (ahora principalmente navegación)
   cargarEstadisticas();
   cargarActividadReciente();
-  
+
   // Opcional: Configurar tracking automático de navegación
   // Escuchar cambios de ruta para actualizar el historial
   router.afterEach((to, from) => {
