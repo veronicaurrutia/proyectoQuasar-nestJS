@@ -162,7 +162,7 @@
                                 {{
                                   getInitials(
                                     props.row.nombre,
-                                    props.row.apellido
+                                    props.row.apellido,
                                   )
                                 }}
                               </q-avatar>
@@ -222,7 +222,7 @@
                             @click="toggleEstadoUsuario(props.row)"
                           >
                             <q-tooltip>{{
-                              props.row.estado ? "Desactivar" : "Activar"
+                              props.row.estado ? 'Desactivar' : 'Activar'
                             }}</q-tooltip>
                           </q-btn>
                           <q-btn
@@ -295,7 +295,7 @@
                                 {{
                                   getInitials(
                                     props.row.nombre,
-                                    props.row.apellido
+                                    props.row.apellido,
                                   )
                                 }}
                               </q-avatar>
@@ -503,8 +503,8 @@
               />
             </div>
 
-            <div class="col-12">
-              <q-input
+            <!-- <div class="col-12"> -->
+            <!-- <q-input
                 v-model="usuario.password"
                 :type="showPassword ? 'text' : 'password'"
                 label="Contraseña *"
@@ -517,16 +517,16 @@
                   (val) => /[0-9]/.test(val) || 'Debe tener al menos un número',
                 ]"
                 hint="Mínimo 6 caracteres, una mayúscula y un número"
-              >
-                <template v-slot:append>
+              > -->
+            <!-- <template v-slot:append>
                   <q-icon
                     :name="showPassword ? 'visibility_off' : 'visibility'"
                     class="cursor-pointer"
                     @click="showPassword = !showPassword"
-                  />
-                </template>
+                  /> -->
+            <!-- </template>
               </q-input>
-            </div>
+            </div> -->
 
             <div class="col-12 col-md-6" v-if="cuentaId == null">
               <q-select
@@ -643,7 +643,7 @@
               />
             </div>
 
-            <div class="col-12">
+            <!-- <div class="col-12">
               <q-input
                 v-model="usuario.password"
                 :type="showPassword ? 'text' : 'password'"
@@ -677,7 +677,7 @@
                   />
                 </template>
               </q-input>
-            </div>
+            </div> -->
 
             <div class="col-12 col-md-6" v-if="cuentaId == null">
               <q-select
@@ -806,22 +806,21 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch, onMounted, computed } from "vue";
-import { Notify } from "quasar";
-import { api } from "src/boot/axios";
-import { useUsuariostore } from "src/stores/usuario.store";
+import { ref, reactive, watch, onMounted, computed } from 'vue';
+import { Notify } from 'quasar';
+import { api } from 'src/boot/axios';
+import { useUsuariostore } from 'src/stores/usuario.store';
 //css
-import "src/css/pages/usuariosPage.scss";
+import 'src/css/pages/usuariosPage.scss';
 
 // ----- STATE -----
-const showPassword = ref(false);
-const filter = ref("");
+const filter = ref('');
 const dialogUsuario = ref(false);
 const dialogUsuarioEdit = ref(false);
 const cargandoIcon = ref(false);
-const vistaActual = ref("tabla");
+const vistaActual = ref('tabla');
 const dialogArea = ref(false);
-const tab = ref("usuariosArea");
+const tab = ref('usuariosArea');
 const perfiles = ref([]);
 const perfil = ref(null);
 const usuarioSeleccionado = ref(null);
@@ -863,95 +862,95 @@ const usuariosFiltrados = computed(() => {
 });
 
 const estadoFilterOptions = computed(() => [
-  { label: "Activos", value: true },
-  { label: "Inactivos", value: false },
+  { label: 'Activos', value: true },
+  { label: 'Inactivos', value: false },
 ]);
 
 const vistaOptions = [
-  { label: "Tabla", value: "tabla", icon: "table_view" },
-  { label: "Tarjetas", value: "cards", icon: "view_module" },
+  { label: 'Tabla', value: 'tabla', icon: 'table_view' },
+  { label: 'Tarjetas', value: 'cards', icon: 'view_module' },
 ];
 
 // ----- TABLE COLUMNS -----
 const columns = [
   {
-    name: "index",
-    label: "#",
-    headerClasses: "bg-primary text-white",
-    align: "center",
+    name: 'index',
+    label: '#',
+    headerClasses: 'bg-primary text-white',
+    align: 'center',
     field: (row) => row.id,
   },
   {
-    name: "usuario",
-    label: "Usuario",
-    align: "left",
-    field: "usuario",
-    headerClasses: "bg-primary text-white",
-    style: "min-width: 250px",
+    name: 'usuario',
+    label: 'Usuario',
+    align: 'left',
+    field: 'usuario',
+    headerClasses: 'bg-primary text-white',
+    style: 'min-width: 250px',
   },
   {
-    name: "cuenta",
-    label: "Cuenta",
-    field: (row) => (row.cuenta ? row.cuenta.nombre : "Sin cuenta"),
-    align: "center",
-    headerClasses: "bg-primary text-white",
+    name: 'cuenta',
+    label: 'Cuenta',
+    field: (row) => (row.cuenta ? row.cuenta.nombre : 'Sin cuenta'),
+    align: 'center',
+    headerClasses: 'bg-primary text-white',
   },
   {
-    name: "empresa",
-    label: "Empresa",
-    field: (row) => (row.empresa ? row.empresa.nombre : "Sin Empresa"),
-    align: "center",
-    headerClasses: "bg-primary text-white",
+    name: 'empresa',
+    label: 'Empresa',
+    field: (row) => (row.empresa ? row.empresa.nombre : 'Sin Empresa'),
+    align: 'center',
+    headerClasses: 'bg-primary text-white',
   },
   {
-    name: "centro",
-    label: "Centro",
-    field: (row) => (row.centro ? row.centro.nombre : "Sin centro"),
-    align: "center",
-    headerClasses: "bg-primary text-white",
+    name: 'centro',
+    label: 'Centro',
+    field: (row) => (row.centro ? row.centro.nombre : 'Sin centro'),
+    align: 'center',
+    headerClasses: 'bg-primary text-white',
   },
   {
-    name: "enabledopt",
-    label: "Estado",
-    field: "enabledopt",
-    align: "center",
-    headerClasses: "bg-primary text-white",
+    name: 'enabledopt',
+    label: 'Estado',
+    field: 'enabledopt',
+    align: 'center',
+    headerClasses: 'bg-primary text-white',
   },
   {
-    name: "actions",
-    label: "Acciones",
-    field: "actions",
-    align: "center",
-    headerClasses: "bg-primary text-white",
+    name: 'actions',
+    label: 'Acciones',
+    field: 'actions',
+    align: 'center',
+    headerClasses: 'bg-primary text-white',
   },
   {
-    name: "area",
-    label: "Area",
-    field: "area",
-    align: "center",
-    headerClasses: "bg-primary text-white",
+    name: 'area',
+    label: 'Area',
+    field: 'area',
+    align: 'center',
+    headerClasses: 'bg-primary text-white',
   },
 ];
 
 // Columnas para vista móvil
 const columnsMobile = [
   {
-    name: "usuario",
-    label: "Usuario",
-    align: "left",
-    field: "usuario",
+    name: 'usuario',
+    label: 'Usuario',
+    align: 'left',
+    field: 'usuario',
   },
   {
-    name: "enabledopt",
-    label: "Estado",
-    field: "enabledopt",
-    align: "center",
+    name: 'enabledopt',
+    label: 'Estado',
+    field: 'enabledopt',
+    align: 'center',
   },
   {
-    name: "actions",
-    label: "Acciones",
-    field: "actions",
-    align: "center",
+    name: 'actions',
+    label: 'Acciones',
+    field: 'actions',
+    align: 'center',
   },
 ];
 
@@ -979,13 +978,13 @@ watch(
     if (valor != null) {
       await obtenerCentrosCuenta(valor);
     }
-  }
+  },
 );
 
 watch(tab, async (valor) => {
-  if (valor === "usuariosArea") {
+  if (valor === 'usuariosArea') {
     await obtenerUsuarios(); // llama a la función directamente
-  } else if (valor === "usuariosNoArea") {
+  } else if (valor === 'usuariosNoArea') {
     await obtenerUsuariosNoArea(); // también directamente
   }
   // console.log(valor, "el valor");
@@ -994,13 +993,13 @@ watch(tab, async (valor) => {
 // ----- METHODS -----
 const obtenerCuentas = async () => {
   try {
-    const response = await api.get("/cuenta");
+    const response = await api.get('/cuenta');
     cuentas.value = response.data.map((item) => ({
       value: item.id,
       label: item.nombre,
     }));
   } catch (error) {
-    console.error("Error al obtener cuentas:", error);
+    console.error('Error al obtener cuentas:', error);
   }
 };
 
@@ -1009,9 +1008,9 @@ const obtenerUsuarios = async () => {
   try {
     const response = await api.get(`/usuario/area/${usuarioStore.area}`);
     usuarios.value = response.data;
-    console.log(usuarios.value, "los usuarios");
+    console.log(usuarios.value, 'los usuarios');
   } catch (error) {
-    console.error("Error al obtener usuarios:", error);
+    console.error('Error al obtener usuarios:', error);
   }
 };
 
@@ -1019,12 +1018,12 @@ const obtenerUsuariosNoArea = async () => {
   usuarios.value = [];
   try {
     const response = await api.get(
-      `/usuario/no-in-area/${usuarioStore.area}/empresa/${usuarioStore.empresa}`
+      `/usuario/no-in-area/${usuarioStore.area}/empresa/${usuarioStore.empresa}`,
     );
     usuarios.value = response.data;
-    console.log(usuarios.value, "los usuarios sin mi area");
+    console.log(usuarios.value, 'los usuarios sin mi area');
   } catch (error) {
-    console.error("Error al obtener usuarios:", error);
+    console.error('Error al obtener usuarios:', error);
   }
 };
 
@@ -1037,21 +1036,21 @@ const crearUsuario = async () => {
     perfilId: perfil.value,
     areaIds: [area.value],
   });
-  console.log(usuario, "el usuario");
+  console.log(usuario, 'el usuario');
   try {
-    await api.post("/usuario", usuario);
+    await api.post('/usuario', usuario);
     Notify.create({
-      type: "positive",
-      message: "Usuario creado exitosamente",
-      icon: "check_circle",
+      type: 'positive',
+      message: 'Usuario creado exitosamente',
+      icon: 'check_circle',
     });
     dialogUsuario.value = false;
     await obtenerUsuarios();
   } catch (error) {
-    console.error("Error al crear usuario:", error);
+    console.error('Error al crear usuario:', error);
     Notify.create({
-      type: "negative",
-      message: "Error al crear el usuario",
+      type: 'negative',
+      message: 'Error al crear el usuario',
     });
   } finally {
     cargandoIcon.value = false;
@@ -1065,9 +1064,9 @@ const editarUsuario = (row) => {
 
 const verUsuario = (row) => {
   Notify.create({
-    type: "info",
+    type: 'info',
     message: `Visualizando perfil de ${row.nombre} ${row.apellido}`,
-    icon: "visibility",
+    icon: 'visibility',
   });
 };
 
@@ -1077,19 +1076,19 @@ const toggleEstadoUsuario = async (row) => {
     await api.patch(`/usuario/${row.id}`, { estado: nuevoEstado });
 
     Notify.create({
-      type: "positive",
+      type: 'positive',
       message: `Usuario ${
-        nuevoEstado ? "activado" : "desactivado"
+        nuevoEstado ? 'activado' : 'desactivado'
       } exitosamente`,
-      icon: nuevoEstado ? "lock_open" : "lock",
+      icon: nuevoEstado ? 'lock_open' : 'lock',
     });
 
     await obtenerUsuarios();
   } catch (error) {
-    console.error("Error al cambiar estado del usuario:", error);
+    console.error('Error al cambiar estado del usuario:', error);
     Notify.create({
-      type: "negative",
-      message: "Error al cambiar el estado del usuario",
+      type: 'negative',
+      message: 'Error al cambiar el estado del usuario',
     });
   }
 };
@@ -1112,17 +1111,17 @@ const actualizarUsuario = async () => {
 
     await api.patch(`/usuario/${id}`, payload);
     Notify.create({
-      type: "positive",
-      message: "Usuario actualizado exitosamente",
-      icon: "save",
+      type: 'positive',
+      message: 'Usuario actualizado exitosamente',
+      icon: 'save',
     });
     dialogUsuarioEdit.value = false;
     await obtenerUsuarios();
   } catch (error) {
-    console.error("Error al actualizar usuario:", error);
+    console.error('Error al actualizar usuario:', error);
     Notify.create({
-      type: "negative",
-      message: "Error al actualizar el usuario",
+      type: 'negative',
+      message: 'Error al actualizar el usuario',
     });
   } finally {
     cargandoIcon.value = false;
@@ -1137,7 +1136,7 @@ const obtenerCentrosCuenta = async (valor) => {
       label: item.nombre,
     }));
   } catch (error) {
-    console.error("Error al obtener centros:", error);
+    console.error('Error al obtener centros:', error);
   }
 };
 
@@ -1147,7 +1146,7 @@ const obtenerCuentaUser = async () => {
     cuentas.value = [{ label: response.data.nombre, value: response.data.id }];
     usuario.cuentaId = response.data.id;
   } catch (error) {
-    console.error("Error al obtener cuenta:", error);
+    console.error('Error al obtener cuenta:', error);
   }
 };
 
@@ -1156,9 +1155,9 @@ const obtenerArea = async () => {
     const response = await api.get(`/area/${usuarioStore.area}`);
     areas.value = [{ label: response.data.nombre, value: response.data.id }];
     area.value = usuarioStore.area;
-    console.log(areas.value, "el area", usuarioStore.area);
+    console.log(areas.value, 'el area', usuarioStore.area);
   } catch (error) {
-    console.error("error al obtener el area: ", error);
+    console.error('error al obtener el area: ', error);
   }
 };
 
@@ -1168,26 +1167,26 @@ const eliminarUsuario = (row) => {
     message: `¿Desea eliminar el usuario ${row.nombre} ${row.apellido}?`,
     actions: [
       {
-        label: "Eliminar",
-        color: "red",
+        label: 'Eliminar',
+        color: 'red',
         handler: async () => {
           try {
             await api.delete(`/usuario/${row.id}`);
             Notify.create({
-              type: "positive",
-              message: "Usuario eliminado exitosamente",
+              type: 'positive',
+              message: 'Usuario eliminado exitosamente',
             });
             await obtenerUsuarios();
           } catch (error) {
-            console.error("Error al eliminar usuario:", error);
+            console.error('Error al eliminar usuario:', error);
             Notify.create({
-              type: "negative",
-              message: "Error al eliminar el usuario",
+              type: 'negative',
+              message: 'Error al eliminar el usuario',
             });
           }
         },
       },
-      { label: "Cancelar", handler: () => {} },
+      { label: 'Cancelar', handler: () => {} },
     ],
   });
 };
@@ -1197,9 +1196,9 @@ const obtenerPerfiles = async () => {
     const response = await api.get(`/perfil/colaborador`);
     perfiles.value = response.data;
     // console.log(usuarios, "los usuarios");
-    console.log(perfiles.value, "los perfiles");
+    console.log(perfiles.value, 'los perfiles');
   } catch (error) {
-    console.error("Error al obtener los perfiles:", error);
+    console.error('Error al obtener los perfiles:', error);
   }
 };
 
@@ -1212,7 +1211,7 @@ const eliminarArea = async (row) => {
     });
     if (response.status === 200) {
       const resp = await api.delete(
-        `/usuario/${row.id}/perfil-area/${usuarioStore.area}`
+        `/usuario/${row.id}/perfil-area/${usuarioStore.area}`,
       );
       if (response.status == 200) {
         obtenerUsuarios();
@@ -1222,7 +1221,7 @@ const eliminarArea = async (row) => {
       obtenerUsuarios();
     }
   } catch (error) {
-    console.error("error al elminar el area del usuario", error);
+    console.error('error al elminar el area del usuario', error);
   }
 };
 
@@ -1240,17 +1239,17 @@ const agregarUsuarioArea = async () => {
     // Primero agrega el área al usuario
     const response = await api.post(
       `/usuario/${usuarioSeleccionado.value.id}/areas`,
-      data
+      data,
     );
-    console.log(response, "la respuesta");
+    console.log(response, 'la respuesta');
     if (response.status === 201) {
       // Luego asigna el perfil en esa área
       const resp = await api.post(
         `/usuario/${usuarioSeleccionado.value.id}/perfil-area`,
-        body // ✅ sin { body }
+        body, // ✅ sin { body }
       );
 
-      if (resp.estado === "OK") {
+      if (resp.estado === 'OK') {
         obtenerUsuariosNoArea();
         dialogArea.value = false;
       } else {
@@ -1259,7 +1258,7 @@ const agregarUsuarioArea = async () => {
       }
     }
   } catch (error) {
-    console.error("Error al agregar el área del usuario", error);
+    console.error('Error al agregar el área del usuario', error);
   }
 };
 
@@ -1271,41 +1270,41 @@ const abrirDialogArea = (usuario) => {
 
 const recuperarPassword = () => {
   Notify.create({
-    color: "info",
-    message: "Funcionalidad de recuperación de contraseña (simulada).",
-    icon: "info",
+    color: 'info',
+    message: 'Funcionalidad de recuperación de contraseña (simulada).',
+    icon: 'info',
   });
 };
 
 const aplicarFiltros = () => {
   Notify.create({
-    type: "info",
-    message: "Filtros aplicados",
-    icon: "filter_list",
+    type: 'info',
+    message: 'Filtros aplicados',
+    icon: 'filter_list',
   });
 };
 
 const limpiarFiltros = () => {
   estadoFilter.value = null;
-  filter.value = "";
+  filter.value = '';
   Notify.create({
-    type: "info",
-    message: "Filtros limpiados",
-    icon: "clear",
+    type: 'info',
+    message: 'Filtros limpiados',
+    icon: 'clear',
   });
 };
 
 const exportarUsuarios = () => {
   Notify.create({
-    type: "info",
-    message: "Exportando usuarios...",
-    icon: "download",
+    type: 'info',
+    message: 'Exportando usuarios...',
+    icon: 'download',
   });
 };
 
 const getInitials = (nombre, apellido) => {
-  const inicial1 = nombre ? nombre.charAt(0).toUpperCase() : "";
-  const inicial2 = apellido ? apellido.charAt(0).toUpperCase() : "";
+  const inicial1 = nombre ? nombre.charAt(0).toUpperCase() : '';
+  const inicial2 = apellido ? apellido.charAt(0).toUpperCase() : '';
   return inicial1 + inicial2;
 };
 

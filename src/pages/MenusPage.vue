@@ -92,7 +92,7 @@
                         : 'text-grey-6'
                     "
                   >
-                    {{ menu1.descripcion || "Sin descripción" }}
+                    {{ menu1.descripcion || 'Sin descripción' }}
                   </q-item-label>
                 </q-item-section>
 
@@ -188,7 +188,7 @@
                     {{ menu2.nombre }}
                   </q-item-label>
                   <q-item-label caption class="text-grey-6">
-                    {{ menu2.descripcion || "Sin descripción" }}
+                    {{ menu2.descripcion || 'Sin descripción' }}
                   </q-item-label>
                   <q-item-label caption class="text-grey-5" v-if="menu2.ruta">
                     <q-icon name="link" size="12px" class="q-mr-xs" />
@@ -277,15 +277,15 @@
             <q-icon :name="menu1Editando ? 'edit' : 'add'" class="q-mr-sm" />
             {{
               menu1Editando
-                ? "Editar Módulo Principal"
-                : "Nuevo Módulo Principal"
+                ? 'Editar Módulo Principal'
+                : 'Nuevo Módulo Principal'
             }}
           </div>
           <div class="text-subtitle2">
             {{
               menu1Editando
-                ? "Modifica la información del módulo"
-                : "Configura un nuevo módulo del sistema"
+                ? 'Modifica la información del módulo'
+                : 'Configura un nuevo módulo del sistema'
             }}
           </div>
         </q-card-section>
@@ -371,12 +371,12 @@
         <q-card-section class="bg-primary text-white">
           <div class="text-h6">
             <q-icon :name="menu2Editando ? 'edit' : 'add'" class="q-mr-sm" />
-            {{ menu2Editando ? "Editar Submenú" : "Nuevo Submenú" }}
+            {{ menu2Editando ? 'Editar Submenú' : 'Nuevo Submenú' }}
           </div>
           <div class="text-subtitle2">
             {{
               menu2Editando
-                ? "Modifica la información del submenú"
+                ? 'Modifica la información del submenú'
                 : `Crear submenú para ${menuSeleccionado?.nombre}`
             }}
           </div>
@@ -508,11 +508,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import { api } from "src/boot/axios";
-import { useQuasar, Dialog, Notify } from "quasar";
+import { ref, onMounted } from 'vue';
+import { api } from 'src/boot/axios';
+import { useQuasar, Dialog, Notify } from 'quasar';
 //css
-import "/src/css/pages/menusPage.scss";
+import '/src/css/pages/menusPage.scss';
 
 const $q = useQuasar();
 
@@ -534,20 +534,20 @@ const formMenu2 = ref({});
 
 // Iconos de ejemplo para la ayuda
 const iconosEjemplo = ref([
-  { name: "dashboard", desc: "Dashboard" },
-  { name: "people", desc: "Usuarios" },
-  { name: "settings", desc: "Configuración" },
-  { name: "inventory", desc: "Inventario" },
-  { name: "analytics", desc: "Reportes" },
-  { name: "security", desc: "Seguridad" },
-  { name: "payment", desc: "Pagos" },
-  { name: "mail", desc: "Mensajes" },
+  // { name: "dashboard", desc: "Dashboard" },
+  { name: 'people', desc: 'Usuarios' },
+  { name: 'settings', desc: 'Configuración' },
+  { name: 'inventory', desc: 'Inventario' },
+  { name: 'analytics', desc: 'Reportes' },
+  { name: 'security', desc: 'Seguridad' },
+  { name: 'payment', desc: 'Pagos' },
+  { name: 'mail', desc: 'Mensajes' },
 ]);
 
 // 📦 Cargar menús
 const cargarMenus1 = async () => {
   try {
-    const { data } = await api.get("/menu-nivel1");
+    const { data } = await api.get('/menu-nivel1');
 
     // Forzar todos los estados a booleanos
     menusNivel1.value = data.map((menu) => ({
@@ -556,9 +556,9 @@ const cargarMenus1 = async () => {
     }));
   } catch (error) {
     $q.notify({
-      message: "Error al cargar los módulos",
-      color: "negative",
-      icon: "error",
+      message: 'Error al cargar los módulos',
+      color: 'negative',
+      icon: 'error',
     });
   }
 };
@@ -575,9 +575,9 @@ const seleccionarMenu = async (menu1) => {
     }));
   } catch (error) {
     $q.notify({
-      message: "Error al cargar los submenús",
-      color: "negative",
-      icon: "error",
+      message: 'Error al cargar los submenús',
+      color: 'negative',
+      icon: 'error',
     });
     menusNivel2.value = [];
   }
@@ -589,12 +589,12 @@ const cambiarEstadoMenu1 = async (menu1) => {
     await api.patch(`/menu-nivel1/${menu1.id}`, { estado: menu1.estado });
     $q.notify({
       message: `Menú "${menu1.nombre}" ${
-        menu1.estado ? "habilitado" : "deshabilitado"
+        menu1.estado ? 'habilitado' : 'deshabilitado'
       }`,
-      color: "positive",
+      color: 'positive',
     });
   } catch {
-    $q.notify({ message: "Error al actualizar el estado", color: "negative" });
+    $q.notify({ message: 'Error al actualizar el estado', color: 'negative' });
   }
 };
 
@@ -603,12 +603,12 @@ const cambiarEstadoMenu2 = async (menu2) => {
     await api.patch(`/menu-nivel2/${menu2.id}`, { estado: menu2.estado });
     $q.notify({
       message: `Submenú "${menu2.nombre}" ${
-        menu2.estado ? "habilitado" : "deshabilitado"
+        menu2.estado ? 'habilitado' : 'deshabilitado'
       }`,
-      color: "positive",
+      color: 'positive',
     });
   } catch {
-    $q.notify({ message: "Error al actualizar el estado", color: "negative" });
+    $q.notify({ message: 'Error al actualizar el estado', color: 'negative' });
   }
 };
 
@@ -616,10 +616,10 @@ const cambiarEstadoMenu2 = async (menu2) => {
 const abrirDialogoMenu1 = () => {
   menu1Editando.value = null;
   formMenu1.value = {
-    nombre: "",
-    descripcion: "",
-    ruta: "",
-    icon: "",
+    nombre: '',
+    descripcion: '',
+    ruta: '',
+    icon: '',
     estado: true, // ← ✅ Por defecto habilitado
   };
   dialogMenu1.value = true;
@@ -634,9 +634,9 @@ const editarMenu1 = (menu) => {
 const guardarMenu1 = async () => {
   if (!formMenu1.value.nombre?.trim()) {
     $q.notify({
-      message: "El nombre del módulo es requerido",
-      color: "warning",
-      icon: "warning",
+      message: 'El nombre del módulo es requerido',
+      color: 'warning',
+      icon: 'warning',
     });
     return;
   }
@@ -648,16 +648,16 @@ const guardarMenu1 = async () => {
     if (menu1Editando.value) {
       await api.patch(`/menu-nivel1/${menu1Editando.value.id}`, payload);
       $q.notify({
-        message: "Módulo actualizado correctamente",
-        color: "positive",
-        icon: "check",
+        message: 'Módulo actualizado correctamente',
+        color: 'positive',
+        icon: 'check',
       });
     } else {
-      await api.post("/menu-nivel1", payload);
+      await api.post('/menu-nivel1', payload);
       $q.notify({
-        message: "Módulo creado correctamente",
-        color: "positive",
-        icon: "check",
+        message: 'Módulo creado correctamente',
+        color: 'positive',
+        icon: 'check',
       });
     }
 
@@ -665,20 +665,20 @@ const guardarMenu1 = async () => {
     cargarMenus1();
   } catch (error) {
     $q.notify({
-      message: "Error al guardar el módulo",
-      color: "negative",
-      icon: "error",
+      message: 'Error al guardar el módulo',
+      color: 'negative',
+      icon: 'error',
     });
   }
 };
 
 const eliminarMenu1 = async (menu) => {
   Dialog.create({
-    title: "Confirmar eliminación",
+    title: 'Confirmar eliminación',
     message: `¿Está seguro de eliminar el módulo "${menu.nombre}"? Esta acción también eliminará todos sus submenús.`,
     cancel: true,
     persistent: true,
-    color: "negative",
+    color: 'negative',
   }).onOk(async () => {
     try {
       await api.delete(`/menu-nivel1/${menu.id}`);
@@ -688,16 +688,16 @@ const eliminarMenu1 = async (menu) => {
         menusNivel2.value = [];
       }
       $q.notify({
-        message: "Módulo eliminado correctamente",
-        color: "positive",
-        icon: "check",
+        message: 'Módulo eliminado correctamente',
+        color: 'positive',
+        icon: 'check',
       });
     } catch (err) {
       console.error(err);
       $q.notify({
-        message: "Error al eliminar el módulo",
-        color: "negative",
-        icon: "error",
+        message: 'Error al eliminar el módulo',
+        color: 'negative',
+        icon: 'error',
       });
     }
   });
@@ -710,10 +710,10 @@ const abrirDialogoMenu2 = () => {
   menu2Editando.value = null;
   formMenu2.value = {
     menu1Id: menuSeleccionado.value.id,
-    nombre: "",
-    descripcion: "",
-    ruta: "",
-    icon: "",
+    nombre: '',
+    descripcion: '',
+    ruta: '',
+    icon: '',
     estado: true, // ← ✅ por defecto habilitado
   };
   dialogMenu2.value = true;
@@ -738,19 +738,19 @@ const guardarMenu2 = async () => {
     if (menu2Editando.value) {
       await api.patch(`/menu-nivel2/${menu2Editando.value.id}`, payload);
       Notify.create({
-        message: "Menú Nivel 2 actualizado correctamente",
-        color: "positive",
-        icon: "check",
+        message: 'Menú Nivel 2 actualizado correctamente',
+        color: 'positive',
+        icon: 'check',
       });
     } else {
-      await api.post("/menu-nivel2", {
+      await api.post('/menu-nivel2', {
         ...payload,
         menu1Id: menuSeleccionado.value.id, // necesario solo al crear
       });
       Notify.create({
-        message: "Menú Nivel 2 creado correctamente",
-        color: "positive",
-        icon: "check",
+        message: 'Menú Nivel 2 creado correctamente',
+        color: 'positive',
+        icon: 'check',
       });
     }
 
@@ -759,35 +759,35 @@ const guardarMenu2 = async () => {
   } catch (err) {
     console.error(err);
     Notify.create({
-      message: "Error al guardar el Menú Nivel 2",
-      color: "negative",
-      icon: "error",
+      message: 'Error al guardar el Menú Nivel 2',
+      color: 'negative',
+      icon: 'error',
     });
   }
 };
 
 const eliminarMenu2 = async (menu) => {
   Dialog.create({
-    title: "Confirmar eliminación",
+    title: 'Confirmar eliminación',
     message: `¿Está seguro de eliminar el submenú "${menu.nombre}"?`,
     cancel: true,
     persistent: true,
-    color: "negative",
+    color: 'negative',
   }).onOk(async () => {
     try {
       await api.delete(`/menu-nivel2/${menu.id}`);
       seleccionarMenu(menuSeleccionado.value);
       $q.notify({
-        message: "Submenú eliminado correctamente",
-        color: "positive",
-        icon: "check",
+        message: 'Submenú eliminado correctamente',
+        color: 'positive',
+        icon: 'check',
       });
     } catch (err) {
       console.error(err);
       $q.notify({
-        message: "Error al eliminar el submenú",
-        color: "negative",
-        icon: "error",
+        message: 'Error al eliminar el submenú',
+        color: 'negative',
+        icon: 'error',
       });
     }
   });
@@ -800,8 +800,8 @@ const mostrarAyudaIconos = () => {
 
 const abrirPaginaIconos = () => {
   window.open(
-    "https://fonts.google.com/icons?icon.set=Material+Icons",
-    "_blank"
+    'https://fonts.google.com/icons?icon.set=Material+Icons',
+    '_blank',
   );
 };
 

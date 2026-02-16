@@ -1,6 +1,6 @@
-<template>
+<!-- <template>
   <q-page class="dashboard-page">
-    <!-- Header Section -->
+    <!-- Header Section 
     <div class="dashboard-header q-pa-lg bg-gradient-primary">
       <div class="container">
         <div class="row items-center">
@@ -28,7 +28,7 @@
       </div>
     </div>
 
-    <!-- KPI Cards Section -->
+    <!-- KPI Cards Section 
     <div class="kpi-section q-pa-lg">
       <div class="container">
         <div class="row q-col-gutter-lg">
@@ -62,11 +62,11 @@
       </div>
     </div>
 
-    <!-- Main Content -->
+    <!-- Main Content 
     <div class="main-content q-pa-lg">
       <div class="container">
         <div class="row q-col-gutter-lg">
-          <!-- Chart Section -->
+          <!-- Chart Section 
           <div class="col-12 col-lg-8">
             <q-card class="chart-card">
               <q-card-section>
@@ -109,9 +109,9 @@
             </q-card>
           </div>
 
-          <!-- Sidebar -->
+          <!-- Sidebar 
           <div class="col-12 col-lg-4">
-            <!-- Priority Tickets -->
+            <!-- Priority Tickets 
             <q-card class="priority-card q-mb-lg">
               <q-card-section>
                 <h3 class="priority-title">
@@ -161,7 +161,7 @@
               </q-card-section>
             </q-card>
 
-            <!-- Quick Actions -->
+            <!-- Quick Actions 
             <q-card class="actions-card">
               <q-card-section>
                 <h3 class="actions-title">
@@ -184,7 +184,7 @@
           </div>
         </div>
 
-        <!-- Recent Activity Section -->
+        <!-- Recent Activity Section --
         <div class="row q-mt-lg">
           <div class="col-12">
             <q-card class="activity-card">
@@ -475,4 +475,4 @@ export default {
     this.stopAutoRefresh();
   },
 };
-</script>
+</script> -->

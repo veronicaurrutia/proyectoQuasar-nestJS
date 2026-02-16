@@ -28,7 +28,7 @@
                   class="q-mr-md q-mb-md glossy shadow-5"
                   @click="$router.push('/tickets')"
                 />
-                <q-btn
+                <!-- <q-btn
                   color="secondary"
                   size="lg"
                   icon="dashboard"
@@ -36,7 +36,7 @@
                   outline
                   class="q-mb-md"
                   @click="$router.push('/dashboard')"
-                />
+                /> -->
               </div>
             </div>
           </div>
@@ -311,14 +311,14 @@ const features = ref([
     color: 'primary',
     route: '/tickets',
   },
-  {
-    id: 2,
-    title: 'Dashboard Analítico',
-    description: 'Visualiza métricas y estadísticas en tiempo real',
-    icon: 'analytics',
-    color: 'secondary',
-    route: '/dashboard',
-  },
+  // {
+  //   id: 2,
+  //   title: 'Dashboard Analítico',
+  //   description: 'Visualiza métricas y estadísticas en tiempo real',
+  //   icon: 'analytics',
+  //   color: 'secondary',
+  //   route: '/dashboard',
+  // },
   {
     id: 3,
     title: 'Administración',
@@ -775,7 +775,7 @@ const obtenerNombrePagina = (ruta) => {
   const rutas = {
     '/': 'Página de Inicio',
     '/tickets': 'Gestión de Tickets',
-    '/dashboard': 'Dashboard',
+    // '/dashboard': 'Dashboard',
     '/usuarios': 'Usuarios',
     '/areas': 'Áreas',
     '/categorias': 'Categorías',
@@ -810,7 +810,7 @@ const obtenerIconoPagina = (ruta) => {
   const iconos = {
     '/': 'home',
     '/tickets': 'local_activity',
-    '/dashboard': 'dashboard',
+    // '/dashboard': 'dashboard',
     '/usuarios': 'people',
     '/areas': 'domain',
     '/categorias': 'category',

@@ -47,7 +47,7 @@
               ref="emailRef"
               autocomplete="current-password"
               v-model="email"
-              label="Correo Electrónico"
+              label="Correo Electronico"
               outlined
               dense
               class="q-mb-md"
@@ -62,7 +62,7 @@
               v-model="password"
               autocomplete="current-password"
               :type="isPwd ? 'password' : 'text'"
-              label="Contraseña"
+              label="Contrasena"
               outlined
               dense
               class="q-mb-md"
@@ -108,20 +108,19 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
-import { useQuasar } from "quasar";
-import { api } from "src/boot/axios";
-import { useUsuariostore } from "src/stores/usuario.store";
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { useQuasar } from 'quasar';
+import { api } from 'src/boot/axios';
+import { useUsuariostore } from 'src/stores/usuario.store';
 //css
-import "src/css/layouts/login.scss";
+import 'src/css/layouts/login.scss';
 
-const email = ref("");
-const password = ref("");
+const email = ref('');
+const password = ref('');
 const isPwd = ref(true);
 const rememberMe = ref(true);
 const loading = ref(false);
-
 const emailRef = ref(null);
 const passwordRef = ref(null);
 const empresaSeleccionada = ref(null);
@@ -132,45 +131,43 @@ const quasar = useQuasar();
 const usuarioStore = useUsuariostore();
 
 // ----- FUNCIONES -----
-const login = async () => {
-  if (!email.value) return emailRef.value?.focus();
-  if (!password.value) return passwordRef.value?.focus();
+const buildDemoToken = () => {
+  const header = btoa(JSON.stringify({ alg: 'none', typ: 'JWT' }));
+  const exp = Math.floor(Date.now() / 1000) + 60 * 60 * 24;
+  const payload = btoa(JSON.stringify({ exp, demo: true }));
+  return `${header}.${payload}.demo`;
+};
 
-  // Guardar email en localStorage si rememberMe está activo
-  if (rememberMe.value) localStorage.setItem("email", email.value);
-  else localStorage.removeItem("email");
+const login = async () => {
+  if (rememberMe.value && email.value) {
+    localStorage.setItem('email', email.value);
+  } else {
+    localStorage.removeItem('email');
+  }
 
   try {
     loading.value = true;
-    console.log(empresaSeleccionada.value.id, "la empresa");
-    const response = await usuarioStore.loginEmpresa(
-      email.value,
-      password.value,
-      empresaSeleccionada.value.id
-    );
+    usuarioStore.token = buildDemoToken();
+    usuarioStore.usuario = null;
+    usuarioStore.area = null;
+    usuarioStore.perfil = null;
 
-    if (response.estado === "OK") {
-      router.push("/select-area");
-      quasar.notify({
-        message: `Bienvenido ${response.data?.usuario?.nombre ?? ""}`,
-        icon: "waving_hand",
-        color: "positive",
-      });
-    } else {
-      quasar.notify({
-        message:
-          response.data?.response?.data?.message ??
-          response.data?.message ??
-          "Error en login",
-        icon: "close",
-        color: "negative",
-      });
+    if (!empresaSeleccionada.value && empresas.value.length) {
+      empresaSeleccionada.value = empresas.value[0];
     }
+    usuarioStore.setEmpresa(empresaSeleccionada.value?.id ?? null);
+
+    await router.push('/select-area');
+    quasar.notify({
+      message: 'Acceso directo habilitado.',
+      icon: 'waving_hand',
+      color: 'positive',
+    });
   } catch (error) {
     quasar.notify({
-      message: error.message || "Error al intentar iniciar sesión",
-      icon: "close",
-      color: "negative",
+      message: error.message || 'Error al ingresar',
+      icon: 'close',
+      color: 'negative',
     });
   } finally {
     loading.value = false;
@@ -178,13 +175,13 @@ const login = async () => {
 };
 
 const getEmpresas = async () => {
-  const response = await api.get("/empresa");
+  const response = await api.get('/empresa');
   empresas.value = response.data;
 };
 
 // ----- ON MOUNT -----
 onMounted(() => {
-  const storedEmail = localStorage.getItem("email");
+  const storedEmail = localStorage.getItem('email');
   getEmpresas();
   if (storedEmail) {
     email.value = storedEmail;

@@ -102,8 +102,14 @@ const cargando = ref(false);
 const areaSeleccionada = ref(null);
 const perfil = ref(null);
 const empresa = ref(null);
+const isDemo = () => !usuarioStore.usuario;
 
 const cargarAreas = async () => {
+  if (isDemo()) {
+    areas.value = [{ id: 1, nombre: "Demo" }];
+    areaSeleccionada.value = areas.value[0].id;
+    return;
+  }
   try {
     cargando.value = true;
     const { data } = await api.get(`/area/usuario/${usuarioStore.usuario}`);
@@ -121,6 +127,18 @@ const cargarAreas = async () => {
 };
 
 const confirmarArea = () => {
+  if (!areaSeleccionada.value && areas.value.length) {
+    areaSeleccionada.value = areas.value[0].id;
+  }
+  if (isDemo()) {
+    usuarioStore.setArea(areaSeleccionada.value ?? 1);
+    router.push("/");
+    $q.notify({
+      type: "positive",
+      message: "Area demo seleccionada.",
+    });
+    return;
+  }
   $q.notify({
     type: "positive",
     message: `Área seleccionada: ${
@@ -148,6 +166,10 @@ async function obtenerPerfilAreaUsuario() {
 }
 
 async function obtenerEmpresa() {
+  if (!usuarioStore.empresa) {
+    empresa.value = null;
+    return;
+  }
   try {
     const response = await api.get(`/empresa/${usuarioStore.empresa}`);
     empresa.value = response.data; // o response.data.data si tu backend lo envuelve
