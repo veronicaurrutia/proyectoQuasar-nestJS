@@ -61,6 +61,13 @@
       </div>
     </div>
 
+    <!-- Auth Test (desarrollo) -->
+    <div class="auth-test-section q-pa-lg">
+      <div class="container">
+        <AuthTest />
+      </div>
+    </div>
+
     <!-- Features Section -->
     <div class="features-section q-pa-lg">
       <div class="container">
@@ -279,6 +286,7 @@ import { useRouter } from 'vue-router';
 import { api } from 'src/boot/axios';
 import { useQuasar } from 'quasar';
 import { useUsuariostore } from 'src/stores/usuario.store';
+import AuthTest from 'src/components/AuthTest.vue';
 //css
 import 'src/css/pages/indexPage.scss';
 

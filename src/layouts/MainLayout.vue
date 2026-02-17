@@ -642,9 +642,6 @@ async function obtenerMenuPerfil() {
     );
     console.log(response.data, "los permisos", usuarioStore.perfil);
     menu.value = response.data;
-    usuario.value = response.data.id;
-    area.value = response.data.areaId;
-    perfilArea.value = response.data.perfilesPorArea;
   } catch (error) {
     console.error("error al obtener los datos", error);
   }
